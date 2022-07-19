@@ -16,6 +16,12 @@ DATASET_FIELDS = [
     "date",
     "title",
     "abstractText",
+    "projectOutComesReport",
+    "piEmail",
+    "publicationResearch",
+    "publicationConference",
+    "startDate",
+    "expDate",
 ]
 JOINED_FIELDS = ",".join(DATASET_FIELDS)
 
