@@ -36,10 +36,11 @@ while True:
         f"https://api.nsf.gov/services/v1/awards.json?"
         f"fundProgramName=BIO"
         f"&agency=NSF"
-        f"&dateStart=01/01/2019"
+        f"&dateStart=01/01/2017"
         f"&transType=Grant"
-        f"&printFields={JOINED_FIELDS}",
-        f"&offset={current_offset}",
+        f"&printFields={JOINED_FIELDS}"
+        f"&projectOutcomesOnly=true"
+        f"&offset={current_offset}"
     )
 
     # Parse awards
