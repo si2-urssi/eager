@@ -15,7 +15,7 @@ except ImportError:
         "Install with `pip install soft-search[nsf]`."
     )
 
-from .constants import NSFPrograms, ALL_NSF_FIELDS
+from .constants import ALL_NSF_FIELDS, NSFPrograms
 
 ###############################################################################
 
@@ -37,6 +37,7 @@ _NSF_API_URL_TEMPLATE = (
 )
 
 ###############################################################################
+
 
 def _parse_nsf_datetime(dt: Union[str, datetime]) -> str:
     if isinstance(dt, str):

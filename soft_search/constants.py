@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
+class SoftwareOutcomes:
+    SoftwarePredicted = "software-outcome-predicted"
+    SoftwareNotPredicted = "software-outcome-not-predicted"
+
+
 class NSFFields:
     """
     Fields that can be provided to the `get_nsf_dataset` function `dataset_fields`
@@ -32,7 +38,9 @@ class NSFFields:
     startDate = "startDate"
     expDate = "expDate"
 
+
 ALL_NSF_FIELDS = [getattr(NSFFields, a) for a in dir(NSFFields) if "__" not in a]
+
 
 class NSFPrograms:
     BIO = "BIO"

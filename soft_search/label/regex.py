@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import logging
-
-import pandas as pd
 import re
 
-from ..constants import NSFFields
+import pandas as pd
+
+from ..constants import NSFFields, SoftwareOutcomes
 
 ###############################################################################
 
@@ -21,7 +21,10 @@ SOFTWARE_LIKE_PATTERNS = (
 )
 COMPILED_SOFTWARE_LIKE_PATTERNS = re.compile(SOFTWARE_LIKE_PATTERNS)
 
+REGEX_LABEL_COL = "regex_match"
+
 ###############################################################################
+
 
 def _apply_regex(text: str) -> str:
     # Try match
@@ -29,11 +32,44 @@ def _apply_regex(text: str) -> str:
 
     # Found
     if match_or_none:
-        return "software-outcome-predicted"
-    
-    # Not Found
-    return "software-outcome-not-predicted"
+        return SoftwareOutcomes.SoftwarePredicted
 
-def label(df: pd.DataFrame, apply_column: str = NSFFields.abstractText, label_column: str = "regex_match",) -> pd.DataFrame:
+    # Not Found
+    return SoftwareOutcomes.SoftwareNotPredicted
+
+
+def label(
+    df: pd.DataFrame,
+    apply_column: str = NSFFields.abstractText,
+    label_column: str = REGEX_LABEL_COL,
+) -> pd.DataFrame:
+    """
+    In-place add a new column to the provided pandas DataFrame with a label
+    of software predicted or not solely based off a regex match for various
+    software-like and adjacent terminology.
+
+    Parameters
+    ----------
+    df: pd.DataFrame
+        The pandas DataFrame to in-place a column to with the
+        regex matched software outcome labels.
+    apply_column: str
+        The column to use for "prediction".
+        Default: "abstractText"
+    label_column: str
+        The name of the column to add with outcome "prediction".
+        Default: "regex_match"
+
+    Returns
+    -------
+    pd.DataFrame
+        The same pandas DataFrame but with a new column added in-place containing
+        the software outcome "prediction".
+
+    See Also
+    --------
+    soft_search.nsf.get_nsf_dataset
+        Function to get an NSF dataset for prediction.
+    """
     df[label_column] = df[apply_column].apply(_apply_regex)
     return df
