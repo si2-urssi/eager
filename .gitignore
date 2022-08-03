@@ -114,4 +114,4 @@ ENV/
 
 # Project specific
 soft-search-awards.csv
-soft-search-tranformer/
+soft-search-transformer/*
