@@ -6,7 +6,14 @@ from datetime import datetime
 from typing import List, Optional, Union
 
 import pandas as pd
-import requests
+
+try:
+    import requests
+except ImportError:
+    raise ImportError(
+        "Extra dependencies are needed for the `nsf` submodule of `soft-search`. "
+        "Install with `pip install soft-search[nsf]`."
+    )
 
 ###############################################################################
 
