@@ -22,7 +22,7 @@ clean:
 
 # install with all deps
 install:
-	pip install -e {{justfile_directory()}}[lint,test,docs,dev]
+	pip install -e {{justfile_directory()}}[lint,test,docs,dev,nsf]
 
 # lint, format, and check all files
 lint:

@@ -28,7 +28,7 @@ classifiers = [
 dynamic = ["version"]
 dependencies = [
   "pandas~=1.4",
-  "pyarrow~=9",
+  "pyarrow~=9.0",
 ]
 
 [project.urls]
@@ -40,7 +40,7 @@ Documentation = "https://PugetSoundClinic-PIT.github.io/soft-search"
 # extra dependencies
 # https://peps.python.org/pep-0621/#dependencies-optional-dependencies
 [project.optional-dependencies]
-data = [
+nsf = [
   "requests~=2.28",
 ]
 lint = [
@@ -52,6 +52,7 @@ lint = [
   "isort>=5.7.0",
   "mypy>=0.790",
   "pre-commit>=2.20.0",
+  "types-requests~=2.28",
 ]
 test = [
   "coverage>=5.1",
