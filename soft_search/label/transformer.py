@@ -1,25 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from functools import partial
+from pathlib import Path
+from typing import TYPE_CHECKING, Dict, Optional, Union
+
+import numpy as np
 import pandas as pd
 
 from ..constants import NSFFields
-from typing import TYPE_CHECKING, Optional, Dict, Union
-from pathlib import Path
-import numpy as np
-from functools import partial
 
 try:
-    from datasets import Dataset, Features, ClassLabel, Value, load_metric
-    from transformers import AutoTokenizer, DataCollatorWithPadding, AutoModelForSequenceClassification, TrainingArguments, EvalPrediction, Trainer, pipeline
+    from datasets import ClassLabel, Dataset, Features, Value, load_metric
+    from transformers import (
+        AutoModelForSequenceClassification,
+        AutoTokenizer,
+        DataCollatorWithPadding,
+        EvalPrediction,
+        Trainer,
+        TrainingArguments,
+        pipeline,
+    )
 except ImportError:
     raise ImportError(
-        "Extra dependencies are needed for the `label.transformer` submodule of `soft-search`. "
+        "Extra dependencies are needed for the `label.transformer` "
+        "submodule of `soft-search`. "
         "Install with `pip install soft-search[transformer]`."
     )
 
 if TYPE_CHECKING:
+    from datasets.arrow_dataset import Batch
     from transformers.pipelines.base import Pipeline
+    from transformers.tokenization_utils_base import BatchEncoding
 
 ###############################################################################
 
@@ -28,13 +40,14 @@ TRANSFORMER_LABEL_COL = "transformer_label"
 
 ###############################################################################
 
+
 def train(
     df: pd.DataFrame,
     label_col: str,
     text_col: str = NSFFields.abstractText,
     model_storage_dir: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
     base_model: str = "distilbert-base-uncased-finetuned-sst-2-english",
-) -> None:
+) -> Path:
     # Handle storage dir
     model_storage_dir = Path(model_storage_dir).resolve()
 
@@ -46,16 +59,21 @@ def train(
     # Cast to dataset
     dataset = Dataset.from_pandas(
         df,
-        features=Features(label=ClassLabel(names=df["label"].unique().tolist()), text=Value(dtype="string")),
+        features=Features(
+            label=ClassLabel(names=df["label"].unique().tolist()),
+            text=Value(dtype="string"),
+        ),
     )
-    
+
     # Get splits
     dataset_dict = dataset.train_test_split(test_size=0.2, stratify_by_column="label")
 
     # Preprocess
     tokenizer = AutoTokenizer.from_pretrained(base_model)
-    def preprocess_function(examples):
+
+    def preprocess_function(examples: "BatchEncoding") -> "Batch":
         return tokenizer(examples["text"], truncation=True)
+
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
     tokenized_dataset_dict = dataset_dict.map(preprocess_function, batched=True)
 
@@ -79,6 +97,7 @@ def train(
 
     # Compute accuracy metrics
     metric = load_metric("accuracy")
+
     def compute_metrics(eval_pred: EvalPrediction) -> Optional[Dict]:
         predictions = np.argmax(eval_pred.predictions, axis=-1)
         return metric.compute(predictions=predictions, references=eval_pred.label_ids)
@@ -101,8 +120,10 @@ def train(
     trainer.save_model()
     return model_storage_dir
 
+
 def _apply_transformer(text: str, classifier: "Pipeline") -> str:
     return classifier(text, top_k=1)[0]
+
 
 def label(
     df: pd.DataFrame,
