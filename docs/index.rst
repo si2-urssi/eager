@@ -1,5 +1,5 @@
 Welcome to soft-search's documentation!
-======================================
+=======================================
 
 .. toctree::
    :hidden:
