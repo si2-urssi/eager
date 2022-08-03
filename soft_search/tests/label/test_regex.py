@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pytest
+import pandas as pd
 
 from soft_search.constants import NSFFields, SoftwareOutcomes
 from soft_search.label import regex
-import pandas as pd
 
 ###############################################################################
 
