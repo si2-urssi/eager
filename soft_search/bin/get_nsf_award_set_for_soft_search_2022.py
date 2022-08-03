@@ -5,15 +5,14 @@ import argparse
 import logging
 import sys
 import traceback
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from typing import List
 
-from numpy import absolute
+import pandas as pd
 
 from soft_search import nsf
 from soft_search.constants import NSFPrograms
-import pandas as pd
 
 ###############################################################################
 
@@ -49,6 +48,7 @@ class Args(argparse.Namespace):
         )
         p.parse_args(namespace=self)
 
+
 ###############################################################################
 
 
@@ -77,7 +77,11 @@ def main() -> None:
         program_chunks: List[pd.DataFrame] = []
         for program in [NSFPrograms.BIO]:
             log.info(f"Gathering {program} dataset chunk...")
-            program_chunks.append(nsf.get_nsf_dataset(start_date=START_DATE, end_date=END_DATE, program_name=program))
+            program_chunks.append(
+                nsf.get_nsf_dataset(
+                    start_date=START_DATE, end_date=END_DATE, program_name=program
+                )
+            )
 
         # Concat and report size
         awards = pd.concat(program_chunks, ignore_index=True)

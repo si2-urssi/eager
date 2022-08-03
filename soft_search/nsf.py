@@ -16,7 +16,6 @@ except ImportError:
 
 from .constants import ALL_NSF_FIELDS, NSFPrograms
 
-
 ###############################################################################
 # Constants
 
