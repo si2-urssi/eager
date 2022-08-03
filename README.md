@@ -1,38 +1,31 @@
 # soft-search
-searching for software promises in grant applications 
 
-## Generating the Basic Dataset
+[![Build Status](https://github.com/PugetSoundClinic-PIT/soft-search/workflows/CI/badge.svg)](https://github.com/PugetSoundClinic-PIT/soft-search/actions)
+[![Documentation](https://github.com/PugetSoundClinic-PIT/soft-search/workflows/Documentation/badge.svg)](https://PugetSoundClinic-PIT.github.io/soft-search)
 
-### Python
+searching for software promises in grant applications
 
-Uses the NSF HTTP API with specifics parameters.
+---
 
-```bash
-pip install -r scripts/requirements.txt
-python scripts/get-data.py
+## Installation
+
+**Stable Release:** `pip install soft-search`<br>
+**Development Head:** `pip install git+https://github.com/PugetSoundClinic-PIT/soft-search.git`
+
+## Quickstart
+
+```python
+from soft_search import example
+
+print(example.str_len("hello"))  # prints 5
 ```
 
-Data is stored in `data/nsf-awards.csv` and `data/nsf-awards.parquet`.
-(Same data, different formats).
+## Documentation
 
-### R
+For full package documentation please visit [PugetSoundClinic-PIT.github.io/soft-search](https://PugetSoundClinic-PIT.github.io/soft-search).
 
-Uses AwardFindR keyword search for NSF.
+## Development
 
-```bash
-Rscript scripts/requirements.r
-Rscript scripts/get-data.r
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.
 
-Data is stored in `data/keyword-seard.csv`.
-
-## Generating the Filtered Dataset
-
-### Python
-
-```bash
-python scripts/select-awards.py
-```
-
-Data is stored in `data/filtered-nsf-awards.csv` and `data/filtered-nsf-awards.parquet`.
-(Same data, different formats).
+**MIT License**

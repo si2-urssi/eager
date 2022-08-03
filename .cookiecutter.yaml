@@ -1,0 +1,11 @@
+default_context:
+    author_name: "Eva Maxfield Brown"
+    author_email: "jmxbrown@uw.edu"
+    hosting_github_username_or_org: "PugetSoundClinic-PIT"
+    project_name: "Software Search"
+    project_slug: "soft-search"
+    python_slug: "soft_search"
+    project_short_description: "searching for software promises in grant applications"
+    hosting_pypi_username: "PugetSoundClinic-PIT"
+    version: "0.0.0"
+    license: "MIT License"
