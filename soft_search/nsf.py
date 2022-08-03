@@ -54,6 +54,7 @@ ALL_NSF_FIELDS = [getattr(NSFFields, a) for a in dir(NSFFields) if "__" not in a
 class NSFPrograms:
     BIO = "BIO"
 
+
 _NSF_API_URL_TEMPLATE = (
     "https://api.nsf.gov/services/v1/awards.json?"
     "fundProgramName={program_name}"
