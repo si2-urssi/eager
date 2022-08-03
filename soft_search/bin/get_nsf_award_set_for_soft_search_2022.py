@@ -5,10 +5,20 @@ import argparse
 import logging
 import sys
 import traceback
+from pathlib import Path
+from datetime import datetime
+from typing import List
 
-from soft_search import example
+from numpy import absolute
+
+from soft_search import nsf
+from soft_search.constants import NSFPrograms
+import pandas as pd
 
 ###############################################################################
+
+START_DATE = datetime(2017, 1, 1)
+END_DATE = datetime(2022, 1, 1)
 
 
 class Args(argparse.Namespace):
@@ -17,13 +27,19 @@ class Args(argparse.Namespace):
 
     def __parse(self) -> None:
         p = argparse.ArgumentParser(
-            prog="calc-string-length",
-            description="Calculate and return the length of the provided string",
+            prog="get-nsf-award-set-for-soft-search-2022",
+            description=(
+                "Get the NSF awards set used for manually "
+                "labelling software outcomes."
+            ),
         )
         p.add_argument(
-            "string",
-            type=str,
-            help="The string to count the length of.",
+            "-o",
+            "--outfile",
+            dest="outfile",
+            default=Path("./soft-search-awards.csv"),
+            type=Path,
+            help="The path to store the dataset CSV.",
         )
         p.add_argument(
             "--debug",
@@ -32,6 +48,8 @@ class Args(argparse.Namespace):
             help="Run with debug logging.",
         )
         p.parse_args(namespace=self)
+
+###############################################################################
 
 
 def main() -> None:
@@ -51,11 +69,24 @@ def main() -> None:
     )
     log = logging.getLogger(__name__)
 
-    # Process
+    # Get all program chunks
+    # Concat
+    # Store to CSV
     try:
-        log.debug(f"Checking string length for string: '{args.string}'")
-        result = example.str_len(string=args.string)
-        log.info(f"The string '{args.string}' has a length of: {result}")
+        # Get chunks
+        program_chunks: List[pd.DataFrame] = []
+        for program in [NSFPrograms.BIO]:
+            log.info(f"Gathering {program} dataset chunk...")
+            program_chunks.append(nsf.get_nsf_dataset(start_date=START_DATE, end_date=END_DATE, program_name=program))
+
+        # Concat and report size
+        awards = pd.concat(program_chunks, ignore_index=True)
+        log.info(f"Total awards found: {len(awards)}")
+
+        # Store
+        outfile = args.outfile.resolve()
+        awards.to_csv(outfile, index=False)
+        log.info(f"Awards dataset stored to: '{outfile}'.")
     except Exception as e:
         log.error("=============================================")
         log.error("\n\n" + traceback.format_exc())

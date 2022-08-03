@@ -80,7 +80,7 @@ dev = [
 # entry points
 # https://peps.python.org/pep-0621/#entry-points
 [project.entry-points."console_scripts"]
-calc-string-length = "soft_search.bin.str_len:main"
+get-nsf-award-set-for-soft-search-2022 = "soft_search.bin.get_nsf_award_set_for_soft_search_2022:main"
 
 # build settings
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html

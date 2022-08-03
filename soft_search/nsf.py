@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import logging
 from datetime import datetime
 from typing import List, Optional, Union
 
@@ -17,9 +16,6 @@ except ImportError:
 
 from .constants import ALL_NSF_FIELDS, NSFPrograms
 
-###############################################################################
-
-log = logging.getLogger(__name__)
 
 ###############################################################################
 # Constants
@@ -199,9 +195,7 @@ def get_nsf_dataset(
 
         # Update state
         current_offset += 25
-        log.debug(f"Awards gathered: {current_offset}")
 
     # Concat all awards
     awards = pd.concat(chunks, ignore_index=True)
-    log.debug(f"Total awards found: {len(awards)}")
     return awards
