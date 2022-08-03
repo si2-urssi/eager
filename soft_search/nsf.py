@@ -15,52 +15,14 @@ except ImportError:
         "Install with `pip install soft-search[nsf]`."
     )
 
+from .constants import NSFPrograms, ALL_NSF_FIELDS
+
 ###############################################################################
 
 log = logging.getLogger(__name__)
 
 ###############################################################################
 # Constants
-
-
-class NSFFields:
-    """
-    Fields that can be provided to the `get_nsf_dataset` function `dataset_fields`
-    parameter.
-
-    Examples
-    --------
-    >>> get_nsf_dataset(
-    ...     start_date="2017-01-01",
-    ...     dataset_fields=[NSFFields.id_, NSFFields.abstractText],
-    ... )
-    """
-
-    id_ = "id"
-    agency = "agency"
-    awardeeName = "awardeeName"
-    awardeeStateCode = "awardeeStateCode"
-    fundsObligatedAmt = "fundsObligatedAmt"
-    piFirstName = "piFirstName"
-    piLastName = "piLastName"
-    publicAccessMandate = "publicAccessMandate"
-    date = "date"
-    title = "title"
-    abstractText = "abstractText"
-    projectOutComesReport = "projectOutComesReport"
-    piEmail = "piEmail"
-    publicationResearch = "publicationResearch"
-    publicationConference = "publicationConference"
-    startDate = "startDate"
-    expDate = "expDate"
-
-
-ALL_NSF_FIELDS = [getattr(NSFFields, a) for a in dir(NSFFields) if "__" not in a]
-
-
-class NSFPrograms:
-    BIO = "BIO"
-
 
 _NSF_API_URL_TEMPLATE = (
     "https://api.nsf.gov/services/v1/awards.json?"
@@ -74,9 +36,7 @@ _NSF_API_URL_TEMPLATE = (
     "&offset={offset}"
 )
 
-
 ###############################################################################
-
 
 def _parse_nsf_datetime(dt: Union[str, datetime]) -> str:
     if isinstance(dt, str):
@@ -161,7 +121,7 @@ def get_nsf_dataset(
         Default: "Grant"
     dataset_fields: List[str]
         The fields to retrieve.
-        Default: All fields available in the `NSFFields` object.
+        Default: All fields available in the `soft_search.constants.NSFFields` object.
     require_project_outcomes_doc: bool
         Should only awards that have already returned project outcomes documents
         be requested.
@@ -183,7 +143,8 @@ def get_nsf_dataset(
     Get all grants funded by the NSF that have project outcomes under the BIO program
     from 2017 onward but only return the id and abstractText fields.
 
-    >>> from soft_search.nsf import get_nsf_dataset, NSFFields
+    >>> from soft_search.nsf import get_nsf_dataset
+    >>> from soft_search.constants import NSFFields
     >>> get_nsf_dataset(
     ...     start_date="2017-01-01",
     ...     dataset_fields=[
@@ -194,9 +155,9 @@ def get_nsf_dataset(
 
     See Also
     --------
-    NSFFields
+    soft_search.constants.NSFFields
         Available dataset fields to request.
-    NSFPrograms
+    soft_search.constants.NSFPrograms
         Available programs to request.
     """
     # Parse datetimes

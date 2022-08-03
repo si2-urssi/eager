@@ -6,7 +6,8 @@ from typing import List, Union
 
 import pytest
 
-from soft_search.nsf import NSFFields, get_nsf_dataset
+from soft_search.nsf import get_nsf_dataset
+from soft_search.constants import NSFFields
 
 ###############################################################################
 
