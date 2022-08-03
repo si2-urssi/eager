@@ -43,6 +43,12 @@ Documentation = "https://PugetSoundClinic-PIT.github.io/soft-search"
 nsf = [
   "requests~=2.28",
 ]
+transformer = [
+  "datasets~=2.4",
+  "scikit-learn~=1.1",
+  "torch~=1.12",
+  "transformers~=4.21",
+]
 lint = [
   "black>=22.3.0",
   "flake8>=3.8.3",

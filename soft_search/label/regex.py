@@ -1,16 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import logging
 import re
 
 import pandas as pd
 
 from ..constants import NSFFields, SoftwareOutcomes
-
-###############################################################################
-
-log = logging.getLogger(__name__)
 
 ###############################################################################
 # Constants
