@@ -36,37 +36,92 @@ if TYPE_CHECKING:
 ###############################################################################
 
 DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH = Path("soft-search-transformer/").resolve()
+DEFAULT_BASE_MODEL = "distilbert-base-uncased-finetuned-sst-2-english"
 TRANSFORMER_LABEL_COL = "transformer_label"
 
 ###############################################################################
 
 
 def train(
-    df: pd.DataFrame,
+    df: Union[str, Path, pd.DataFrame],
     label_col: str,
     text_col: str = NSFFields.abstractText,
     model_storage_dir: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
-    base_model: str = "distilbert-base-uncased-finetuned-sst-2-english",
+    base_model: str = DEFAULT_BASE_MODEL,
 ) -> Path:
+    """
+    Fine-tune a transformer model to classify the provided labels.
+
+    Parameters
+    ----------
+    df: Union[str, Path, pd.DataFrame]
+        The data to use for training.
+        Only CSV file format is supported when providing a file path.
+    label_col: str
+        The column name which contains the labels.
+    text_col: str
+        The column name which contains the raw text.
+        Default: "abstractText"
+    model_storage_dir: Union[str, Path]
+        The path to store the model to.
+        Default: "soft-search-transformer/"
+    base_model: str
+        The base model to fine-tune.
+        Default: "distilbert-base-uncased-finetuned-sst-2-english"
+
+    Returns
+    -------
+    Path
+        The path to the stored model.
+
+    Examples
+    --------
+    Example training from supplied manually labelled data.
+
+    >>> from soft_search.data import load_soft_search_2022
+    >>> from soft_search.label import transformer
+    >>> df = load_soft_search_2022()
+    >>> model = transformer.train(
+    ...     df,
+    ...     label_col="stated_software_will_be_created",
+    ...     text_col="abstractText"
+    ... )
+
+    See Also
+    --------
+    label
+        A function to apply a model across a pandas DataFrame.
+    """
     # Handle storage dir
     model_storage_dir = Path(model_storage_dir).resolve()
+
+    # Read DataFrame
+    if isinstance(df, (str, Path)):
+        df = pd.read_csv(df)
 
     # Rename cols
     df = df.copy(deep=True)
     df = df[[label_col, text_col]]
     df = df.rename(columns={label_col: "label", text_col: "text"})
+    label_names = df["label"].unique().tolist()
+
+    # Construct label to id and vice-versa LUTs
+    label2id, id2label = dict(), dict()
+    for i, label in enumerate(label_names):
+        label2id[label] = str(i)
+        id2label[str(i)] = label
 
     # Cast to dataset
     dataset = Dataset.from_pandas(
         df,
         features=Features(
-            label=ClassLabel(names=df["label"].unique().tolist()),
+            label=ClassLabel(num_classes=len(id2label), names=label_names),
             text=Value(dtype="string"),
         ),
     )
 
     # Get splits
-    dataset_dict = dataset.train_test_split(test_size=0.2, stratify_by_column="label")
+    dataset_dict = dataset.train_test_split(test_size=0.25, stratify_by_column="label")
 
     # Preprocess
     tokenizer = AutoTokenizer.from_pretrained(base_model)
@@ -78,7 +133,13 @@ def train(
     tokenized_dataset_dict = dataset_dict.map(preprocess_function, batched=True)
 
     # AutoModel
-    model = AutoModelForSequenceClassification.from_pretrained(base_model, num_labels=2)
+    model = AutoModelForSequenceClassification.from_pretrained(
+        base_model,
+        num_labels=len(id2label),
+        label2id=label2id,
+        id2label=id2label,
+        ignore_mismatched_sizes=True,
+    )
 
     # Training Args
     training_args = TrainingArguments(
@@ -91,7 +152,7 @@ def train(
         metric_for_best_model="accuracy",
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
-        num_train_epochs=3,
+        num_train_epochs=5,
         weight_decay=0.01,
     )
 
@@ -122,7 +183,7 @@ def train(
 
 
 def _apply_transformer(text: str, classifier: "Pipeline") -> str:
-    return classifier(text, top_k=1)[0]
+    return classifier(text, truncation=True, top_k=1)[0]["label"]
 
 
 def label(
@@ -131,8 +192,38 @@ def label(
     label_column: str = TRANSFORMER_LABEL_COL,
     model: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
 ) -> pd.DataFrame:
+    """
+    In-place add a new column to the provided pandas DataFrame with a label
+    of software predicted or not using a trained transformer model.
+
+    Parameters
+    ----------
+    df: pd.DataFrame
+        The pandas DataFrame to in-place add a column with the
+        software predicted outcome labels.
+    apply_column: str
+        The column to use for "prediction".
+        Default: "abstractText"
+    label_column: str
+        The name of the column to add with outcome "prediction".
+        Default: "transformer_label"
+    model: Union[str, Path]
+        The path to the stored model.
+        Default: "soft-search-transformer/"
+
+    Returns
+    -------
+    pd.DataFrame
+        The same pandas DataFrame but with a new column added in-place containing
+        the software outcome prediction.
+
+    See Also
+    --------
+    soft_search.nsf.get_nsf_dataset
+        Function to get an NSF dataset for prediction.
+    """
     # Load label pipeline
-    classifier = pipeline("text-classification", model=str(model))
+    classifier = pipeline("text-classification", model=str(model), tokenizer=str(model))
 
     # Partial func
     apply_classifier = partial(_apply_transformer, classifier=classifier)
