@@ -5,7 +5,7 @@ import re
 
 import pandas as pd
 
-from ..constants import NSFFields, SoftwareOutcomes
+from ..constants import SoftwareOutcomes
 
 ###############################################################################
 # Constants
@@ -35,7 +35,7 @@ def _apply_regex(text: str) -> str:
 
 def label(
     df: pd.DataFrame,
-    apply_column: str = NSFFields.abstractText,
+    apply_column: str = "text",
     label_column: str = REGEX_LABEL_COL,
 ) -> pd.DataFrame:
     """
@@ -50,7 +50,7 @@ def label(
         regex matched software outcome labels.
     apply_column: str
         The column to use for "prediction".
-        Default: "abstractText"
+        Default: "text"
     label_column: str
         The name of the column to add with outcome "prediction".
         Default: "regex_match"

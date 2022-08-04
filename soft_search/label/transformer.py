@@ -4,12 +4,10 @@
 import logging
 from functools import partial
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 import numpy as np
 import pandas as pd
-
-from ..constants import NSFFields
 
 try:
     from datasets import Dataset, load_metric
@@ -192,13 +190,42 @@ def train(
     return model_storage_dir
 
 
+def _train_and_store_transformer_to_package(seed: int = 0) -> Path:
+    # Normal imports
+    from soft_search.data import load_joined_soft_search_2022, _DATA_DIR
+    import shutil
+    
+    # Set a bunch of seeds for reproducibility
+    import torch
+    import random
+    import numpy as np
+    torch.manual_seed(0)
+    random.seed(0)
+    np.random.seed(0)
+
+    # Load data, train
+    df = load_joined_soft_search_2022()
+    model = train(df)
+
+    # Remove all checkpoint dirs
+    for checkpoint in model.glob("checkpoint-*"):
+        shutil.rmtree(checkpoint)
+
+    # Check for existing soft-search-transformer dir and clobber
+    dst = _DATA_DIR / "soft-search-transformer"
+    if dst.exists():
+        shutil.rmtree(dst)
+    
+    # Move model to storage
+    return Path(shutil.move(model, _DATA_DIR)).resolve()
+
 def _apply_transformer(text: str, classifier: "Pipeline") -> str:
     return classifier(text, truncation=True, top_k=1)[0]["label"]
 
 
 def label(
     df: pd.DataFrame,
-    apply_column: str = NSFFields.abstractText,
+    apply_column: str = "text",
     label_column: str = TRANSFORMER_LABEL_COL,
     model: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
 ) -> pd.DataFrame:
@@ -213,7 +240,7 @@ def label(
         software predicted outcome labels.
     apply_column: str
         The column to use for "prediction".
-        Default: "abstractText"
+        Default: "text"
     label_column: str
         The name of the column to add with outcome "prediction".
         Default: "transformer_label"

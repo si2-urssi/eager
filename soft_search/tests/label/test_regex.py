@@ -3,7 +3,7 @@
 
 import pandas as pd
 
-from soft_search.constants import NSFFields, SoftwareOutcomes
+from soft_search.constants import SoftwareOutcomes
 from soft_search.label import regex
 
 ###############################################################################
@@ -13,7 +13,7 @@ def test_regex_label() -> None:
     # Starting DataFrame
     df = pd.DataFrame(
         {
-            NSFFields.abstractText: [
+            "text": [
                 "software",
                 "hello",
                 "world",
