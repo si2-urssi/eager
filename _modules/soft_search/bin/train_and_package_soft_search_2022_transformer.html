@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
-        <title>soft_search.bin.get_nsf_award_set_for_soft_search_2022 - soft-search 0.1.dev1+gea3c088 documentation</title>
+        <title>soft_search.bin.train_and_package_soft_search_2022_transformer - soft-search 0.1.dev1+gea3c088 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -203,7 +203,7 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for soft_search.bin.get_nsf_award_set_for_soft_search_2022</h1><div class="highlight"><pre>
+          <h1>Source code for soft_search.bin.train_and_package_soft_search_2022_transformer</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
@@ -212,13 +212,8 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-<span class="kn">from</span> <span class="nn">soft_search</span> <span class="kn">import</span> <span class="n">nsf</span>
-<span class="kn">from</span> <span class="nn">soft_search.constants</span> <span class="kn">import</span> <span class="n">NSFPrograms</span>
+<span class="kn">from</span> <span class="nn">soft_search.label</span> <span class="kn">import</span> <span class="n">transformer</span>
 
 <span class="c1">###############################################################################</span>
 
@@ -226,25 +221,17 @@
 <span class="n">END_DATE</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Args"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.get_nsf_award_set_for_soft_search_2022.Args">[docs]</a><span class="k">class</span> <span class="nc">Args</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">):</span>
+<div class="viewcode-block" id="Args"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.train_and_package_soft_search_2022_transformer.Args">[docs]</a><span class="k">class</span> <span class="nc">Args</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__parse</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__parse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-            <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;get-nsf-award-set-for-soft-search-2022&quot;</span><span class="p">,</span>
+            <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;train-and-package-soft-search-2022-transformer&quot;</span><span class="p">,</span>
             <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-                <span class="s2">&quot;Get the NSF awards set used for manually &quot;</span>
-                <span class="s2">&quot;labelling software outcomes.&quot;</span>
+                <span class="s2">&quot;Train and package the 2022 Soft Search transformer model &quot;</span>
+                <span class="s2">&quot;so that it can be shipped with the pip installable wheel.&quot;</span>
             <span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--outfile&quot;</span><span class="p">,</span>
-            <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;outfile&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./soft-search-awards.csv&quot;</span><span class="p">),</span>
-            <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to store the dataset CSV.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--debug&quot;</span><span class="p">,</span>
@@ -258,7 +245,7 @@
 <span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.get_nsf_award_set_for_soft_search_2022.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.train_and_package_soft_search_2022_transformer.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># Get args</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">Args</span><span class="p">()</span>
 
@@ -275,28 +262,9 @@
     <span class="p">)</span>
     <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-    <span class="c1"># Get all program chunks</span>
-    <span class="c1"># Concat</span>
-    <span class="c1"># Store to CSV</span>
+    <span class="c1"># Try training and storage</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># Get chunks</span>
-        <span class="n">program_chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">program</span> <span class="ow">in</span> <span class="p">[</span><span class="n">NSFPrograms</span><span class="o">.</span><span class="n">BIO</span><span class="p">]:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gathering </span><span class="si">{</span><span class="n">program</span><span class="si">}</span><span class="s2"> dataset chunk...&quot;</span><span class="p">)</span>
-            <span class="n">program_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">nsf</span><span class="o">.</span><span class="n">get_nsf_dataset</span><span class="p">(</span>
-                    <span class="n">start_date</span><span class="o">=</span><span class="n">START_DATE</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">END_DATE</span><span class="p">,</span> <span class="n">program_name</span><span class="o">=</span><span class="n">program</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Concat and report size</span>
-        <span class="n">awards</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">program_chunks</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total awards found: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">awards</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Store</span>
-        <span class="n">outfile</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">outfile</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
-        <span class="n">awards</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Awards dataset stored to: &#39;</span><span class="si">{</span><span class="n">outfile</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+        <span class="n">transformer</span><span class="o">.</span><span class="n">_train_and_store_transformer_to_package</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;=============================================&quot;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>

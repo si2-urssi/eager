@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="soft_search.data package" href="soft_search.data.html" />
 
     <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
-        <title>soft_search.label package - soft-search 0.1.dev1+g756e7ea documentation</title>
+        <title>soft_search.label package - soft-search 0.1.dev1+gea3c088 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -126,7 +126,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">soft-search 0.1.dev1+g756e7ea documentation</div></a>
+      <a href="index.html"><div class="brand">soft-search 0.1.dev1+gea3c088 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -149,7 +149,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+g756e7ea documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+gea3c088 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -249,8 +249,116 @@ the software outcome “prediction”.</p>
 </dd></dl>
 
 </section>
-<section id="soft-search-label-transformer-module">
-<h2>soft_search.label.transformer module<a class="headerlink" href="#soft-search-label-transformer-module" title="Permalink to this heading">#</a></h2>
+<section id="module-soft_search.label.transformer">
+<span id="soft-search-label-transformer-module"></span><h2>soft_search.label.transformer module<a class="headerlink" href="#module-soft_search.label.transformer" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="soft_search.label.transformer.label">
+<span class="sig-prename descclassname"><span class="pre">soft_search.label.transformer.</span></span><span class="sig-name descname"><span class="pre">label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'transformer_label'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/soft-search/soft-search/soft_search/data/soft-search-transformer')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/soft_search/label/transformer.html#label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#soft_search.label.transformer.label" title="Permalink to this definition">#</a></dt>
+<dd><p>In-place add a new column to the provided pandas DataFrame with a label
+of software predicted or not using a trained transformer model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>df: pd.DataFrame</strong></dt><dd><p>The pandas DataFrame to in-place add a column with the
+software predicted outcome labels.</p>
+</dd>
+<dt><strong>apply_column: str</strong></dt><dd><p>The column to use for “prediction”.
+Default: “text”</p>
+</dd>
+<dt><strong>label_column: str</strong></dt><dd><p>The name of the column to add with outcome “prediction”.
+Default: “transformer_label”</p>
+</dd>
+<dt><strong>model: Union[str, Path]</strong></dt><dd><p>The path to the stored model.
+Default: The model stored with this package.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>The same pandas DataFrame but with a new column added in-place containing
+the software outcome prediction.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="soft_search.html#soft_search.nsf.get_nsf_dataset" title="soft_search.nsf.get_nsf_dataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">soft_search.nsf.get_nsf_dataset</span></code></a></dt><dd><p>Function to get an NSF dataset for prediction.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<p>Example application to a new NSF dataset.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">soft_search</span> <span class="kn">import</span> <span class="n">constants</span><span class="p">,</span> <span class="n">nsf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">soft_search.label</span> <span class="kn">import</span> <span class="n">transformer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">nsf</span><span class="o">.</span><span class="n">get_nsf_dataset</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;2016-01-01&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;2017-01-01&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">dataset_fields</span><span class="o">=</span><span class="p">[</span><span class="n">constants</span><span class="o">.</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">predicted</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">label</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">df</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">apply_column</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="soft_search.label.transformer.train">
+<span class="sig-prename descclassname"><span class="pre">soft_search.label.transformer.</span></span><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'label'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_storage_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/soft-search/soft-search/soft-search-transformer')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'distilbert-base-uncased-finetuned-sst-2-english'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/soft_search/label/transformer.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#soft_search.label.transformer.train" title="Permalink to this definition">#</a></dt>
+<dd><p>Fine-tune a transformer model to classify the provided labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>df: Union[str, Path, pd.DataFrame]</strong></dt><dd><p>The data to use for training.
+Only CSV file format is supported when providing a file path.</p>
+</dd>
+<dt><strong>label_col: str</strong></dt><dd><p>The column name which contains the labels.
+Default: “label”</p>
+</dd>
+<dt><strong>text_col: str</strong></dt><dd><p>The column name which contains the raw text.
+Default: “text”</p>
+</dd>
+<dt><strong>model_storage_dir: Union[str, Path]</strong></dt><dd><p>The path to store the model to.
+Default: “soft-search-transformer/”</p>
+</dd>
+<dt><strong>base_model: str</strong></dt><dd><p>The base model to fine-tune.
+Default: “distilbert-base-uncased-finetuned-sst-2-english”</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>Path</dt><dd><p>The path to the stored model.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#soft_search.label.transformer.label" title="soft_search.label.transformer.label"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label</span></code></a></dt><dd><p>A function to apply a model across a pandas DataFrame.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<p>Example training from supplied manually labelled data.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">soft_search.data</span> <span class="kn">import</span> <span class="n">load_joined_soft_search_2022</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">soft_search.label</span> <span class="kn">import</span> <span class="n">transformer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">load_joined_soft_search_2022</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">df</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">stratify</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 <section id="module-soft_search.label">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-soft_search.label" title="Permalink to this heading">#</a></h2>
@@ -318,7 +426,7 @@ the software outcome “prediction”.</p>
 <li><a class="reference internal" href="#">soft_search.label package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-soft_search.label.regex">soft_search.label.regex module</a></li>
-<li><a class="reference internal" href="#soft-search-label-transformer-module">soft_search.label.transformer module</a></li>
+<li><a class="reference internal" href="#module-soft_search.label.transformer">soft_search.label.transformer module</a></li>
 <li><a class="reference internal" href="#module-soft_search.label">Module contents</a></li>
 </ul>
 </li>
