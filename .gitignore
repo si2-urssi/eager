@@ -115,3 +115,4 @@ ENV/
 # Project specific
 soft-search-awards.csv
 soft-search-transformer/*
+soft-search-transformer-confusion.png

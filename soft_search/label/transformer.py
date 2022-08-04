@@ -239,7 +239,8 @@ def label(
     >>> from soft_search.data import load_joined_soft_search_2022
     >>> from soft_search.label import transformer
     >>> from sklearn.model_selection import train_test_split
-    >>> from sklearn.metrics import classification_report
+    >>> from sklearn.metrics import classification_report, ConfusionMatrixDisplay
+    >>> import matplotlib.pyplot as plt
     >>> df = load_joined_soft_search_2022()
     >>> train, test = train_test_split(
     ...     df,
@@ -247,14 +248,20 @@ def label(
     ...     stratify=df["label"]
     ... )
     >>> model = transformer.train(train)
-    >>> labelled = transformer.label(
+    >>> predicted = transformer.label(
     ...     test,
     ...     apply_column="text",
     ... )
     >>> print(classification_report(
-    ...     labelled["label"],
-    ...     labelled["transformer_label"],
+    ...     predicted["label"],
+    ...     predicted["transformer_label"],
     ... ))
+    >>> ConfusionMatrixDisplay.from_predictions(
+    ...     predicted["label"],
+    ...     predicted["transformer_label"],
+    ... )
+    >>> plt.xticks(rotation=45)
+    >>> plt.savefig("soft-search-transformer-confusion.png", bbox_inches="tight")
     """
     # Load label pipeline
     classifier = pipeline("text-classification", model=str(model), tokenizer=str(model))
