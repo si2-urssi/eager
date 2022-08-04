@@ -47,6 +47,7 @@ Documentation = "https://PugetSoundClinic-PIT.github.io/soft-search"
 [project.optional-dependencies]
 lint = [
   "black>=22.3.0",
+  "check-manifest>=0.48",
   "flake8>=3.8.3",
   "flake8-debugger>=3.2.1",
   "flake8-pyprojecttoml",
@@ -93,8 +94,7 @@ zip-safe = false
 include-package-data = true
 
 [tool.setuptools.packages.find]
-include = ["soft_search*"]
-exclude = ["soft_search.tests*"]
+exclude = ["*docs/*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.parquet", "*.json", "*.bin", "*.txt", "py.typed"]
@@ -121,7 +121,8 @@ ignore = [
   "CONTRIBUTING.md",
   "Justfile",
   ".cookiecutter.yaml",
-  "docs/*",
+  "*docs/*",
+  "*soft-search-2022-transformer/*",
 ]
 
 [tool.mypy]
