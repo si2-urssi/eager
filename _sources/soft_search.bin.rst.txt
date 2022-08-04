@@ -12,10 +12,10 @@ soft\_search.bin.get\_nsf\_award\_set\_for\_soft\_search\_2022 module
    :undoc-members:
    :show-inheritance:
 
-soft\_search.bin.train\_and\_package\_soft\_search\_2022\_transformer module
-----------------------------------------------------------------------------
+soft\_search.bin.train\_and\_upload\_soft\_search\_2022\_transformer module
+---------------------------------------------------------------------------
 
-.. automodule:: soft_search.bin.train_and_package_soft_search_2022_transformer
+.. automodule:: soft_search.bin.train_and_upload_soft_search_2022_transformer
    :members:
    :undoc-members:
    :show-inheritance:
