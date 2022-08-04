@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Optional, Union
 
 import numpy as np
 import pandas as pd
-import logging
 
 from ..constants import NSFFields
 
@@ -125,7 +125,7 @@ def train(
 
     # Get splits
     dataset_dict = dataset.train_test_split(test_size=0.25, stratify_by_column="label")
-    
+
     # Log splits
     log.info(
         f"Training dataset splits:\n"
