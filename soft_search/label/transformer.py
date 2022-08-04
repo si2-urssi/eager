@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Dict, Optional, Union
 
 import numpy as np
 import pandas as pd
+
 from ..data import SOFT_SEARCH_2022_TRANSFORMER
 
 try:

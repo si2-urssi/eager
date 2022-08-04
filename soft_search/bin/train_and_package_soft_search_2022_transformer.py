@@ -6,10 +6,6 @@ import logging
 import sys
 import traceback
 from datetime import datetime
-from pathlib import Path
-from typing import List
-
-import pandas as pd
 
 from soft_search.label import transformer
 
