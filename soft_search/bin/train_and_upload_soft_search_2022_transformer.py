@@ -21,10 +21,11 @@ class Args(argparse.Namespace):
 
     def __parse(self) -> None:
         p = argparse.ArgumentParser(
-            prog="train-and-package-soft-search-2022-transformer",
+            prog="train-and-upload-soft-search-2022-transformer",
             description=(
-                "Train and package the 2022 Soft Search transformer model "
-                "so that it can be shipped with the pip installable wheel."
+                "Train and upload the 2022 Soft Search transformer model "
+                "to the huggingface hub. Must be logged in to huggingface hub "
+                "prior to starting training."
             ),
         )
         p.add_argument(
@@ -58,7 +59,7 @@ def main() -> None:
 
     # Try training and storage
     try:
-        archive_path = transformer._train_and_store_transformer_to_package()
+        archive_path = transformer._train_and_upload_transformer()
         log.info(f"Stored trained model to: {archive_path}")
     except Exception as e:
         log.error("=============================================")

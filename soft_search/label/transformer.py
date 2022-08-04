@@ -4,7 +4,7 @@
 import logging
 from functools import partial
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -18,8 +18,6 @@ from transformers import (
     TrainingArguments,
     pipeline,
 )
-
-from ..data import SOFT_SEARCH_2022_TRANSFORMER
 
 if TYPE_CHECKING:
     from datasets.arrow_dataset import Batch
@@ -35,63 +33,19 @@ log = logging.getLogger(__name__)
 DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH = Path("soft-search-transformer/").resolve()
 DEFAULT_BASE_MODEL = "distilbert-base-uncased-finetuned-sst-2-english"
 TRANSFORMER_LABEL_COL = "transformer_label"
+HUGGINGFACE_HUB_SOFT_SEARCH_MODEL = "evamaxfield/soft-search"
 
 ###############################################################################
 
 
-def train(
+def _train(
     df: Union[str, Path, pd.DataFrame],
     label_col: str = "label",
     text_col: str = "text",
     model_storage_dir: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
     base_model: str = DEFAULT_BASE_MODEL,
-) -> Path:
-    """
-    Fine-tune a transformer model to classify the provided labels.
-
-    Parameters
-    ----------
-    df: Union[str, Path, pd.DataFrame]
-        The data to use for training.
-        Only CSV file format is supported when providing a file path.
-    label_col: str
-        The column name which contains the labels.
-        Default: "label"
-    text_col: str
-        The column name which contains the raw text.
-        Default: "text"
-    model_storage_dir: Union[str, Path]
-        The path to store the model to.
-        Default: "soft-search-transformer/"
-    base_model: str
-        The base model to fine-tune.
-        Default: "distilbert-base-uncased-finetuned-sst-2-english"
-
-    Returns
-    -------
-    Path
-        The path to the stored model.
-
-    Examples
-    --------
-    Example training from supplied manually labelled data.
-
-    >>> from soft_search.data import load_joined_soft_search_2022
-    >>> from soft_search.label import transformer
-    >>> from sklearn.model_selection import train_test_split
-    >>> df = load_joined_soft_search_2022()
-    >>> train, test = train_test_split(
-    ...     df,
-    ...     test_size=0.3,
-    ...     stratify=df["label"]
-    ... )
-    >>> model = transformer.train(train)
-
-    See Also
-    --------
-    label
-        A function to apply a model across a pandas DataFrame.
-    """
+    extra_training_args: Dict[str, Any] = {},
+) -> Tuple[Path, Trainer]:
     # Handle storage dir
     model_storage_dir = Path(model_storage_dir).resolve()
 
@@ -156,6 +110,7 @@ def train(
         per_device_eval_batch_size=16,
         num_train_epochs=5,
         weight_decay=0.01,
+        **extra_training_args,
     )
 
     # Compute accuracy metrics
@@ -181,23 +136,82 @@ def train(
 
     # Store model
     trainer.save_model()
+    return model_storage_dir, trainer
+
+
+def train(
+    df: Union[str, Path, pd.DataFrame],
+    label_col: str = "label",
+    text_col: str = "text",
+    model_storage_dir: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
+    base_model: str = DEFAULT_BASE_MODEL,
+) -> Path:
+    """
+    Fine-tune a transformer model to classify the provided labels.
+
+    Parameters
+    ----------
+    df: Union[str, Path, pd.DataFrame]
+        The data to use for training.
+        Only CSV file format is supported when providing a file path.
+    label_col: str
+        The column name which contains the labels.
+        Default: "label"
+    text_col: str
+        The column name which contains the raw text.
+        Default: "text"
+    model_storage_dir: Union[str, Path]
+        The path to store the model to.
+        Default: "soft-search-transformer/"
+    base_model: str
+        The base model to fine-tune.
+        Default: "distilbert-base-uncased-finetuned-sst-2-english"
+
+    Returns
+    -------
+    Path
+        The path to the stored model.
+
+    Examples
+    --------
+    Example training from supplied manually labelled data.
+
+    >>> from soft_search.data import load_joined_soft_search_2022
+    >>> from soft_search.label import transformer
+    >>> from sklearn.model_selection import train_test_split
+    >>> df = load_joined_soft_search_2022()
+    >>> train, test = train_test_split(
+    ...     df,
+    ...     test_size=0.3,
+    ...     stratify=df["label"]
+    ... )
+    >>> model = transformer.train(train)
+
+    See Also
+    --------
+    label
+        A function to apply a model across a pandas DataFrame.
+    """
+    model_storage_dir, _ = _train(
+        df=df,
+        label_col=label_col,
+        text_col=text_col,
+        model_storage_dir=model_storage_dir,
+        base_model=base_model,
+    )
     return model_storage_dir
 
 
-def _train_and_store_transformer_to_package(seed: int = 0) -> Path:
+def _train_and_upload_transformer(seed: int = 0) -> Path:
     # Normal imports
     import random
-    import shutil
 
     import numpy as np
 
     # Set a bunch of seeds for reproducibility
     import torch
 
-    from soft_search.data import (
-        SOFT_SEARCH_2022_TRANSFORMER,
-        load_joined_soft_search_2022,
-    )
+    from soft_search.data import load_joined_soft_search_2022
 
     torch.manual_seed(0)
     random.seed(0)
@@ -205,11 +219,15 @@ def _train_and_store_transformer_to_package(seed: int = 0) -> Path:
 
     # Load data, train
     df = load_joined_soft_search_2022()
-    model = train(df, model_storage_dir=SOFT_SEARCH_2022_TRANSFORMER)
-
-    # Remove all checkpoint dirs
-    for checkpoint in model.glob("checkpoint-*"):
-        shutil.rmtree(checkpoint)
+    model, _ = _train(
+        df,
+        model_storage_dir=DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
+        extra_training_args=dict(
+            push_to_hub=True,
+            hub_model_id=HUGGINGFACE_HUB_SOFT_SEARCH_MODEL,
+            hub_strategy="end",
+        ),
+    )
 
     return model
 
@@ -222,7 +240,7 @@ def label(
     df: pd.DataFrame,
     apply_column: str = "text",
     label_column: str = TRANSFORMER_LABEL_COL,
-    model: Union[str, Path] = SOFT_SEARCH_2022_TRANSFORMER,
+    model: Union[str, Path] = HUGGINGFACE_HUB_SOFT_SEARCH_MODEL,
 ) -> pd.DataFrame:
     """
     In-place add a new column to the provided pandas DataFrame with a label
@@ -241,7 +259,7 @@ def label(
         Default: "transformer_label"
     model: Union[str, Path]
         The path to the stored model.
-        Default: The model stored with this package.
+        Default: https://huggingface.co/evamaxfield/soft-search (latest CI model)
 
     Returns
     -------

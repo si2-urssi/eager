@@ -85,7 +85,7 @@ dev = [
 # https://peps.python.org/pep-0621/#entry-points
 [project.entry-points."console_scripts"]
 get-nsf-award-set-for-soft-search-2022 = "soft_search.bin.get_nsf_award_set_for_soft_search_2022:main"
-train-and-package-soft-search-2022-transformer = "soft_search.bin.train_and_package_soft_search_2022_transformer:main"
+train-and-upload-soft-search-2022-transformer = "soft_search.bin.train_and_upload_soft_search_2022_transformer:main"
 
 # build settings
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
