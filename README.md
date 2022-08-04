@@ -14,10 +14,24 @@ searching for software promises in grant applications
 
 ## Quickstart
 
-```python
-from soft_search import example
+### Apply our Pre-trained Transformer
 
-print(example.str_len("hello"))  # prints 5
+```bash
+pip install soft-search[nsf,transformer]
+```
+
+```python
+from soft_search import constants, nsf
+from soft_search.label import transformer
+df = nsf.get_nsf_dataset(
+    "2016-01-01",
+    "2017-01-01",
+    dataset_fields=[constants.NSFFields.abstractText],
+)
+predicted = transformer.label(
+    df,
+    apply_column=constants.NSFFields.abstractText,
+)
 ```
 
 ## Documentation

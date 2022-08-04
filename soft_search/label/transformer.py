@@ -267,34 +267,19 @@ def label(
 
     Examples
     --------
-    Example application and evaluation from supplied manually labelled data.
+    Example application to a new NSF dataset.
 
-    >>> from soft_search.data import load_joined_soft_search_2022
+    >>> from soft_search import constants, nsf
     >>> from soft_search.label import transformer
-    >>> from sklearn.model_selection import train_test_split
-    >>> from sklearn.metrics import classification_report, ConfusionMatrixDisplay
-    >>> import matplotlib.pyplot as plt
-    >>> df = load_joined_soft_search_2022()
-    >>> train, test = train_test_split(
-    ...     df,
-    ...     test_size=0.3,
-    ...     stratify=df["label"]
+    >>> df = nsf.get_nsf_dataset(
+    ...     "2016-01-01",
+    ...     "2017-01-01",
+    ...     dataset_fields=[constants.NSFFields.abstractText],
     ... )
-    >>> model = transformer.train(train)
     >>> predicted = transformer.label(
-    ...     test,
-    ...     apply_column="text",
+    ...     df,
+    ...     apply_column=constants.NSFFields.abstractText,
     ... )
-    >>> print(classification_report(
-    ...     predicted["label"],
-    ...     predicted["transformer_label"],
-    ... ))
-    >>> ConfusionMatrixDisplay.from_predictions(
-    ...     predicted["label"],
-    ...     predicted["transformer_label"],
-    ... )
-    >>> plt.xticks(rotation=45)
-    >>> plt.savefig("soft-search-transformer-confusion.png", bbox_inches="tight")
     """
     # Load label pipeline
     classifier = pipeline("text-classification", model=str(model), tokenizer=str(model))
