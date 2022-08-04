@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Dict, Optional, Union
 
 import numpy as np
 import pandas as pd
+from ..data import SOFT_SEARCH_2022_TRANSFORMER
 
 try:
     from datasets import Dataset, load_metric
@@ -231,7 +232,7 @@ def label(
     df: pd.DataFrame,
     apply_column: str = "text",
     label_column: str = TRANSFORMER_LABEL_COL,
-    model: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
+    model: Union[str, Path] = SOFT_SEARCH_2022_TRANSFORMER,
 ) -> pd.DataFrame:
     """
     In-place add a new column to the provided pandas DataFrame with a label
@@ -250,7 +251,7 @@ def label(
         Default: "transformer_label"
     model: Union[str, Path]
         The path to the stored model.
-        Default: "soft-search-transformer/"
+        Default: The model stored with this package.
 
     Returns
     -------
