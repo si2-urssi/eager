@@ -4,7 +4,7 @@
 import logging
 from functools import partial
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Dict, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -192,13 +192,16 @@ def train(
 
 def _train_and_store_transformer_to_package(seed: int = 0) -> Path:
     # Normal imports
-    from soft_search.data import load_joined_soft_search_2022, _DATA_DIR
+    import random
     import shutil
-    
+
+    import numpy as np
+
     # Set a bunch of seeds for reproducibility
     import torch
-    import random
-    import numpy as np
+
+    from soft_search.data import _DATA_DIR, load_joined_soft_search_2022
+
     torch.manual_seed(0)
     random.seed(0)
     np.random.seed(0)
@@ -215,9 +218,10 @@ def _train_and_store_transformer_to_package(seed: int = 0) -> Path:
     dst = _DATA_DIR / "soft-search-transformer"
     if dst.exists():
         shutil.rmtree(dst)
-    
+
     # Move model to storage
     return Path(shutil.move(model, _DATA_DIR)).resolve()
+
 
 def _apply_transformer(text: str, classifier: "Pipeline") -> str:
     return classifier(text, truncation=True, top_k=1)[0]["label"]

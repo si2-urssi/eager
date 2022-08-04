@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pandas as pd
-
-from soft_search.constants import SoftwareOutcomes
-from soft_search.label import transformer
-from soft_search.data import load_joined_soft_search_2022
-import torch
 import random
-import numpy as np
 import shutil
 
+import numpy as np
+import pandas as pd
+import torch
+
+from soft_search.constants import SoftwareOutcomes
+from soft_search.data import load_joined_soft_search_2022
+from soft_search.label import transformer
+
 ###############################################################################
+
 
 def test_transformer_train() -> None:
     # Load data
@@ -28,7 +30,7 @@ def test_transformer_train() -> None:
 
 
 def test_transformer_label() -> None:
-    # Set a bunch of seeds for a semblance of reproducibility 
+    # Set a bunch of seeds for a semblance of reproducibility
     torch.manual_seed(0)
     random.seed(0)
     np.random.seed(0)
