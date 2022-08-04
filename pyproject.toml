@@ -27,8 +27,13 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
+  "datasets~=2.4",
   "pandas~=1.4",
   "pyarrow~=9.0",
+  "requests~=2.28",
+  "scikit-learn~=1.1",
+  "torch~=1.12",
+  "transformers~=4.21",
 ]
 
 [project.urls]
@@ -40,15 +45,6 @@ Documentation = "https://PugetSoundClinic-PIT.github.io/soft-search"
 # extra dependencies
 # https://peps.python.org/pep-0621/#dependencies-optional-dependencies
 [project.optional-dependencies]
-nsf = [
-  "requests~=2.28",
-]
-transformer = [
-  "datasets~=2.4",
-  "scikit-learn~=1.1",
-  "torch~=1.12",
-  "transformers~=4.21",
-]
 lint = [
   "black>=22.3.0",
   "flake8>=3.8.3",
@@ -95,7 +91,10 @@ train-and-package-soft-search-2022-transformer = "soft_search.bin.train_and_pack
 [tool.setuptools]
 zip-safe = false
 include-package-data = true
-packages = { find = { exclude = ["tests"] } }
+
+[tool.setuptools.packages.find]
+include = ["soft_search*"]
+exclude = ["soft_search.tests*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.parquet", "*.json", "*.bin", "*.txt", "py.typed"]

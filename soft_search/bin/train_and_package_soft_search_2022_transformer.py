@@ -58,7 +58,8 @@ def main() -> None:
 
     # Try training and storage
     try:
-        transformer._train_and_store_transformer_to_package()
+        archive_path = transformer._train_and_store_transformer_to_package()
+        log.info(f"Stored trained model to: {archive_path}")
     except Exception as e:
         log.error("=============================================")
         log.error("\n\n" + traceback.format_exc())

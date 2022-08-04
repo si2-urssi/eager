@@ -16,10 +16,6 @@ searching for software promises in grant applications
 
 ### Apply our Pre-trained Transformer
 
-```bash
-pip install soft-search[nsf,transformer]
-```
-
 ```python
 from soft_search import constants, nsf
 from soft_search.label import transformer

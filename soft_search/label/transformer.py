@@ -8,26 +8,18 @@ from typing import TYPE_CHECKING, Dict, Optional, Union
 
 import numpy as np
 import pandas as pd
+from datasets import Dataset, load_metric
+from transformers import (
+    AutoModelForSequenceClassification,
+    AutoTokenizer,
+    DataCollatorWithPadding,
+    EvalPrediction,
+    Trainer,
+    TrainingArguments,
+    pipeline,
+)
 
 from ..data import SOFT_SEARCH_2022_TRANSFORMER
-
-try:
-    from datasets import Dataset, load_metric
-    from transformers import (
-        AutoModelForSequenceClassification,
-        AutoTokenizer,
-        DataCollatorWithPadding,
-        EvalPrediction,
-        Trainer,
-        TrainingArguments,
-        pipeline,
-    )
-except ImportError:
-    raise ImportError(
-        "Extra dependencies are needed for the `label.transformer` "
-        "submodule of `soft-search`. "
-        "Install with `pip install soft-search[transformer]`."
-    )
 
 if TYPE_CHECKING:
     from datasets.arrow_dataset import Batch
@@ -202,7 +194,10 @@ def _train_and_store_transformer_to_package(seed: int = 0) -> Path:
     # Set a bunch of seeds for reproducibility
     import torch
 
-    from soft_search.data import _DATA_DIR, load_joined_soft_search_2022
+    from soft_search.data import (
+        SOFT_SEARCH_2022_TRANSFORMER,
+        load_joined_soft_search_2022,
+    )
 
     torch.manual_seed(0)
     random.seed(0)
@@ -210,19 +205,13 @@ def _train_and_store_transformer_to_package(seed: int = 0) -> Path:
 
     # Load data, train
     df = load_joined_soft_search_2022()
-    model = train(df)
+    model = train(df, model_storage_dir=SOFT_SEARCH_2022_TRANSFORMER)
 
     # Remove all checkpoint dirs
     for checkpoint in model.glob("checkpoint-*"):
         shutil.rmtree(checkpoint)
 
-    # Check for existing soft-search-transformer dir and clobber
-    dst = _DATA_DIR / "soft-search-transformer"
-    if dst.exists():
-        shutil.rmtree(dst)
-
-    # Move model to storage
-    return Path(shutil.move(model, _DATA_DIR)).resolve()
+    return model
 
 
 def _apply_transformer(text: str, classifier: "Pipeline") -> str:
