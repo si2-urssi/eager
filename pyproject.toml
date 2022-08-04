@@ -98,7 +98,7 @@ include-package-data = true
 packages = { find = { exclude = ["tests"] } }
 
 [tool.setuptools.package-data]
-"*" = ["*.parquet", "*.json", "*.bin", "*.txt"]
+"*" = ["*.parquet", "*.json", "*.bin", "*.txt", "py.typed"]
 
 # tools
 [tool.black]
@@ -121,6 +121,8 @@ ignore = [
   "CODE_OF_CONDUCT.md",
   "CONTRIBUTING.md",
   "Justfile",
+  ".cookiecutter.yaml",
+  "docs/*",
 ]
 
 [tool.mypy]
