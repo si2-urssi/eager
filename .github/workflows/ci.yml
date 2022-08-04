@@ -96,6 +96,7 @@ jobs:
         tree soft_search
     - name: Build Package
       run: |
+        just clean
         pip install build wheel
         tree soft_search
         python -m build
