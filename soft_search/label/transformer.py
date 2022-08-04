@@ -7,11 +7,12 @@ from typing import TYPE_CHECKING, Dict, Optional, Union
 
 import numpy as np
 import pandas as pd
+import logging
 
 from ..constants import NSFFields
 
 try:
-    from datasets import ClassLabel, Dataset, Features, Value, load_metric
+    from datasets import Dataset, load_metric
     from transformers import (
         AutoModelForSequenceClassification,
         AutoTokenizer,
@@ -35,6 +36,10 @@ if TYPE_CHECKING:
 
 ###############################################################################
 
+log = logging.getLogger(__name__)
+
+###############################################################################
+
 DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH = Path("soft-search-transformer/").resolve()
 DEFAULT_BASE_MODEL = "distilbert-base-uncased-finetuned-sst-2-english"
 TRANSFORMER_LABEL_COL = "transformer_label"
@@ -44,8 +49,8 @@ TRANSFORMER_LABEL_COL = "transformer_label"
 
 def train(
     df: Union[str, Path, pd.DataFrame],
-    label_col: str,
-    text_col: str = NSFFields.abstractText,
+    label_col: str = "label",
+    text_col: str = "text",
     model_storage_dir: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
     base_model: str = DEFAULT_BASE_MODEL,
 ) -> Path:
@@ -59,9 +64,10 @@ def train(
         Only CSV file format is supported when providing a file path.
     label_col: str
         The column name which contains the labels.
+        Default: "label"
     text_col: str
         The column name which contains the raw text.
-        Default: "abstractText"
+        Default: "text"
     model_storage_dir: Union[str, Path]
         The path to store the model to.
         Default: "soft-search-transformer/"
@@ -78,14 +84,16 @@ def train(
     --------
     Example training from supplied manually labelled data.
 
-    >>> from soft_search.data import load_soft_search_2022
+    >>> from soft_search.data import load_joined_soft_search_2022
     >>> from soft_search.label import transformer
-    >>> df = load_soft_search_2022()
-    >>> model = transformer.train(
+    >>> from sklearn.model_selection import train_test_split
+    >>> df = load_joined_soft_search_2022()
+    >>> train, test = train_test_split(
     ...     df,
-    ...     label_col="stated_software_will_be_created",
-    ...     text_col="abstractText"
+    ...     test_size=0.3,
+    ...     stratify=df["label"]
     ... )
+    >>> model = transformer.train(train)
 
     See Also
     --------
@@ -112,16 +120,18 @@ def train(
         id2label[str(i)] = label
 
     # Cast to dataset
-    dataset = Dataset.from_pandas(
-        df,
-        features=Features(
-            label=ClassLabel(num_classes=len(id2label), names=label_names),
-            text=Value(dtype="string"),
-        ),
-    )
+    dataset = Dataset.from_pandas(df)
+    dataset = dataset.class_encode_column("label")
 
     # Get splits
     dataset_dict = dataset.train_test_split(test_size=0.25, stratify_by_column="label")
+    
+    # Log splits
+    log.info(
+        f"Training dataset splits:\n"
+        f"\t'train': {len(dataset_dict['train'])}\n"
+        f"\t'test': {len(dataset_dict['test'])}"
+    )
 
     # Preprocess
     tokenizer = AutoTokenizer.from_pretrained(base_model)
@@ -221,6 +231,30 @@ def label(
     --------
     soft_search.nsf.get_nsf_dataset
         Function to get an NSF dataset for prediction.
+
+    Examples
+    --------
+    Example application and evaluation from supplied manually labelled data.
+
+    >>> from soft_search.data import load_joined_soft_search_2022
+    >>> from soft_search.label import transformer
+    >>> from sklearn.model_selection import train_test_split
+    >>> from sklearn.metrics import classification_report
+    >>> df = load_joined_soft_search_2022()
+    >>> train, test = train_test_split(
+    ...     df,
+    ...     test_size=0.3,
+    ...     stratify=df["label"]
+    ... )
+    >>> model = transformer.train(train)
+    >>> labelled = transformer.label(
+    ...     test,
+    ...     apply_column="text",
+    ... )
+    >>> print(classification_report(
+    ...     labelled["label"],
+    ...     labelled["transformer_label"],
+    ... ))
     """
     # Load label pipeline
     classifier = pipeline("text-classification", model=str(model), tokenizer=str(model))

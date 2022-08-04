@@ -46,7 +46,7 @@ def label(
     Parameters
     ----------
     df: pd.DataFrame
-        The pandas DataFrame to in-place a column to with the
+        The pandas DataFrame to in-place add a column with the
         regex matched software outcome labels.
     apply_column: str
         The column to use for "prediction".

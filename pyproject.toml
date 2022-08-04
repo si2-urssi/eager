@@ -81,6 +81,7 @@ docs = [
 ]
 dev = [
   "ipython>=8.4.0",
+  "matplotlib>=3.5.2",
 ]
 
 # entry points
@@ -96,7 +97,7 @@ include-package-data = true
 packages = { find = { exclude = ["tests"] } }
 
 [tool.setuptools.package-data]
-"*" = ["*.yaml"]
+"*" = ["*.parquet"]
 
 # tools
 [tool.black]
