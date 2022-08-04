@@ -1,0 +1,7 @@
+soft_search
+===========
+
+.. toctree::
+   :maxdepth: 4
+
+   soft_search

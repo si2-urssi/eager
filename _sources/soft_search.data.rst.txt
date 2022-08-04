@@ -1,0 +1,21 @@
+soft\_search.data package
+=========================
+
+Submodules
+----------
+
+soft\_search.data.soft\_search\_2022 module
+-------------------------------------------
+
+.. automodule:: soft_search.data.soft_search_2022
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: soft_search.data
+   :members:
+   :undoc-members:
+   :show-inheritance:

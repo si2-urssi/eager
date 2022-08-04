@@ -1,0 +1,29 @@
+soft\_search.bin package
+========================
+
+Submodules
+----------
+
+soft\_search.bin.get\_nsf\_award\_set\_for\_soft\_search\_2022 module
+---------------------------------------------------------------------
+
+.. automodule:: soft_search.bin.get_nsf_award_set_for_soft_search_2022
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+soft\_search.bin.train\_and\_package\_soft\_search\_2022\_transformer module
+----------------------------------------------------------------------------
+
+.. automodule:: soft_search.bin.train_and_package_soft_search_2022_transformer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: soft_search.bin
+   :members:
+   :undoc-members:
+   :show-inheritance:

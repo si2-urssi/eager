@@ -1,0 +1,29 @@
+soft\_search.label package
+==========================
+
+Submodules
+----------
+
+soft\_search.label.regex module
+-------------------------------
+
+.. automodule:: soft_search.label.regex
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+soft\_search.label.transformer module
+-------------------------------------
+
+.. automodule:: soft_search.label.transformer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: soft_search.label
+   :members:
+   :undoc-members:
+   :show-inheritance:
