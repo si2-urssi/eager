@@ -100,6 +100,7 @@ jobs:
         pip install .
     - name: Generate and Push Model
       run: |
+        mkdir ~/.huggingface
         echo ${{ secrets.HUGGINGFACE_TOKEN }} >> ~/.huggingface/token
         train-and-upload-soft-search-2022-transformer
     - name: Build Package
