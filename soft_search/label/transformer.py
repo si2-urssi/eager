@@ -203,16 +203,15 @@ def train(
 
 
 def _train_and_upload_transformer(seed: int = 0) -> Path:
-    # Normal imports
+    import os
     import random
 
     import numpy as np
-
-    # Set a bunch of seeds for reproducibility
     import torch
 
     from soft_search.data import load_joined_soft_search_2022
 
+    # Set a bunch of seeds for reproducibility
     torch.manual_seed(0)
     random.seed(0)
     np.random.seed(0)
@@ -226,6 +225,7 @@ def _train_and_upload_transformer(seed: int = 0) -> Path:
             push_to_hub=True,
             hub_model_id=HUGGINGFACE_HUB_SOFT_SEARCH_MODEL,
             hub_strategy="end",
+            hub_token=os.environ["HUGGINGFACE_TOKEN"],
         ),
     )
 

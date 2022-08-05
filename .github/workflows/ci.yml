@@ -99,9 +99,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install .
     - name: Generate and Push Model
+      env:
+        HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
       run: |
-        mkdir ~/.huggingface
-        echo ${{ secrets.HUGGINGFACE_TOKEN }} >> ~/.huggingface/token
         train-and-upload-soft-search-2022-transformer
     - name: Build Package
       run: |
