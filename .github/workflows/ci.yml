@@ -106,6 +106,7 @@ jobs:
     - name: Build Package
       run: |
         pip install build wheel
+        just clean
         python -m build
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
