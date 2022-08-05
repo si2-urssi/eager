@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
-        <title>soft_search.label.transformer - soft-search 0.1.dev1+g209cc49 documentation</title>
+        <title>soft_search.label.transformer - soft-search 0.1.dev1+gaf3c10f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -125,7 +125,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g209cc49 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+gaf3c10f documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -148,7 +148,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+g209cc49 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+gaf3c10f documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -409,16 +409,15 @@
 
 
 <span class="k">def</span> <span class="nf">_train_and_upload_transformer</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-    <span class="c1"># Normal imports</span>
+    <span class="kn">import</span> <span class="nn">os</span>
     <span class="kn">import</span> <span class="nn">random</span>
 
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-    <span class="c1"># Set a bunch of seeds for reproducibility</span>
     <span class="kn">import</span> <span class="nn">torch</span>
 
     <span class="kn">from</span> <span class="nn">soft_search.data</span> <span class="kn">import</span> <span class="n">load_joined_soft_search_2022</span>
 
+    <span class="c1"># Set a bunch of seeds for reproducibility</span>
     <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -432,6 +431,7 @@
             <span class="n">push_to_hub</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">hub_model_id</span><span class="o">=</span><span class="n">HUGGINGFACE_HUB_SOFT_SEARCH_MODEL</span><span class="p">,</span>
             <span class="n">hub_strategy</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">,</span>
+            <span class="n">hub_token</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;HUGGINGFACE_TOKEN&quot;</span><span class="p">],</span>
         <span class="p">),</span>
     <span class="p">)</span>
 
