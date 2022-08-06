@@ -8,12 +8,12 @@ clean:
 	rm -fr {{justfile_directory()}}/docs/_build/
 	rm -fr {{justfile_directory()}}/dist/
 	rm -fr {{justfile_directory()}}/.eggs/
-	find {{justfile_directory()}} -name '*.egg-info' -exec rm -fr {} +
-	find {{justfile_directory()}} -name '*.egg' -exec rm -f {} +
-	find {{justfile_directory()}} -name '*.pyc' -exec rm -f {} +
-	find {{justfile_directory()}} -name '*.pyo' -exec rm -f {} +
-	find {{justfile_directory()}} -name '*~' -exec rm -f {} +
-	find {{justfile_directory()}} -name '__pycache__' -exec rm -fr {} +
+	find {{justfile_directory()}}/ -name '*.egg-info' -exec rm -fr {} +
+	find {{justfile_directory()}}/ -name '*.egg' -exec rm -f {} +
+	find {{justfile_directory()}}/ -name '*.pyc' -exec rm -f {} +
+	find {{justfile_directory()}}/ -name '*.pyo' -exec rm -f {} +
+	find {{justfile_directory()}}/ -name '*~' -exec rm -f {} +
+	find {{justfile_directory()}}/ -name '__pycache__' -exec rm -fr {} +
 	rm -fr {{justfile_directory()}}/.coverage
 	rm -fr {{justfile_directory()}}/coverage.xml
 	rm -fr {{justfile_directory()}}/htmlcov/
@@ -31,7 +31,7 @@ lint:
 
 # run tests
 test:
-	pytest --cov-report xml --cov-report html --cov=soft_search soft_search/tests/
+	pytest --cov-report xml --cov-report html --cov=soft_search {{justfile_directory()}}/soft_search/tests/
 
 # run lint and then run tests
 build:
@@ -40,10 +40,10 @@ build:
 
 # generate Sphinx HTML documentation
 generate-docs:
-	rm -f docs/soft_search*.rst
-	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ soft_search **/tests/
-	python -msphinx "docs/" "docs/_build/"
+	rm -f {{justfile_directory()}}/docs/soft_search*.rst
+	rm -f {{justfile_directory()}}/docs/modules.rst
+	sphinx-apidoc -o {{justfile_directory()}}/docs/ soft_search {{justfile_directory()}}/**/tests/
+	python -msphinx "{{justfile_directory()}}/docs/" "{{justfile_directory()}}/docs/_build/"
 
 # generate Sphinx HTML documentation and serve to browser
 serve-docs:
@@ -61,4 +61,5 @@ release:
 
 # update this repo using latest cookiecutter-py-package
 update-from-cookiecutter:
-	cookiecutter gh:evamaxfield/cookiecutter-py-package --config-file .cookiecutter.yaml --no-input --overwrite-if-exists --output-dir ..
+	pip install cookiecutter
+	cookiecutter gh:evamaxfield/cookiecutter-py-package --config-file {{justfile_directory()}}/.cookiecutter.yaml --no-input --overwrite-if-exists --output-dir {{justfile_directory()}}/..
