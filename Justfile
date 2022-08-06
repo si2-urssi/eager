@@ -4,26 +4,27 @@ default:
 
 # clean all build, python, and lint files
 clean:
-	rm -fr {{justfile_directory()}}/build/
-	rm -fr {{justfile_directory()}}/docs/_build/
-	rm -fr {{justfile_directory()}}/dist/
-	rm -fr {{justfile_directory()}}/.eggs/
-	find {{justfile_directory()}}/ -name '*.egg-info' -exec rm -fr {} +
-	find {{justfile_directory()}}/ -name '*.egg' -exec rm -f {} +
-	find {{justfile_directory()}}/ -name '*.pyc' -exec rm -f {} +
-	find {{justfile_directory()}}/ -name '*.pyo' -exec rm -f {} +
-	find {{justfile_directory()}}/ -name '*~' -exec rm -f {} +
-	find {{justfile_directory()}}/ -name '__pycache__' -exec rm -fr {} +
-	rm -fr {{justfile_directory()}}/.coverage
-	rm -fr {{justfile_directory()}}/coverage.xml
-	rm -fr {{justfile_directory()}}/htmlcov/
-	rm -fr {{justfile_directory()}}/.pytest_cache
-	rm -fr {{justfile_directory()}}/.mypy_cache
-	rm -fr {{justfile_directory()}}/soft-search-transformer/
+	rm -fr build
+	rm -fr docs/_build
+	rm -fr dist
+	rm -fr .eggs
+	find . -name '*.egg-info' -exec rm -fr {} +
+	find . -name '*.egg' -exec rm -f {} +
+	find . -name '*.pyc' -exec rm -f {} +
+	find . -name '*.pyo' -exec rm -f {} +
+	find . -name '*~' -exec rm -f {} +
+	find . -name '__pycache__' -exec rm -fr {} +
+	rm -fr .coverage
+	rm -fr coverage.xml
+	rm -fr htmlcov
+	rm -fr .pytest_cache
+	rm -fr .mypy_cache
+	rm -fr soft-search-transformer
+
 
 # install with all deps
 install:
-	pip install -e {{justfile_directory()}}[lint,test,docs,dev]
+	pip install -e .[lint,test,docs,dev]
 
 # lint, format, and check all files
 lint:
@@ -31,7 +32,7 @@ lint:
 
 # run tests
 test:
-	pytest --cov-report xml --cov-report html --cov=soft_search {{justfile_directory()}}/soft_search/tests/
+	pytest --cov-report xml --cov-report html --cov=soft_search soft_search/tests
 
 # run lint and then run tests
 build:
@@ -40,10 +41,10 @@ build:
 
 # generate Sphinx HTML documentation
 generate-docs:
-	rm -f {{justfile_directory()}}/docs/soft_search*.rst
-	rm -f {{justfile_directory()}}/docs/modules.rst
-	sphinx-apidoc -o {{justfile_directory()}}/docs/ soft_search {{justfile_directory()}}/**/tests/
-	python -msphinx "{{justfile_directory()}}/docs/" "{{justfile_directory()}}/docs/_build/"
+	rm -f docs/soft_search*.rst
+	rm -f docs/modules.rst
+	sphinx-apidoc -o docs soft_search **/tests
+	python -msphinx "docs" "docs/_build"
 
 # generate Sphinx HTML documentation and serve to browser
 serve-docs:
@@ -62,4 +63,4 @@ release:
 # update this repo using latest cookiecutter-py-package
 update-from-cookiecutter:
 	pip install cookiecutter
-	cookiecutter gh:evamaxfield/cookiecutter-py-package --config-file {{justfile_directory()}}/.cookiecutter.yaml --no-input --overwrite-if-exists --output-dir {{justfile_directory()}}/..
+	cookiecutter gh:evamaxfield/cookiecutter-py-package --config-file .cookiecutter.yaml --no-input --overwrite-if-exists --output-dir ..
