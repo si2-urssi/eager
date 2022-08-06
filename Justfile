@@ -46,10 +46,21 @@ generate-docs:
 	sphinx-apidoc -o docs soft_search **/tests
 	python -msphinx "docs" "docs/_build"
 
+
+# Generate project URI for browser opening
+# We replace here to handle windows paths
+# Windows paths are normally `\` separated but even in the browser they use `/`
+# https://stackoverflow.com/a/61991869
+project_uri := if "os_family()" == "unix" {
+	justfile_directory()
+} else {
+	replace(justfile_directory(), "\\", "/")
+}
+
 # generate Sphinx HTML documentation and serve to browser
 serve-docs:
 	just generate-docs
-	python -mwebbrowser -t file://{{justfile_directory()}}/docs/_build/index.html
+	python -mwebbrowser -t "file://{{project_uri}}/docs/_build/index.html"
 
 # tag a new version
 tag-for-release version:
