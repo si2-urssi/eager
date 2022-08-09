@@ -79,7 +79,7 @@ def _get_nsf_chunk(
 def get_nsf_dataset(
     start_date: Union[str, datetime],
     end_date: Optional[Union[str, datetime]] = None,
-    program_name: str = NSFPrograms.BIO,
+    program_name: str = NSFPrograms.Biological_Sciences,
     agency: str = "NSF",
     transaction_type: str = "Grant",
     dataset_fields: List[str] = ALL_NSF_FIELDS,
