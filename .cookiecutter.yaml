@@ -7,5 +7,4 @@ default_context:
     python_slug: "soft_search"
     project_short_description: "searching for software promises in grant applications"
     hosting_pypi_username: "PugetSoundClinic-PIT"
-    version: "0.0.0"
     license: "MIT License"
