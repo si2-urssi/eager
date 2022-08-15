@@ -162,7 +162,7 @@ def get_nsf_dataset(
     str_require_project_outcomes = str(require_project_outcomes_doc).lower()
 
     # Run gather
-    current_offset = 0
+    current_offset = 1
     chunks: List[pd.DataFrame] = []
     while True:
         # Get chunk
@@ -189,5 +189,8 @@ def get_nsf_dataset(
         current_offset += 25
 
     # Concat all awards
-    awards = pd.concat(chunks, ignore_index=True)
-    return awards
+    return (
+        pd.concat(chunks, ignore_index=True)
+        .drop_duplicates("id")
+        .reset_index(drop=True)
+    )

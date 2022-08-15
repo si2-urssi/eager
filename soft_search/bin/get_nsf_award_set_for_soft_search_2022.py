@@ -76,23 +76,30 @@ def main() -> None:
         # Get chunks
         program_chunks: List[pd.DataFrame] = []
         for program in [
-            NSFPrograms.Biological_Sciences,
+            # NSFPrograms.Biological_Sciences,
             NSFPrograms.Computer_and_Information_Science_and_Engineering,
-            NSFPrograms.Engineering,
-            NSFPrograms.Environmental_Research_and_Education,
-            NSFPrograms.Geosciences,
-            NSFPrograms.Mathematical_and_Physical_Sciences,
-            NSFPrograms.Social_Behavioral_and_Economic_Sciences,
+            # NSFPrograms.Engineering,
+            # NSFPrograms.Environmental_Research_and_Education,
+            # NSFPrograms.Geosciences,
+            # NSFPrograms.Mathematical_and_Physical_Sciences,
+            # NSFPrograms.Social_Behavioral_and_Economic_Sciences,
         ]:
             log.info(f"Gathering {program} dataset chunk...")
             program_chunks.append(
                 nsf.get_nsf_dataset(
-                    start_date=START_DATE, end_date=END_DATE, program_name=program
+                    start_date=START_DATE,
+                    end_date=END_DATE,
+                    program_name=program,
+                    require_project_outcomes_doc=False,
                 )
             )
 
         # Concat and report size
-        awards = pd.concat(program_chunks, ignore_index=True)
+        awards = (
+            pd.concat(program_chunks, ignore_index=True)
+            .drop_duplicates("id")
+            .reset_index(drop=True)
+        )
         log.info(f"Total awards found: {len(awards)}")
 
         # Store
