@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
-        <title>soft_search.bin.get_nsf_award_set_for_soft_search_2022 - soft-search 0.1.dev1+g00f9354 documentation</title>
+        <title>soft_search.bin.get_nsf_award_set_for_soft_search_2022 - soft-search 0.1.dev1+g932bd42 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g00f9354 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g932bd42 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+g00f9354 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+g932bd42 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -280,23 +280,30 @@
         <span class="c1"># Get chunks</span>
         <span class="n">program_chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">program</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="n">NSFPrograms</span><span class="o">.</span><span class="n">Biological_Sciences</span><span class="p">,</span>
+            <span class="c1"># NSFPrograms.Biological_Sciences,</span>
             <span class="n">NSFPrograms</span><span class="o">.</span><span class="n">Computer_and_Information_Science_and_Engineering</span><span class="p">,</span>
-            <span class="n">NSFPrograms</span><span class="o">.</span><span class="n">Engineering</span><span class="p">,</span>
-            <span class="n">NSFPrograms</span><span class="o">.</span><span class="n">Environmental_Research_and_Education</span><span class="p">,</span>
-            <span class="n">NSFPrograms</span><span class="o">.</span><span class="n">Geosciences</span><span class="p">,</span>
-            <span class="n">NSFPrograms</span><span class="o">.</span><span class="n">Mathematical_and_Physical_Sciences</span><span class="p">,</span>
-            <span class="n">NSFPrograms</span><span class="o">.</span><span class="n">Social_Behavioral_and_Economic_Sciences</span><span class="p">,</span>
+            <span class="c1"># NSFPrograms.Engineering,</span>
+            <span class="c1"># NSFPrograms.Environmental_Research_and_Education,</span>
+            <span class="c1"># NSFPrograms.Geosciences,</span>
+            <span class="c1"># NSFPrograms.Mathematical_and_Physical_Sciences,</span>
+            <span class="c1"># NSFPrograms.Social_Behavioral_and_Economic_Sciences,</span>
         <span class="p">]:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gathering </span><span class="si">{</span><span class="n">program</span><span class="si">}</span><span class="s2"> dataset chunk...&quot;</span><span class="p">)</span>
             <span class="n">program_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">nsf</span><span class="o">.</span><span class="n">get_nsf_dataset</span><span class="p">(</span>
-                    <span class="n">start_date</span><span class="o">=</span><span class="n">START_DATE</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">END_DATE</span><span class="p">,</span> <span class="n">program_name</span><span class="o">=</span><span class="n">program</span>
+                    <span class="n">start_date</span><span class="o">=</span><span class="n">START_DATE</span><span class="p">,</span>
+                    <span class="n">end_date</span><span class="o">=</span><span class="n">END_DATE</span><span class="p">,</span>
+                    <span class="n">program_name</span><span class="o">=</span><span class="n">program</span><span class="p">,</span>
+                    <span class="n">require_project_outcomes_doc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="p">)</span>
 
         <span class="c1"># Concat and report size</span>
-        <span class="n">awards</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">program_chunks</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">awards</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">program_chunks</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total awards found: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">awards</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Store</span>
