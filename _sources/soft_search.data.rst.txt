@@ -4,6 +4,14 @@ soft\_search.data package
 Submodules
 ----------
 
+soft\_search.data.irr module
+----------------------------
+
+.. automodule:: soft_search.data.irr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 soft\_search.data.soft\_search\_2022 module
 -------------------------------------------
 
