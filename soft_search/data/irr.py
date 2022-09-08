@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Union
 
 import pandas as pd
-from statsmodels.stats.inter_rater import fleiss_kappa
+from statsmodels.stats.inter_rater import aggregate_raters, fleiss_kappa
 
 ###############################################################################
 
@@ -47,9 +47,9 @@ def calc_fleiss_kappa(
     ]
 
     # Aggregate
-    # agg_rater_software = aggregate_raters(software)
+    agg_rater_software, _ = aggregate_raters(software)
 
     # Calc Kappa's and return
     return KappaStats(
-        PromisesSoftware=fleiss_kappa(software),
+        PromisesSoftware=fleiss_kappa(agg_rater_software),
     )
