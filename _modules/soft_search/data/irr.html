@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
-        <title>soft_search.data.irr - soft-search 0.1.dev1+ga9772cd documentation</title>
+        <title>soft_search.data.irr - soft-search 0.1.dev1+g911ec81 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+ga9772cd documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g911ec81 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+ga9772cd documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+g911ec81 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -210,7 +210,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">statsmodels.stats.inter_rater</span> <span class="kn">import</span> <span class="n">fleiss_kappa</span>
+<span class="kn">from</span> <span class="nn">statsmodels.stats.inter_rater</span> <span class="kn">import</span> <span class="n">aggregate_raters</span><span class="p">,</span> <span class="n">fleiss_kappa</span>
 
 <span class="c1">###############################################################################</span>
 
@@ -251,11 +251,11 @@
     <span class="p">]</span>
 
     <span class="c1"># Aggregate</span>
-    <span class="c1"># agg_rater_software = aggregate_raters(software)</span>
+    <span class="n">agg_rater_software</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">aggregate_raters</span><span class="p">(</span><span class="n">software</span><span class="p">)</span>
 
     <span class="c1"># Calc Kappa&#39;s and return</span>
     <span class="k">return</span> <span class="n">KappaStats</span><span class="p">(</span>
-        <span class="n">PromisesSoftware</span><span class="o">=</span><span class="n">fleiss_kappa</span><span class="p">(</span><span class="n">software</span><span class="p">),</span>
+        <span class="n">PromisesSoftware</span><span class="o">=</span><span class="n">fleiss_kappa</span><span class="p">(</span><span class="n">agg_rater_software</span><span class="p">),</span>
     <span class="p">)</span></div>
 </pre></div>
         </article>
