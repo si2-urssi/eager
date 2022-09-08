@@ -1,7 +1,7 @@
 # package build
 # https://peps.python.org/pep-0517/
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=65", "wheel", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
@@ -32,6 +32,7 @@ dependencies = [
   "pyarrow~=9.0",
   "requests~=2.28",
   "scikit-learn~=1.1",
+  "statsmodels~=0.13",
   "torch~=1.12",
   "transformers~=4.21",
 ]

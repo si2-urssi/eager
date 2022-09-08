@@ -181,6 +181,6 @@ texinfo_documents = [
         "soft-search Documentation",
         author,
         "soft_search",
-        "TODO: short description",
+        "searching for software promises in grant applications",
     ),
 ]
