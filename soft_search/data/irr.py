@@ -6,17 +6,19 @@ from pathlib import Path
 from typing import Union
 
 import pandas as pd
-from statsmodels.stats.inter_rater import aggregate_raters, fleiss_kappa
+from statsmodels.stats.inter_rater import fleiss_kappa
 
 ###############################################################################
+
 
 @dataclass
 class KappaStats:
     PromisesSoftware: float
 
+
 def calc_fleiss_kappa(
     data: Union[str, Path, pd.DataFrame],
-) -> float:
+) -> KappaStats:
     """
     Calculate the Fleiss kappa score as a metric for
     inter-rater reliability for the soft-search dataset.
@@ -36,11 +38,13 @@ def calc_fleiss_kappa(
         data = pd.read_csv(data)
 
     # Prep
-    software = data[[
-        "AnnotatorOnePromisesSoftware",
-        "AnnotatorTwoPromisesSoftware",
-        # "AnnotatorThreePromisesSoftware",
-    ]]
+    software = data[
+        [
+            "AnnotatorOnePromisesSoftware",
+            "AnnotatorTwoPromisesSoftware",
+            # "AnnotatorThreePromisesSoftware",
+        ]
+    ]
 
     # Aggregate
     # agg_rater_software = aggregate_raters(software)
