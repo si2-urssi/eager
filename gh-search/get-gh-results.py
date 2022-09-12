@@ -1,52 +1,73 @@
 import time
+
+import pandas as pd
+from dotenv import load_dotenv
 from ghapi.all import GhApi
 
-SEARCH_TERMS = [
-    '"National Science Foundation"',
-    '"NSF Award"',
-    '"NSF Grant"',
-    '"Supported by the NSF"',
-    '"Supported by NSF"',
+load_dotenv()
+
+SEARCH_QUERIES = [
+    "National Science Foundation",
+    "NSF Award",
+    "NSF Grant",
+    "Supported by the NSF",
+    "Supported by NSF",
 ]
 
 TEMP_STORAGE_FILE = "gh-page-results.json"
 
 # Load GH API
-api = GhApi(token="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")
+# Env variable of GITHUB_TOKEN with a PAT must be in `.env` file.
+api = GhApi()
 
 # Get all results for each term
 results = []
-for search_term in SEARCH_TERMS:
-    search_query = f"{search_term} filename:README.md"
-    command_template = (
-        "gh api -X /search/code "
-        "-f q='{search_query}' "
-        "-f per_page=100 "
-        "-f page={page} "
-        "> {storage_file}"
-    )
+for query in SEARCH_QUERIES:
+    complete_query = f'"{query}" filename:README.md'
 
     # Get initial
     page = 0
     all_gathered = False
     while not all_gathered:
-        query_q = f'{search_term} filename:README.md'
-        print(query_q)
-        page = api("/search/code", "GET ", query=dict(q='"National Science Foundation" filename:README.md', per_page=100, page=5))
-        print(page["total_count"])
-        print(len(page["items"]))
+        print(f"Querying: '{complete_query}', Page: {page}")
+        try:
+            results = api("/search/code", "GET ", query=dict(q=complete_query, per_page=30, page=page))
+            items_returned = results["items"]
+            if len(items_returned) != 30:
+                print(
+                    f"Query failed to return all 30 requested items. "
+                    f"(Instead returned {len(items_returned)} items)"
+                )
 
-        # check that results are present
-        # add columns to results
+            # Unpack results
+            for item in items_returned:
+                repo_details = item["repository"]
+                repo_name = repo_details["name"]
+                owner_details = repo_details["owner"]
+                owner_name = owner_details["login"]
+                results.append(
+                    {
+                        "repo_owner": owner_name,
+                        "repo_name": repo_name,
+                        "repo_link": f"https://github.com/{owner_name}/{repo_name}",
+                        "found_from_query": query,
+                    }
+                )
 
-        # Wait to avoid rate limiting
-        time.sleep(10)
+            # Store partial results always
+            pd.DataFrame(results).to_csv("gh-results.csv")
 
-        if page == 4:
-            all_gathered = True
+            # Wait to avoid rate limiting
+            print("Sleeping for one minute...")
+            time.sleep(60)
 
-        page += 1
-        
-        
+            # Increase page and keep going
+            page += 1
 
-    
+            # Break because we are done
+            if len(items_returned) == 0:
+                break
+
+        except Exception as e:
+            print(f"Caught exception: {e}")
+            pass
