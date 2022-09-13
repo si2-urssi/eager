@@ -148,6 +148,14 @@ def get_nsf_dataset(
         Available dataset fields to request.
     soft_search.constants.NSFPrograms
         Available programs to request.
+
+    Notes
+    -----
+    After a lot of testing, it seems like the NSF Award Search API does not
+    return all results available via "Simple Search" or "Advanced Search".
+
+    This function is safe for prototyping but for research purposes it is
+    recommended to download data files from the "Advanced Search" webpage.
     """
     # Parse datetimes
     formatted_start_date = _parse_nsf_datetime(start_date)
