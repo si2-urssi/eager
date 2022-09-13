@@ -10,8 +10,7 @@ class PredictionLabels:
     AlgorithmPredicted = "algorithm-predicted"
     AlgorithmNotPredicted = "algorithm-not-predicted"
     DatabasePredicted = "database-predicted"
-    DatabaseNotPredicted ="database-not-predicted"
-    
+    DatabaseNotPredicted = "database-not-predicted"
 
 
 class NSFFields:
