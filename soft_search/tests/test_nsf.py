@@ -15,11 +15,11 @@ from soft_search.nsf import get_nsf_dataset
 @pytest.mark.parametrize(
     "start_date, end_date, dataset_fields",
     [
-        ("2017-01-01", "2017-06-01", [NSFFields.id_, NSFFields.abstractText]),
-        ("01/01/2018", "01/01/2019", [NSFFields.id_, NSFFields.title]),
+        ("2017-01-01", "2017-02-01", [NSFFields.id_, NSFFields.abstractText]),
+        ("01/01/2018", "02/01/2018", [NSFFields.id_, NSFFields.title]),
         (
             datetime(2019, 1, 1),
-            datetime(2020, 1, 1),
+            datetime(2019, 2, 1),
             [NSFFields.id_, NSFFields.projectOutComesReport],
         ),
         # Fails because weird date format
