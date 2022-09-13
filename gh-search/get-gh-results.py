@@ -10,13 +10,13 @@ load_dotenv()
 
 ###############################################################################
 
-SEARCH_QUERIES = [
-    "National Science Foundation",
-    "NSF Award",
-    "NSF Grant",
-    "Supported by the NSF",
-    "Supported by NSF",
-]
+SEARCH_QUERIES_START_PAGE = {
+    # "National Science Foundation": 101,
+    "NSF Award": 0,
+    "NSF Grant": 0,
+    "Supported by the NSF": 0,
+    "Supported by NSF": 0,
+}
 
 BATCH_SIZE = 10
 
@@ -27,13 +27,11 @@ BATCH_SIZE = 10
 api = GhApi()
 
 # Get all results for each term
-results = []
 query_start_time = time.time()
-for query in SEARCH_QUERIES:
+for query, page in SEARCH_QUERIES_START_PAGE.items():
     complete_query = f'"{query}" filename:README.md'
 
     # Get initial
-    page = 0
     all_gathered = False
     while not all_gathered:
         try:
@@ -43,6 +41,7 @@ for query in SEARCH_QUERIES:
             items_returned = page_results["items"]
 
             # Unpack results
+            results = []
             for item in items_returned:
                 repo_details = item["repository"]
                 repo_name = repo_details["name"]
@@ -80,15 +79,18 @@ for query in SEARCH_QUERIES:
                     }
                 )
 
-            # Store partial results always
-            pd.DataFrame(results).to_csv("gh-results.csv", index=False)
+            # Store partial results
+            pd.DataFrame(results).to_csv(
+                f"gh-search/results/{query.lower().replace(' ', '_')}-page_{page}.csv",
+                index=False,
+            )
 
             # Increase page and keep going
             page += 1
 
             # Wait to avoid rate limiting
-            print("Sleeping for forty seconds...")
-            time.sleep(40)
+            print("Sleeping for one minute...")
+            time.sleep(60)
 
             # Update time estimate
             batch_time = time.time()
@@ -105,7 +107,9 @@ for query in SEARCH_QUERIES:
             )
 
             # Break because we are done
-            if len(items_returned) == 0:
+            # Stop at 1000 results because GitHub limits search
+            # https://github.com/PyGithub/PyGithub/issues/1072#issuecomment-499211486
+            if len(items_returned) == 0 or page * BATCH_SIZE >= 1000:
                 break
 
         except HTTP4xxClientError as e:
