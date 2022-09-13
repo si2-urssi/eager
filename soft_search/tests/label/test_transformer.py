@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import torch
 
-from soft_search.constants import SoftwareOutcomes
+from soft_search.constants import PredictionLabels
 from soft_search.data import load_joined_soft_search_2022
 from soft_search.label import transformer
 
@@ -43,10 +43,10 @@ def test_transformer_train_and_label() -> None:
     )
     # Expected values based off above abstractText column
     expected_values = [
-        SoftwareOutcomes.SoftwareNotPredicted,  # Lol, need more data / a better model
-        SoftwareOutcomes.SoftwareNotPredicted,
-        SoftwareOutcomes.SoftwareNotPredicted,
-        SoftwareOutcomes.SoftwareNotPredicted,  # Lol, need more data / a better model
+        PredictionLabels.SoftwareNotPredicted,  # Lol, need more data / a better model
+        PredictionLabels.SoftwareNotPredicted,
+        PredictionLabels.SoftwareNotPredicted,
+        PredictionLabels.SoftwareNotPredicted,  # Lol, need more data / a better model
     ]
 
     # Run and compare

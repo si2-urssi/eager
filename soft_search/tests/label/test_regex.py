@@ -3,7 +3,7 @@
 
 import pandas as pd
 
-from soft_search.constants import SoftwareOutcomes
+from soft_search.constants import PredictionLabels
 from soft_search.label import regex
 
 ###############################################################################
@@ -23,10 +23,10 @@ def test_regex_label() -> None:
     )
     # Expected values based off above abstractText column
     expected_values = [
-        SoftwareOutcomes.SoftwarePredicted,
-        SoftwareOutcomes.SoftwareNotPredicted,
-        SoftwareOutcomes.SoftwareNotPredicted,
-        SoftwareOutcomes.SoftwarePredicted,
+        PredictionLabels.SoftwarePredicted,
+        PredictionLabels.SoftwareNotPredicted,
+        PredictionLabels.SoftwareNotPredicted,
+        PredictionLabels.SoftwarePredicted,
     ]
 
     # Run and compare
