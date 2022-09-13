@@ -40,10 +40,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/PugetSoundClinic-PIT/soft-search"
-"Bug Tracker" = "https://github.com/PugetSoundClinic-PIT/soft-search/issues"
-Documentation = "https://PugetSoundClinic-PIT.github.io/soft-search"
-"User Support" = "https://github.com/PugetSoundClinic-PIT/soft-search/issues"
+Homepage = "https://github.com/si2-urssi/soft-search"
+"Bug Tracker" = "https://github.com/si2-urssi/soft-search/issues"
+Documentation = "https://si2-urssi.github.io/soft-search"
+"User Support" = "https://github.com/si2-urssi/soft-search/issues"
 
 # extra dependencies
 # https://peps.python.org/pep-0621/#dependencies-optional-dependencies

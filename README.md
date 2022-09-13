@@ -1,7 +1,7 @@
 # soft-search
 
-[![Build Status](https://github.com/PugetSoundClinic-PIT/soft-search/workflows/CI/badge.svg)](https://github.com/PugetSoundClinic-PIT/soft-search/actions)
-[![Documentation](https://github.com/PugetSoundClinic-PIT/soft-search/workflows/Documentation/badge.svg)](https://PugetSoundClinic-PIT.github.io/soft-search)
+[![Build Status](https://github.com/si2-urssi/soft-search/workflows/CI/badge.svg)](https://github.com/si2-urssi/soft-search/actions)
+[![Documentation](https://github.com/si2-urssi/soft-search/workflows/Documentation/badge.svg)](https://si2-urssi.github.io/soft-search)
 
 searching for software promises in grant applications
 
@@ -10,7 +10,7 @@ searching for software promises in grant applications
 ## Installation
 
 **Stable Release:** `pip install soft-search`<br>
-**Development Head:** `pip install git+https://github.com/PugetSoundClinic-PIT/soft-search.git`
+**Development Head:** `pip install git+https://github.com/si2-urssi/soft-search.git`
 
 ## Quickstart
 
@@ -32,7 +32,7 @@ predicted = transformer.label(
 
 ## Documentation
 
-For full package documentation please visit [PugetSoundClinic-PIT.github.io/soft-search](https://PugetSoundClinic-PIT.github.io/soft-search).
+For full package documentation please visit [si2-urssi.github.io/soft-search](https://si2-urssi.github.io/soft-search).
 
 ## Development
 
