@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="soft_search.bin package" href="soft_search.bin.html" /><link rel="prev" title="soft_search" href="modules.html" />
 
     <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
-        <title>soft_search package - soft-search 0.1.dev1+g911ec81 documentation</title>
+        <title>soft_search package - soft-search 0.1.dev1+gb27c6aa documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">soft-search 0.1.dev1+g911ec81 documentation</div></a>
+      <a href="index.html"><div class="brand">soft-search 0.1.dev1+gb27c6aa documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+g911ec81 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+gb27c6aa documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -210,6 +210,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="soft_search.bin.html">soft_search.bin package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="soft_search.bin.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soft_search.bin.html#module-soft_search.bin.get_github_repositories_with_nsf_ref">soft_search.bin.get_github_repositories_with_nsf_ref module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soft_search.bin.html#module-soft_search.bin.get_nsf_award_set_for_soft_search_2022">soft_search.bin.get_nsf_award_set_for_soft_search_2022 module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soft_search.bin.html#module-soft_search.bin.train_and_upload_soft_search_2022_transformer">soft_search.bin.train_and_upload_soft_search_2022_transformer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soft_search.bin.html#module-soft_search.bin">Module contents</a></li>
@@ -467,6 +468,11 @@ Default: True (request only projects with outcomes)</p>
 </dd>
 </dl>
 </div>
+<p class="rubric">Notes</p>
+<p>After a lot of testing, it seems like the NSF Award Search API does not
+return all results available via “Simple Search” or “Advanced Search”.</p>
+<p>This function is safe for prototyping but for research purposes it is
+recommended to download data files from the “Advanced Search” webpage.</p>
 <p class="rubric">Examples</p>
 <p>Get all grants funded by the NSF that have project outcomes under the BIO program
 from 2017 onward.</p>

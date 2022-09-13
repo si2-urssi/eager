@@ -4,6 +4,14 @@ soft\_search.bin package
 Submodules
 ----------
 
+soft\_search.bin.get\_github\_repositories\_with\_nsf\_ref module
+-----------------------------------------------------------------
+
+.. automodule:: soft_search.bin.get_github_repositories_with_nsf_ref
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 soft\_search.bin.get\_nsf\_award\_set\_for\_soft\_search\_2022 module
 ---------------------------------------------------------------------
 
