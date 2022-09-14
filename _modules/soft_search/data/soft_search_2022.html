@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
-        <title>soft_search.data.soft_search_2022 - soft-search 0.1.dev1+g4ace53b documentation</title>
+        <title>soft_search.data.soft_search_2022 - soft-search 0.1.dev1+ge53a727 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g4ace53b documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+ge53a727 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+g4ace53b documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+ge53a727 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -211,11 +211,29 @@
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">NSFFields</span><span class="p">,</span> <span class="n">SoftwareOutcomes</span>
+<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">NSFFields</span><span class="p">,</span> <span class="n">PredictionLabels</span>
 
 <span class="c1">###############################################################################</span>
 
 <span class="n">SOFT_SEARCH_2022_DS_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;soft-search-2022-labelled.parquet&quot;</span>
+<span class="n">SOFT_SEARCH_2022_IRR_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;soft-search-2022-irr-50.parquet&quot;</span>
+
+
+<div class="viewcode-block" id="SoftSearch2022IRRDatasetFields"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.soft_search_2022.SoftSearch2022IRRDatasetFields">[docs]</a><span class="k">class</span> <span class="nc">SoftSearch2022IRRDatasetFields</span><span class="p">:</span>
+    <span class="n">AwardNumber</span> <span class="o">=</span> <span class="s2">&quot;AwardNumber&quot;</span>
+    <span class="n">Abstract</span> <span class="o">=</span> <span class="s2">&quot;Abstract&quot;</span>
+    <span class="n">PromisesSoftware</span> <span class="o">=</span> <span class="s2">&quot;PromisesSoftware&quot;</span>
+    <span class="n">PromisesModel</span> <span class="o">=</span> <span class="s2">&quot;PromisesModel&quot;</span>
+    <span class="n">PromisesAlgorithm</span> <span class="o">=</span> <span class="s2">&quot;PromisesAlgorithm&quot;</span>
+    <span class="n">PromisesDatabase</span> <span class="o">=</span> <span class="s2">&quot;PromisesDatabase&quot;</span>
+    <span class="n">Notes</span> <span class="o">=</span> <span class="s2">&quot;Notes&quot;</span></div>
+
+
+<span class="n">ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nb">getattr</span><span class="p">(</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">a</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="SoftSearch2022DatasetFields"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.soft_search_2022.SoftSearch2022DatasetFields">[docs]</a><span class="k">class</span> <span class="nc">SoftSearch2022DatasetFields</span><span class="p">:</span>
@@ -234,6 +252,66 @@
 <span class="p">]</span>
 
 <span class="c1">###############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">_prepare_soft_search_2022_irr</span><span class="p">(</span>
+    <span class="n">anno1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+    <span class="n">anno2</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to prepare the manually labelled data downloaded from Google Drive</span>
+<span class="sd">    into the stored dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    anno1: Union[str, Path, pd.DataFrame]</span>
+<span class="sd">        The path or in-memory pandas DataFrame for the raw manually labelled</span>
+<span class="sd">        data from annotator one used for calculating inter-rater reliability.</span>
+<span class="sd">        Only CSV file format is supported when providing a file path.</span>
+<span class="sd">    anno2: Union[str, Path, pd.DataFrame]</span>
+<span class="sd">        The path or in-memory pandas DataFrame for the raw manually labelled</span>
+<span class="sd">        data from annotator two used for calculating inter-rater reliability.</span>
+<span class="sd">        Only CSV file format is supported when providing a file path.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Path</span>
+<span class="sd">        The Path to the prepared and stored parquet file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Read data</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">anno1</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+        <span class="n">anno1_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">anno1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">anno1_data</span> <span class="o">=</span> <span class="n">anno1</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">anno2</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+        <span class="n">anno2_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">anno2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">anno2_data</span> <span class="o">=</span> <span class="n">anno2</span>
+
+    <span class="c1"># Select columns</span>
+    <span class="n">anno1_data</span> <span class="o">=</span> <span class="n">anno1_data</span><span class="p">[</span><span class="n">ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS</span><span class="p">]</span>
+    <span class="n">anno2_data</span> <span class="o">=</span> <span class="n">anno2_data</span><span class="p">[</span><span class="n">ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS</span><span class="p">]</span>
+
+    <span class="c1"># Replace any nan values with &quot;no&quot;</span>
+    <span class="n">anno1_data</span> <span class="o">=</span> <span class="n">anno1_data</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+    <span class="n">anno2_data</span> <span class="o">=</span> <span class="n">anno2_data</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Remap values</span>
+    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Software&quot;</span><span class="p">,</span> <span class="s2">&quot;Model&quot;</span><span class="p">,</span> <span class="s2">&quot;Algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;Database&quot;</span><span class="p">]:</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Promises</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">remapper</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;yes&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">PredictionLabels</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">Predicted&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;no&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">PredictionLabels</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">NotPredicted&quot;</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="n">anno1_data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">anno1_data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">remapper</span><span class="p">)</span>
+        <span class="n">anno2_data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">anno2_data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">remapper</span><span class="p">)</span>
+
+    <span class="c1"># Combine to single dataframe</span>
+    <span class="n">anno1_data</span><span class="p">[</span><span class="s2">&quot;AnnotatorNum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">anno2_data</span><span class="p">[</span><span class="s2">&quot;AnnotatorNum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">anno1_data</span><span class="p">,</span> <span class="n">anno2_data</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">combined</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">SOFT_SEARCH_2022_IRR_PATH</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">SOFT_SEARCH_2022_IRR_PATH</span>
 
 
 <span class="k">def</span> <span class="nf">_prepare_soft_search_2022</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
@@ -267,8 +345,8 @@
 
     <span class="c1"># Remap values</span>
     <span class="n">software_values_map</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;yes&quot;</span><span class="p">:</span> <span class="n">SoftwareOutcomes</span><span class="o">.</span><span class="n">SoftwarePredicted</span><span class="p">,</span>
-        <span class="s2">&quot;no&quot;</span><span class="p">:</span> <span class="n">SoftwareOutcomes</span><span class="o">.</span><span class="n">SoftwareNotPredicted</span><span class="p">,</span>
+        <span class="s2">&quot;yes&quot;</span><span class="p">:</span> <span class="n">PredictionLabels</span><span class="o">.</span><span class="n">SoftwarePredicted</span><span class="p">,</span>
+        <span class="s2">&quot;no&quot;</span><span class="p">:</span> <span class="n">PredictionLabels</span><span class="o">.</span><span class="n">SoftwareNotPredicted</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">df</span><span class="p">[</span><span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_was_created</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
         <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_was_created</span>
@@ -292,6 +370,18 @@
 <span class="sd">        The dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">SOFT_SEARCH_2022_DS_PATH</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_soft_search_2022_irr"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.soft_search_2022.load_soft_search_2022_irr">[docs]</a><span class="k">def</span> <span class="nf">load_soft_search_2022_irr</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the Software Search 2022 Inter-Rater Reliability labelled dataset.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        The dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">SOFT_SEARCH_2022_IRR_PATH</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="load_joined_soft_search_2022"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.soft_search_2022.load_joined_soft_search_2022">[docs]</a><span class="k">def</span> <span class="nf">load_joined_soft_search_2022</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>

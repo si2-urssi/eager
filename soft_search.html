@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="soft_search.bin package" href="soft_search.bin.html" /><link rel="prev" title="soft_search" href="modules.html" />
 
     <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
-        <title>soft_search package - soft-search 0.1.dev1+g4ace53b documentation</title>
+        <title>soft_search package - soft-search 0.1.dev1+ge53a727 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">soft-search 0.1.dev1+g4ace53b documentation</div></a>
+      <a href="index.html"><div class="brand">soft-search 0.1.dev1+ge53a727 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+g4ace53b documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+ge53a727 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -400,17 +400,47 @@ parameter.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="soft_search.constants.SoftwareOutcomes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">soft_search.constants.</span></span><span class="sig-name descname"><span class="pre">SoftwareOutcomes</span></span><a class="reference internal" href="_modules/soft_search/constants.html#SoftwareOutcomes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#soft_search.constants.SoftwareOutcomes" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="soft_search.constants.PredictionLabels">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">soft_search.constants.</span></span><span class="sig-name descname"><span class="pre">PredictionLabels</span></span><a class="reference internal" href="_modules/soft_search/constants.html#PredictionLabels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#soft_search.constants.PredictionLabels" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="soft_search.constants.SoftwareOutcomes.SoftwareNotPredicted">
-<span class="sig-name descname"><span class="pre">SoftwareNotPredicted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'software-outcome-not-predicted'</span></em><a class="headerlink" href="#soft_search.constants.SoftwareOutcomes.SoftwareNotPredicted" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="soft_search.constants.PredictionLabels.AlgorithmNotPredicted">
+<span class="sig-name descname"><span class="pre">AlgorithmNotPredicted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'algorithm-not-predicted'</span></em><a class="headerlink" href="#soft_search.constants.PredictionLabels.AlgorithmNotPredicted" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="soft_search.constants.SoftwareOutcomes.SoftwarePredicted">
-<span class="sig-name descname"><span class="pre">SoftwarePredicted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'software-outcome-predicted'</span></em><a class="headerlink" href="#soft_search.constants.SoftwareOutcomes.SoftwarePredicted" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="soft_search.constants.PredictionLabels.AlgorithmPredicted">
+<span class="sig-name descname"><span class="pre">AlgorithmPredicted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'algorithm-predicted'</span></em><a class="headerlink" href="#soft_search.constants.PredictionLabels.AlgorithmPredicted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soft_search.constants.PredictionLabels.DatabaseNotPredicted">
+<span class="sig-name descname"><span class="pre">DatabaseNotPredicted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'database-not-predicted'</span></em><a class="headerlink" href="#soft_search.constants.PredictionLabels.DatabaseNotPredicted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soft_search.constants.PredictionLabels.DatabasePredicted">
+<span class="sig-name descname"><span class="pre">DatabasePredicted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'database-predicted'</span></em><a class="headerlink" href="#soft_search.constants.PredictionLabels.DatabasePredicted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soft_search.constants.PredictionLabels.ModelNotPredicted">
+<span class="sig-name descname"><span class="pre">ModelNotPredicted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'model-not-predicted'</span></em><a class="headerlink" href="#soft_search.constants.PredictionLabels.ModelNotPredicted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soft_search.constants.PredictionLabels.ModelPredicted">
+<span class="sig-name descname"><span class="pre">ModelPredicted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'model-predicted'</span></em><a class="headerlink" href="#soft_search.constants.PredictionLabels.ModelPredicted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soft_search.constants.PredictionLabels.SoftwareNotPredicted">
+<span class="sig-name descname"><span class="pre">SoftwareNotPredicted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'software-not-predicted'</span></em><a class="headerlink" href="#soft_search.constants.PredictionLabels.SoftwareNotPredicted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soft_search.constants.PredictionLabels.SoftwarePredicted">
+<span class="sig-name descname"><span class="pre">SoftwarePredicted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'software-predicted'</span></em><a class="headerlink" href="#soft_search.constants.PredictionLabels.SoftwarePredicted" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
