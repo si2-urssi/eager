@@ -73,8 +73,16 @@ def calc_cohens_kappa(
     return KappaStats(**results)
 
 
-def print_irr_diff_stats() -> None:
-    """ """
+def print_irr_summary_stats() -> None:
+    """
+    Print useful statistics and summary stats using the stored
+    inter-rater reliability data.
+
+    Prints:
+    * Cohen's Kappa Statistic for each potential model
+    * Mean number of examples for each label between the two annotators
+    * The rows which differ between the two annotators
+    """
     # Load IRR data
     data = load_soft_search_2022_irr()
 
@@ -99,7 +107,7 @@ def print_irr_diff_stats() -> None:
     anno2 = data.loc[data["AnnotatorNum"] == 2]
 
     # Print stats
-    print("Cohen's Kappa Scores and Differing Rows:")
+    print("Inter-Rater Reliability Statistics and Data Summary:")
     print("=" * 80)
     for cat in [
         SoftSearch2022IRRDatasetFields.PromisesSoftware,
@@ -107,10 +115,9 @@ def print_irr_diff_stats() -> None:
         SoftSearch2022IRRDatasetFields.PromisesAlgorithm,
         SoftSearch2022IRRDatasetFields.PromisesDatabase,
     ]:
+        # Get score for category
         cat_score = getattr(kappa, cat)
-        print(f"{cat}: {cat_score} ({_iterrpreted_score(cat_score)})")
-
-        # Create mini-df for row-wise comparison
+        # Create mini-df for row-wise comparisons
         subset = pd.DataFrame(
             {
                 SoftSearch2022IRRDatasetFields.AwardNumber: (
@@ -120,7 +127,18 @@ def print_irr_diff_stats() -> None:
                 "anno2": anno2[cat].values,
             }
         )
+        # Generate counts
+        anno1_counts = subset["anno1"].value_counts().to_frame().T
+        anno2_counts = subset["anno2"].value_counts().to_frame().T
+        mean_counts = pd.concat([anno1_counts, anno2_counts]).mean(axis=0).to_frame().T
         diff = subset.loc[subset["anno1"] != subset["anno2"]]
+
+        # Run print
+        print(f"{cat}: {cat_score} ({_iterrpreted_score(cat_score)})")
+        print()
+        print("Average of Both Annotators Value Counts:")
+        print(mean_counts)
+        print()
         print("Differing Labels:")
         print(diff)
         print("-" * 80)
