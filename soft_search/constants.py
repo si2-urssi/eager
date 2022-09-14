@@ -2,9 +2,15 @@
 # -*- coding: utf-8 -*-
 
 
-class SoftwareOutcomes:
-    SoftwarePredicted = "software-outcome-predicted"
-    SoftwareNotPredicted = "software-outcome-not-predicted"
+class PredictionLabels:
+    SoftwarePredicted = "software-predicted"
+    SoftwareNotPredicted = "software-not-predicted"
+    ModelPredicted = "model-predicted"
+    ModelNotPredicted = "model-not-predicted"
+    AlgorithmPredicted = "algorithm-predicted"
+    AlgorithmNotPredicted = "algorithm-not-predicted"
+    DatabasePredicted = "database-predicted"
+    DatabaseNotPredicted = "database-not-predicted"
 
 
 class NSFFields:

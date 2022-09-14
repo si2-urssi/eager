@@ -5,7 +5,7 @@ import re
 
 import pandas as pd
 
-from ..constants import SoftwareOutcomes
+from ..constants import PredictionLabels
 
 ###############################################################################
 # Constants
@@ -27,10 +27,10 @@ def _apply_regex(text: str) -> str:
 
     # Found
     if match_or_none:
-        return SoftwareOutcomes.SoftwarePredicted
+        return PredictionLabels.SoftwarePredicted
 
     # Not Found
-    return SoftwareOutcomes.SoftwareNotPredicted
+    return PredictionLabels.SoftwareNotPredicted
 
 
 def label(
