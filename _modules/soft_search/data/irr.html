@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
-        <title>soft_search.data.irr - soft-search 0.1.dev1+ge53a727 documentation</title>
+    <meta name="generator" content="sphinx-5.2.3, furo 2022.09.29"/>
+        <title>soft_search.data.irr - soft-search 0.1.dev1+gd6d2a0c documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+ge53a727 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+gd6d2a0c documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+ge53a727 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+gd6d2a0c documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -205,42 +205,34 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">cohen_kappa_score</span>
+<span class="kn">from</span> <span class="nn">statsmodels.stats.inter_rater</span> <span class="kn">import</span> <span class="n">aggregate_raters</span><span class="p">,</span> <span class="n">fleiss_kappa</span>
 
 <span class="kn">from</span> <span class="nn">.soft_search_2022</span> <span class="kn">import</span> <span class="n">SoftSearch2022IRRDatasetFields</span><span class="p">,</span> <span class="n">load_soft_search_2022_irr</span>
 
 <span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="KappaStats"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.irr.KappaStats">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">KappaStats</span><span class="p">:</span>
-    <span class="n">PromisesSoftware</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">PromisesModel</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">PromisesAlgorithm</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">PromisesDatabase</span><span class="p">:</span> <span class="nb">float</span></div>
-
-
-<div class="viewcode-block" id="calc_cohens_kappa"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.irr.calc_cohens_kappa">[docs]</a><span class="k">def</span> <span class="nf">calc_cohens_kappa</span><span class="p">(</span>
+<div class="viewcode-block" id="calc_fleiss_kappa"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.irr.calc_fleiss_kappa">[docs]</a><span class="k">def</span> <span class="nf">calc_fleiss_kappa</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KappaStats</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the Cohen&#39;s Kappa score as a metric for</span>
+<span class="sd">    Calculate the Fleiss Kappa score as a metric for</span>
 <span class="sd">    inter-rater reliability for the soft-search dataset.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data: Union[str, Path, pd.DataFrame]</span>
-<span class="sd">        The path to the dataset (as CSV) or an in-memory DataFrame.</span>
+<span class="sd">        The path to the dataset (as parquet) or an in-memory DataFrame.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    KappaStats</span>
-<span class="sd">        The kappa statistics for the various columns.</span>
+<span class="sd">    float</span>
+<span class="sd">        The kappa statistic for the data.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -249,32 +241,34 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    See interpretation of Cohen&#39;s Kappa Statistic:</span>
+<span class="sd">    See interpretation of Fleiss Kappa Statistic:</span>
 <span class="sd">    https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3900052/table/t3-biochem-med-22-3-276-4/?report=objectonly</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Assume the data is the soft-search labelled dataset</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="c1"># Prep comparisons</span>
-    <span class="n">anno1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;AnnotatorNum&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">anno2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;AnnotatorNum&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># Sort by link to have consistent order</span>
+    <span class="nb">sorted</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+        <span class="n">by</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">github_link</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
 
-    <span class="c1"># Aggregate</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span>
-        <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">PromisesSoftware</span><span class="p">,</span>
-        <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">PromisesModel</span><span class="p">,</span>
-        <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">PromisesAlgorithm</span><span class="p">,</span>
-        <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">PromisesDatabase</span><span class="p">,</span>
-    <span class="p">]:</span>
-        <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">cohen_kappa_score</span><span class="p">(</span>
-            <span class="n">anno1</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-            <span class="n">anno2</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+    <span class="c1"># Make a frame of _just_ the annotation</span>
+    <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">annotator_label</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+        <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="nb">sorted</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                <span class="nb">sorted</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span> <span class="o">==</span> <span class="n">annotator_label</span>
+            <span class="p">][</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">include_in_definition</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="p">)</span>
 
+    <span class="c1"># Aggregate</span>
+    <span class="n">agg_raters</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">aggregate_raters</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span>
+
     <span class="c1"># Calc Kappa&#39;s and return</span>
-    <span class="k">return</span> <span class="n">KappaStats</span><span class="p">(</span><span class="o">**</span><span class="n">results</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">fleiss_kappa</span><span class="p">(</span><span class="n">agg_raters</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="print_irr_summary_stats"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.irr.print_irr_summary_stats">[docs]</a><span class="k">def</span> <span class="nf">print_irr_summary_stats</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -290,62 +284,76 @@
     <span class="c1"># Load IRR data</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">load_soft_search_2022_irr</span><span class="p">()</span>
 
+    <span class="c1"># Sort by link to have consistent order</span>
+    <span class="nb">sorted</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+        <span class="n">by</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">github_link</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
     <span class="c1"># Get Cohen&#39;s Kappa Stats</span>
-    <span class="n">kappa</span> <span class="o">=</span> <span class="n">calc_cohens_kappa</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">kappa</span> <span class="o">=</span> <span class="n">calc_fleiss_kappa</span><span class="p">(</span><span class="nb">sorted</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_iterrpreted_score</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">0.2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;No agreement&quot;</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">0.2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Poor agreement&quot;</span>
         <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;=</span> <span class="mf">0.2</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">0.4</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;Minimal agreement&quot;</span>
+            <span class="k">return</span> <span class="s2">&quot;Fair agreement&quot;</span>
         <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;=</span> <span class="mf">0.4</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">0.6</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;Weak agreement&quot;</span>
-        <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;=</span> <span class="mf">0.6</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">0.8</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;Moderate agreement&quot;</span>
-        <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;=</span> <span class="mf">0.8</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">0.9</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;Strong agreement&quot;</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;=</span> <span class="mf">0.6</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">0.8</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Substantial agreement&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;Almost perfect agreement&quot;</span>
 
-    <span class="c1"># Get annotator subsets</span>
-    <span class="n">anno1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;AnnotatorNum&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">anno2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;AnnotatorNum&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># Get just annotation series</span>
+    <span class="n">annotations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">link_series</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">annotator_label</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+        <span class="n">annotator_subset</span> <span class="o">=</span> <span class="nb">sorted</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="nb">sorted</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span> <span class="o">==</span> <span class="n">annotator_label</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">annotations</span><span class="p">[</span><span class="n">annotator_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">annotator_subset</span><span class="p">[</span>
+            <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">include_in_definition</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">link_series</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">link_series</span> <span class="o">=</span> <span class="n">annotator_subset</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">github_link</span><span class="p">]</span>
+
+    <span class="c1"># Each annotator column values as columns</span>
+    <span class="n">annotations_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">github_link</span><span class="p">:</span> <span class="n">link_series</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">annotations</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
 
     <span class="c1"># Print stats</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inter-Rater Reliability Statistics and Data Summary:&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span>
-        <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">PromisesSoftware</span><span class="p">,</span>
-        <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">PromisesModel</span><span class="p">,</span>
-        <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">PromisesAlgorithm</span><span class="p">,</span>
-        <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">PromisesDatabase</span><span class="p">,</span>
-    <span class="p">]:</span>
-        <span class="c1"># Get score for category</span>
-        <span class="n">cat_score</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kappa</span><span class="p">,</span> <span class="n">cat</span><span class="p">)</span>
-        <span class="c1"># Create mini-df for row-wise comparisons</span>
-        <span class="n">subset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">AwardNumber</span><span class="p">:</span> <span class="p">(</span>
-                    <span class="n">anno1</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">AwardNumber</span><span class="p">]</span>
-                <span class="p">),</span>
-                <span class="s2">&quot;anno1&quot;</span><span class="p">:</span> <span class="n">anno1</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-                <span class="s2">&quot;anno2&quot;</span><span class="p">:</span> <span class="n">anno2</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-        <span class="c1"># Generate counts</span>
-        <span class="n">anno1_counts</span> <span class="o">=</span> <span class="n">subset</span><span class="p">[</span><span class="s2">&quot;anno1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">anno2_counts</span> <span class="o">=</span> <span class="n">subset</span><span class="p">[</span><span class="s2">&quot;anno2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">mean_counts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">anno1_counts</span><span class="p">,</span> <span class="n">anno2_counts</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">diff</span> <span class="o">=</span> <span class="n">subset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">subset</span><span class="p">[</span><span class="s2">&quot;anno1&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">subset</span><span class="p">[</span><span class="s2">&quot;anno2&quot;</span><span class="p">]]</span>
+    <span class="n">annotator_pairs</span> <span class="o">=</span> <span class="n">combinations</span><span class="p">(</span>
+        <span class="nb">sorted</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span> <span class="mi">2</span>
+    <span class="p">)</span>
 
-        <span class="c1"># Run print</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">cat_score</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">_iterrpreted_score</span><span class="p">(</span><span class="n">cat_score</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average of Both Annotators Value Counts:&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">mean_counts</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Differing Labels:&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span></div>
+    <span class="c1"># Run print</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">include_in_definition</span><span class="si">}</span><span class="s2">: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kappa</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">_iterrpreted_score</span><span class="p">(</span><span class="n">kappa</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+    <span class="c1"># Get all possible diffs then drop duplicates</span>
+    <span class="n">diffs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">anno_one</span><span class="p">,</span> <span class="n">anno_two</span> <span class="ow">in</span> <span class="n">annotator_pairs</span><span class="p">:</span>
+        <span class="n">diffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">annotations_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">annotations_df</span><span class="p">[</span><span class="n">anno_one</span><span class="p">]</span> <span class="o">!=</span> <span class="n">annotations_df</span><span class="p">[</span><span class="n">anno_two</span><span class="p">]]</span>
+        <span class="p">)</span>
+    <span class="n">diff_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">diffs</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Differing Labels:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">diff_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span></div>
 </pre></div>
         </article>
       </div>
@@ -385,6 +393,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>

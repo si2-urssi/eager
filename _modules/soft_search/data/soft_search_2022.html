@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
-        <title>soft_search.data.soft_search_2022 - soft-search 0.1.dev1+ge53a727 documentation</title>
+    <meta name="generator" content="sphinx-5.2.3, furo 2022.09.29"/>
+        <title>soft_search.data.soft_search_2022 - soft-search 0.1.dev1+gd6d2a0c documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+ge53a727 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+gd6d2a0c documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+ge53a727 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+gd6d2a0c documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -207,7 +207,7 @@
 
 
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
@@ -216,17 +216,15 @@
 <span class="c1">###############################################################################</span>
 
 <span class="n">SOFT_SEARCH_2022_DS_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;soft-search-2022-labelled.parquet&quot;</span>
-<span class="n">SOFT_SEARCH_2022_IRR_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;soft-search-2022-irr-50.parquet&quot;</span>
+<span class="n">SOFT_SEARCH_2022_IRR_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;soft-search-2022-irr.parquet&quot;</span>
 
 
 <div class="viewcode-block" id="SoftSearch2022IRRDatasetFields"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.soft_search_2022.SoftSearch2022IRRDatasetFields">[docs]</a><span class="k">class</span> <span class="nc">SoftSearch2022IRRDatasetFields</span><span class="p">:</span>
-    <span class="n">AwardNumber</span> <span class="o">=</span> <span class="s2">&quot;AwardNumber&quot;</span>
-    <span class="n">Abstract</span> <span class="o">=</span> <span class="s2">&quot;Abstract&quot;</span>
-    <span class="n">PromisesSoftware</span> <span class="o">=</span> <span class="s2">&quot;PromisesSoftware&quot;</span>
-    <span class="n">PromisesModel</span> <span class="o">=</span> <span class="s2">&quot;PromisesModel&quot;</span>
-    <span class="n">PromisesAlgorithm</span> <span class="o">=</span> <span class="s2">&quot;PromisesAlgorithm&quot;</span>
-    <span class="n">PromisesDatabase</span> <span class="o">=</span> <span class="s2">&quot;PromisesDatabase&quot;</span>
-    <span class="n">Notes</span> <span class="o">=</span> <span class="s2">&quot;Notes&quot;</span></div>
+    <span class="n">annotator</span> <span class="o">=</span> <span class="s2">&quot;annotator&quot;</span>
+    <span class="n">github_link</span> <span class="o">=</span> <span class="s2">&quot;github_link&quot;</span>
+    <span class="n">include_in_definition</span> <span class="o">=</span> <span class="s2">&quot;include_in_definition&quot;</span>
+    <span class="n">notes</span> <span class="o">=</span> <span class="s2">&quot;notes&quot;</span>
+    <span class="n">most_recent_commit_datetime</span> <span class="o">=</span> <span class="s2">&quot;most_recent_commit_datetime&quot;</span></div>
 
 
 <span class="n">ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS</span> <span class="o">=</span> <span class="p">[</span>
@@ -255,8 +253,7 @@
 
 
 <span class="k">def</span> <span class="nf">_prepare_soft_search_2022_irr</span><span class="p">(</span>
-    <span class="n">anno1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
-    <span class="n">anno2</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+    <span class="n">all_annos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to prepare the manually labelled data downloaded from Google Drive</span>
@@ -264,52 +261,82 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    anno1: Union[str, Path, pd.DataFrame]</span>
-<span class="sd">        The path or in-memory pandas DataFrame for the raw manually labelled</span>
-<span class="sd">        data from annotator one used for calculating inter-rater reliability.</span>
-<span class="sd">        Only CSV file format is supported when providing a file path.</span>
-<span class="sd">    anno2: Union[str, Path, pd.DataFrame]</span>
-<span class="sd">        The path or in-memory pandas DataFrame for the raw manually labelled</span>
-<span class="sd">        data from annotator two used for calculating inter-rater reliability.</span>
-<span class="sd">        Only CSV file format is supported when providing a file path.</span>
+<span class="sd">    all_annos: Union[str, Path, pd.DataFrame]</span>
+<span class="sd">        A list of paths or in-memory pandas DataFrames for the raw</span>
+<span class="sd">        manually labelled data from annotator one used for calculating</span>
+<span class="sd">        inter-rater reliability.</span>
+<span class="sd">        Only CSV file format is supported when providing a file paths.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    Path</span>
 <span class="sd">        The Path to the prepared and stored parquet file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Read data</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">anno1</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
-        <span class="n">anno1_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">anno1</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">anno1_data</span> <span class="o">=</span> <span class="n">anno1</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">anno2</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
-        <span class="n">anno2_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">anno2</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">anno2_data</span> <span class="o">=</span> <span class="n">anno2</span>
+    <span class="c1"># Fix data</span>
+    <span class="n">EXCLUDE_INCLUDE_VALUES_MAP</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;exclude&quot;</span><span class="p">:</span> <span class="s2">&quot;exclude&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;include&quot;</span><span class="p">:</span> <span class="s2">&quot;include&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;include &quot;</span><span class="p">:</span> <span class="s2">&quot;include&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;incldue&quot;</span><span class="p">:</span> <span class="s2">&quot;include&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;exclude &quot;</span><span class="p">:</span> <span class="s2">&quot;exclude&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;excude&quot;</span><span class="p">:</span> <span class="s2">&quot;exclude&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
 
-    <span class="c1"># Select columns</span>
-    <span class="n">anno1_data</span> <span class="o">=</span> <span class="n">anno1_data</span><span class="p">[</span><span class="n">ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS</span><span class="p">]</span>
-    <span class="n">anno2_data</span> <span class="o">=</span> <span class="n">anno2_data</span><span class="p">[</span><span class="n">ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS</span><span class="p">]</span>
+    <span class="c1"># Selected data</span>
+    <span class="n">columns_subset_frames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">anno</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_annos</span><span class="p">):</span>
+        <span class="c1"># Load the data</span>
+        <span class="n">annotator_label</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">anno</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+            <span class="n">anno_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">anno</span><span class="p">)</span>
+            <span class="n">annotator_label</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">anno</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">anno_data</span> <span class="o">=</span> <span class="n">anno</span>
+            <span class="n">annotator_label</span> <span class="o">=</span> <span class="n">i</span>
 
-    <span class="c1"># Replace any nan values with &quot;no&quot;</span>
-    <span class="n">anno1_data</span> <span class="o">=</span> <span class="n">anno1_data</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
-    <span class="n">anno2_data</span> <span class="o">=</span> <span class="n">anno2_data</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+        <span class="c1"># Drop duplicate &quot;notes&quot; column before rename</span>
+        <span class="n">anno_data</span> <span class="o">=</span> <span class="n">anno_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;notes&quot;</span><span class="p">])</span>
 
-    <span class="c1"># Remap values</span>
-    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Software&quot;</span><span class="p">,</span> <span class="s2">&quot;Model&quot;</span><span class="p">,</span> <span class="s2">&quot;Algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;Database&quot;</span><span class="p">]:</span>
-        <span class="n">column</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Promises</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">remapper</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;yes&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">PredictionLabels</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">Predicted&quot;</span><span class="p">),</span>
-            <span class="s2">&quot;no&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">PredictionLabels</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">NotPredicted&quot;</span><span class="p">),</span>
-        <span class="p">}</span>
-        <span class="n">anno1_data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">anno1_data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">remapper</span><span class="p">)</span>
-        <span class="n">anno2_data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">anno2_data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">remapper</span><span class="p">)</span>
+        <span class="c1"># Rename columns</span>
+        <span class="n">anno_data</span> <span class="o">=</span> <span class="n">anno_data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;include/exclude&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">include_in_definition</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;link&quot;</span><span class="p">:</span> <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">github_link</span><span class="p">,</span>
+                <span class="s2">&quot;Notes (justifications) &quot;</span><span class="p">:</span> <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">notes</span><span class="p">,</span>
+                <span class="s2">&quot;most_recent_commit_datetime&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">most_recent_commit_datetime</span>
+                <span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
 
-    <span class="c1"># Combine to single dataframe</span>
-    <span class="n">anno1_data</span><span class="p">[</span><span class="s2">&quot;AnnotatorNum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">anno2_data</span><span class="p">[</span><span class="s2">&quot;AnnotatorNum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">combined</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">anno1_data</span><span class="p">,</span> <span class="n">anno2_data</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Subset columns</span>
+        <span class="n">subset</span> <span class="o">=</span> <span class="n">anno_data</span><span class="p">[</span>
+            <span class="p">[</span>
+                <span class="n">col</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Sort by link to have semi-consistent order</span>
+        <span class="n">subset</span> <span class="o">=</span> <span class="n">subset</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+            <span class="n">by</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">github_link</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Rename values</span>
+        <span class="n">subset</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">include_in_definition</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset</span><span class="p">[</span>
+            <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">include_in_definition</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">EXCLUDE_INCLUDE_VALUES_MAP</span><span class="p">)</span>
+
+        <span class="c1"># Add column for annotator</span>
+        <span class="n">subset</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span> <span class="o">=</span> <span class="n">annotator_label</span>
+        <span class="n">columns_subset_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">columns_subset_frames</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">combined</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">SOFT_SEARCH_2022_IRR_PATH</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">SOFT_SEARCH_2022_IRR_PATH</span>
 
@@ -471,6 +498,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
