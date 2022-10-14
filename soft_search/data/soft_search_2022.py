@@ -3,7 +3,7 @@
 
 
 from pathlib import Path
-from typing import Union
+from typing import List, Union
 
 import pandas as pd
 
@@ -12,17 +12,15 @@ from ..constants import NSFFields, PredictionLabels
 ###############################################################################
 
 SOFT_SEARCH_2022_DS_PATH = Path(__file__).parent / "soft-search-2022-labelled.parquet"
-SOFT_SEARCH_2022_IRR_PATH = Path(__file__).parent / "soft-search-2022-irr-50.parquet"
+SOFT_SEARCH_2022_IRR_PATH = Path(__file__).parent / "soft-search-2022-irr.parquet"
 
 
 class SoftSearch2022IRRDatasetFields:
-    AwardNumber = "AwardNumber"
-    Abstract = "Abstract"
-    PromisesSoftware = "PromisesSoftware"
-    PromisesModel = "PromisesModel"
-    PromisesAlgorithm = "PromisesAlgorithm"
-    PromisesDatabase = "PromisesDatabase"
-    Notes = "Notes"
+    annotator = "annotator"
+    github_link = "github_link"
+    include_in_definition = "include_in_definition"
+    notes = "notes"
+    most_recent_commit_datetime = "most_recent_commit_datetime"
 
 
 ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS = [
@@ -51,8 +49,7 @@ ALL_SOFT_SEARCH_2022_DATASET_FIELDS = [
 
 
 def _prepare_soft_search_2022_irr(
-    anno1: Union[str, Path, pd.DataFrame],
-    anno2: Union[str, Path, pd.DataFrame],
+    all_annos: List[Union[str, Path, pd.DataFrame]],
 ) -> Path:
     """
     Function to prepare the manually labelled data downloaded from Google Drive
@@ -60,52 +57,82 @@ def _prepare_soft_search_2022_irr(
 
     Parameters
     ----------
-    anno1: Union[str, Path, pd.DataFrame]
-        The path or in-memory pandas DataFrame for the raw manually labelled
-        data from annotator one used for calculating inter-rater reliability.
-        Only CSV file format is supported when providing a file path.
-    anno2: Union[str, Path, pd.DataFrame]
-        The path or in-memory pandas DataFrame for the raw manually labelled
-        data from annotator two used for calculating inter-rater reliability.
-        Only CSV file format is supported when providing a file path.
+    all_annos: Union[str, Path, pd.DataFrame]
+        A list of paths or in-memory pandas DataFrames for the raw
+        manually labelled data from annotator one used for calculating
+        inter-rater reliability.
+        Only CSV file format is supported when providing a file paths.
 
     Returns
     -------
     Path
         The Path to the prepared and stored parquet file.
     """
-    # Read data
-    if isinstance(anno1, (str, Path)):
-        anno1_data = pd.read_csv(anno1)
-    else:
-        anno1_data = anno1
-    if isinstance(anno2, (str, Path)):
-        anno2_data = pd.read_csv(anno2)
-    else:
-        anno2_data = anno2
+    # Fix data
+    EXCLUDE_INCLUDE_VALUES_MAP = {
+        "exclude": "exclude",
+        "include": "include",
+        "include ": "include",
+        "incldue": "include",
+        "exclude ": "exclude",
+        "excude": "exclude",
+    }
 
-    # Select columns
-    anno1_data = anno1_data[ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS]
-    anno2_data = anno2_data[ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS]
+    # Selected data
+    columns_subset_frames: List[pd.DataFrame] = []
+    for i, anno in enumerate(all_annos):
+        # Load the data
+        annotator_label: Union[str, int]
+        if isinstance(anno, (str, Path)):
+            anno_data = pd.read_csv(anno)
+            annotator_label = Path(anno).with_suffix("").name
+        else:
+            anno_data = anno
+            annotator_label = i
 
-    # Replace any nan values with "no"
-    anno1_data = anno1_data.fillna("no")
-    anno2_data = anno2_data.fillna("no")
+        # Drop duplicate "notes" column before rename
+        anno_data = anno_data.drop(columns=["notes"])
 
-    # Remap values
-    for cat in ["Software", "Model", "Algorithm", "Database"]:
-        column = f"Promises{cat}"
-        remapper = {
-            "yes": getattr(PredictionLabels, f"{cat}Predicted"),
-            "no": getattr(PredictionLabels, f"{cat}NotPredicted"),
-        }
-        anno1_data[column] = anno1_data[column].map(remapper)
-        anno2_data[column] = anno2_data[column].map(remapper)
+        # Rename columns
+        anno_data = anno_data.rename(
+            columns={
+                "include/exclude": (
+                    SoftSearch2022IRRDatasetFields.include_in_definition
+                ),
+                "link": SoftSearch2022IRRDatasetFields.github_link,
+                "Notes (justifications) ": SoftSearch2022IRRDatasetFields.notes,
+                "most_recent_commit_datetime": (
+                    SoftSearch2022IRRDatasetFields.most_recent_commit_datetime
+                ),
+            }
+        )
 
-    # Combine to single dataframe
-    anno1_data["AnnotatorNum"] = 1
-    anno2_data["AnnotatorNum"] = 2
-    combined = pd.concat([anno1_data, anno2_data]).reset_index(drop=True)
+        # Subset columns
+        subset = anno_data[
+            [
+                col
+                for col in ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS
+                if col is not SoftSearch2022IRRDatasetFields.annotator
+            ]
+        ]
+
+        # Sort by link to have semi-consistent order
+        subset = subset.sort_values(
+            by=[
+                SoftSearch2022IRRDatasetFields.github_link,
+            ],
+        )
+
+        # Rename values
+        subset[SoftSearch2022IRRDatasetFields.include_in_definition] = subset[
+            SoftSearch2022IRRDatasetFields.include_in_definition
+        ].map(EXCLUDE_INCLUDE_VALUES_MAP)
+
+        # Add column for annotator
+        subset[SoftSearch2022IRRDatasetFields.annotator] = annotator_label
+        columns_subset_frames.append(subset)
+
+    combined = pd.concat(columns_subset_frames).reset_index(drop=True)
     combined.to_parquet(SOFT_SEARCH_2022_IRR_PATH)
     return SOFT_SEARCH_2022_IRR_PATH
 

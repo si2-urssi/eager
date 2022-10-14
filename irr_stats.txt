@@ -1,0 +1,64 @@
+Inter-Rater Reliability Statistics and Data Summary:
+================================================================================
+PromisesSoftware: 0.6601941747572816 (Moderate agreement)
+
+Average of Both Annotators Value Counts:
+   software-not-predicted  software-predicted
+0                    35.5                14.5
+
+Differing Labels:
+    AwardNumber                   anno1                   anno2
+8       1910213  software-not-predicted      software-predicted
+10      1911232      software-predicted  software-not-predicted
+13      1822087      software-predicted  software-not-predicted
+14      1943109  software-not-predicted      software-predicted
+20      1901048      software-predicted  software-not-predicted
+36      1935966  software-not-predicted      software-predicted
+49      1835780      software-predicted  software-not-predicted
+--------------------------------------------------------------------------------
+PromisesModel: 0.11111111111111116 (No agreement)
+
+Average of Both Annotators Value Counts:
+   model-not-predicted  model-predicted
+0                 45.0              5.0
+
+Differing Labels:
+    AwardNumber                anno1                anno2
+3       1940291      model-predicted  model-not-predicted
+5       2124276      model-predicted  model-not-predicted
+7       2126582  model-not-predicted      model-predicted
+8       1910213      model-predicted  model-not-predicted
+10      1911232      model-predicted  model-not-predicted
+12      2007998  model-not-predicted      model-predicted
+34      1948432  model-not-predicted      model-predicted
+46      1938914  model-not-predicted      model-predicted
+--------------------------------------------------------------------------------
+PromisesAlgorithm: 0.5681381957773513 (Weak agreement)
+
+Average of Both Annotators Value Counts:
+   algorithm-not-predicted  algorithm-predicted
+0                     35.5                 14.5
+
+Differing Labels:
+    AwardNumber                    anno1                    anno2
+8       1910213  algorithm-not-predicted      algorithm-predicted
+10      1911232      algorithm-predicted  algorithm-not-predicted
+24      2055127      algorithm-predicted  algorithm-not-predicted
+28      2007181      algorithm-predicted  algorithm-not-predicted
+29      1955593      algorithm-predicted  algorithm-not-predicted
+31      2104264      algorithm-predicted  algorithm-not-predicted
+40      2009007      algorithm-predicted  algorithm-not-predicted
+42      2019135  algorithm-not-predicted      algorithm-predicted
+47      1931389      algorithm-predicted  algorithm-not-predicted
+--------------------------------------------------------------------------------
+PromisesDatabase: 0.0 (No agreement)
+
+Average of Both Annotators Value Counts:
+   database-not-predicted  database-predicted
+0                    49.0                 2.0
+
+Differing Labels:
+    AwardNumber               anno1                   anno2
+2       1910193  database-predicted  database-not-predicted
+29      1955593  database-predicted  database-not-predicted
+--------------------------------------------------------------------------------
