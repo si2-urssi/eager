@@ -76,6 +76,7 @@ def _prepare_soft_search_2022_irr(
         "incldue": "include",
         "exclude ": "exclude",
         "excude": "exclude",
+        "include?": "include",
     }
 
     # Selected data

@@ -145,8 +145,10 @@ def print_irr_summary_stats() -> None:
             annotations_df.loc[annotations_df[anno_one] != annotations_df[anno_two]]
         )
     diff_df = pd.concat(diffs)
+    diff_df = diff_df.drop_duplicates(subset=["github_link"]).reset_index()
 
     print("Differing Labels:")
-    print(diff_df.drop_duplicates().reset_index())
+    print(diff_df)
     print()
     print("-" * 80)
+    diff_df.to_csv("irr-diffs.csv", index=False)
