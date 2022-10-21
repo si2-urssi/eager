@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
-        <title>soft_search.data.irr - soft-search 0.1.dev1+g7b8ef8d documentation</title>
+        <title>soft_search.data.irr - soft-search 0.1.dev1+g87f8909 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g7b8ef8d documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g87f8909 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+g7b8ef8d documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+g87f8909 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -249,7 +249,7 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="c1"># Sort by link to have consistent order</span>
-    <span class="nb">sorted</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+    <span class="n">sorted_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
         <span class="n">by</span><span class="o">=</span><span class="p">[</span>
             <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">github_link</span><span class="p">,</span>
         <span class="p">],</span>
@@ -257,12 +257,15 @@
 
     <span class="c1"># Make a frame of _just_ the annotation</span>
     <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">annotator_label</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">annotator_label</span> <span class="ow">in</span> <span class="n">sorted_data</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
         <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="nb">sorted</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                <span class="nb">sorted</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span> <span class="o">==</span> <span class="n">annotator_label</span>
+            <span class="n">sorted_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                <span class="n">sorted_data</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span> <span class="o">==</span> <span class="n">annotator_label</span>
             <span class="p">][</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">include_in_definition</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="p">)</span>
+
+    <span class="c1"># Annotations merged together and ensured to be in subject as rows order</span>
+    <span class="n">annotations</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 
     <span class="c1"># Aggregate</span>
     <span class="n">agg_raters</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">aggregate_raters</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span>
@@ -285,14 +288,14 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">load_soft_search_2022_irr</span><span class="p">()</span>
 
     <span class="c1"># Sort by link to have consistent order</span>
-    <span class="nb">sorted</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+    <span class="n">sorted_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
         <span class="n">by</span><span class="o">=</span><span class="p">[</span>
             <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">github_link</span><span class="p">,</span>
         <span class="p">],</span>
     <span class="p">)</span>
 
     <span class="c1"># Get Cohen&#39;s Kappa Stats</span>
-    <span class="n">kappa</span> <span class="o">=</span> <span class="n">calc_fleiss_kappa</span><span class="p">(</span><span class="nb">sorted</span><span class="p">)</span>
+    <span class="n">kappa</span> <span class="o">=</span> <span class="n">calc_fleiss_kappa</span><span class="p">(</span><span class="n">sorted_data</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_iterrpreted_score</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -310,9 +313,9 @@
     <span class="c1"># Get just annotation series</span>
     <span class="n">annotations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">link_series</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">annotator_label</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
-        <span class="n">annotator_subset</span> <span class="o">=</span> <span class="nb">sorted</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-            <span class="nb">sorted</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span> <span class="o">==</span> <span class="n">annotator_label</span>
+    <span class="k">for</span> <span class="n">annotator_label</span> <span class="ow">in</span> <span class="n">sorted_data</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+        <span class="n">annotator_subset</span> <span class="o">=</span> <span class="n">sorted_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">sorted_data</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span> <span class="o">==</span> <span class="n">annotator_label</span>
         <span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="n">annotations</span><span class="p">[</span><span class="n">annotator_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">annotator_subset</span><span class="p">[</span>
             <span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">include_in_definition</span>
@@ -332,7 +335,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inter-Rater Reliability Statistics and Data Summary:&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
     <span class="n">annotator_pairs</span> <span class="o">=</span> <span class="n">combinations</span><span class="p">(</span>
-        <span class="nb">sorted</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span> <span class="mi">2</span>
+        <span class="n">sorted_data</span><span class="p">[</span><span class="n">SoftSearch2022IRRDatasetFields</span><span class="o">.</span><span class="n">annotator</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span> <span class="mi">2</span>
     <span class="p">)</span>
 
     <span class="c1"># Run print</span>
