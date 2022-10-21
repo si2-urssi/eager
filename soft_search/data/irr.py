@@ -53,7 +53,9 @@ def calc_fleiss_kappa(
 
     # Make a frame of _just_ the annotation
     annotations: List[pd.Series] = []
-    for annotator_label in sorted_data[SoftSearch2022IRRDatasetFields.annotator].unique():
+    for annotator_label in sorted_data[
+        SoftSearch2022IRRDatasetFields.annotator
+    ].unique():
         annotations.append(
             sorted_data.loc[
                 sorted_data[SoftSearch2022IRRDatasetFields.annotator] == annotator_label
@@ -109,7 +111,9 @@ def print_irr_summary_stats() -> None:
     # Get just annotation series
     annotations: Dict[str, pd.Series] = {}
     link_series: Optional[pd.Series] = None
-    for annotator_label in sorted_data[SoftSearch2022IRRDatasetFields.annotator].unique():
+    for annotator_label in sorted_data[
+        SoftSearch2022IRRDatasetFields.annotator
+    ].unique():
         annotator_subset = sorted_data.loc[
             sorted_data[SoftSearch2022IRRDatasetFields.annotator] == annotator_label
         ].reset_index()
