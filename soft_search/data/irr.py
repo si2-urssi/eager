@@ -45,7 +45,7 @@ def calc_fleiss_kappa(
         data = pd.read_parquet(data)
 
     # Sort by link to have consistent order
-    sorted = data.sort_values(
+    sorted_data = data.sort_values(
         by=[
             SoftSearch2022IRRDatasetFields.github_link,
         ],
@@ -53,12 +53,15 @@ def calc_fleiss_kappa(
 
     # Make a frame of _just_ the annotation
     annotations: List[pd.Series] = []
-    for annotator_label in sorted[SoftSearch2022IRRDatasetFields.annotator].unique():
+    for annotator_label in sorted_data[SoftSearch2022IRRDatasetFields.annotator].unique():
         annotations.append(
-            sorted.loc[
-                sorted[SoftSearch2022IRRDatasetFields.annotator] == annotator_label
+            sorted_data.loc[
+                sorted_data[SoftSearch2022IRRDatasetFields.annotator] == annotator_label
             ][SoftSearch2022IRRDatasetFields.include_in_definition].values
         )
+
+    # Annotations merged together and ensured to be in subject as rows order
+    annotations = pd.DataFrame(annotations).T
 
     # Aggregate
     agg_raters, _ = aggregate_raters(annotations)
@@ -81,14 +84,14 @@ def print_irr_summary_stats() -> None:
     data = load_soft_search_2022_irr()
 
     # Sort by link to have consistent order
-    sorted = data.sort_values(
+    sorted_data = data.sort_values(
         by=[
             SoftSearch2022IRRDatasetFields.github_link,
         ],
     )
 
     # Get Cohen's Kappa Stats
-    kappa = calc_fleiss_kappa(sorted)
+    kappa = calc_fleiss_kappa(sorted_data)
 
     def _iterrpreted_score(v: float) -> str:
         if v < 0:
@@ -106,9 +109,9 @@ def print_irr_summary_stats() -> None:
     # Get just annotation series
     annotations: Dict[str, pd.Series] = {}
     link_series: Optional[pd.Series] = None
-    for annotator_label in sorted[SoftSearch2022IRRDatasetFields.annotator].unique():
-        annotator_subset = sorted.loc[
-            sorted[SoftSearch2022IRRDatasetFields.annotator] == annotator_label
+    for annotator_label in sorted_data[SoftSearch2022IRRDatasetFields.annotator].unique():
+        annotator_subset = sorted_data.loc[
+            sorted_data[SoftSearch2022IRRDatasetFields.annotator] == annotator_label
         ].reset_index()
         annotations[annotator_label] = annotator_subset[
             SoftSearch2022IRRDatasetFields.include_in_definition
@@ -128,7 +131,7 @@ def print_irr_summary_stats() -> None:
     print("Inter-Rater Reliability Statistics and Data Summary:")
     print("=" * 80)
     annotator_pairs = combinations(
-        sorted[SoftSearch2022IRRDatasetFields.annotator].unique(), 2
+        sorted_data[SoftSearch2022IRRDatasetFields.annotator].unique(), 2
     )
 
     # Run print
