@@ -27,6 +27,7 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
+  "beautifulsoup4~=4.11",
   "datasets~=2.4",
   "python-dotenv~=0.21",
   "ghapi~=1.0",
@@ -88,6 +89,7 @@ dev = [
 get-github-repositories-with-nsf-ref = "soft_search.bin.get_github_repositories_with_nsf_ref:main"
 get-nsf-award-set-for-soft-search-2022 = "soft_search.bin.get_nsf_award_set_for_soft_search_2022:main"
 train-and-upload-soft-search-2022-transformer = "soft_search.bin.train_and_upload_soft_search_2022_transformer:main"
+find-nsf-award-ids-in-github-readmes-and-link = "soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link:main"
 
 # build settings
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
