@@ -3,18 +3,17 @@
 
 import argparse
 import logging
+import re
 import sys
 import time
 import traceback
 from pathlib import Path
 
-import re
 import pandas as pd
-from pytest import fail
-from tqdm import tqdm
-from requests.exceptions import HTTPError
 import requests
 from bs4 import BeautifulSoup
+from requests.exceptions import HTTPError
+from tqdm import tqdm
 
 ###############################################################################
 
@@ -42,7 +41,7 @@ class Args(argparse.Namespace):
             help=(
                 "The path to the GitHub dataset to parse and link with "
                 "NSF Awards. Must be provided as a CSV."
-            )
+            ),
         )
         p.add_argument(
             "-o",
@@ -63,10 +62,7 @@ class Args(argparse.Namespace):
             dest="sleep",
             default=5,
             type=int,
-            help=(
-                "Number of seconds to sleep between requests to GitHub. "
-                "Default: 5"
-            )
+            help=("Number of seconds to sleep between requests to GitHub. Default: 5"),
         )
         p.add_argument(
             "--debug",
@@ -79,13 +75,14 @@ class Args(argparse.Namespace):
 
 ###############################################################################
 
+
 def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
     # Load GitHub Data
     github_data = pd.read_csv(gh_data_path)
 
     # Dedupe based on GitHub Link
     github_data = github_data.drop_duplicates(subset=["link"])
-    
+
     # Create containers for errored or found data
     linked_rows = []
     failed_rows = []
@@ -105,24 +102,28 @@ def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
             github_page = requests.get(row.link)
             github_page.raise_for_status()
         except HTTPError:
-            failed_rows.append({
-                "github_link": row.link,
-                "nsf_award_id": None,
-                "reason": "failed-to-scrape-github",
-            })
+            failed_rows.append(
+                {
+                    "github_link": row.link,
+                    "nsf_award_id": None,
+                    "reason": "failed-to-scrape-github",
+                }
+            )
             continue
-        
+
         # Find and scrape README text
         soup = BeautifulSoup(github_page.content, "html.parser")
         readme_container = soup.find(id="readme")
         if readme_container is None:
-            failed_rows.append({
-                "github_link": row.link,
-                "nsf_award_id": None,
-                "reason": "no-readme",
-            })
+            failed_rows.append(
+                {
+                    "github_link": row.link,
+                    "nsf_award_id": None,
+                    "reason": "no-readme",
+                }
+            )
             continue
-        
+
         # Find all 7 digit numbers
         # This is obviously very inclusive
         # We _hope_ to filter some out in the NSF checking in a second
@@ -131,8 +132,8 @@ def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
             readme_container.text,
             re.MULTILINE,
         )
-        
-        # strict_nsf_award_references = 
+
+        # strict_nsf_award_references =
         #
         # I couldn't figure out this regex
         # (NSF|National\ Science\ Foundation){1}(.)+([0-9]{7})+
@@ -142,7 +143,7 @@ def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
         #
         # it only finds the last one
         # I have tried many variants of it...
-        
+
         # For each award, try to see if it is a valid id
         # by checking with the API
         # This does not guarantee that it is the _correct_ award
@@ -152,33 +153,36 @@ def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
         for nsf_award_id in set(likely_nsf_award_references):
             try:
                 award_response = requests.get(
-                    f"https://api.nsf.gov/services/"
-                    f"v1/awards/{nsf_award_id}.json"
+                    f"https://api.nsf.gov/services/v1/awards/{nsf_award_id}.json"
                 )
                 award_response.raise_for_status()
-                
+
                 # Safety check further
                 award_response.json()
-                
+
                 # Seems like a match, add it
-                linked_rows.append({
-                    "github_link": row.link,
-                    "nsf_award_id": nsf_award_id,
-                    "nsf_link": (
-                        f"https://www.nsf.gov/awardsearch/"
-                        f"showAward?AWD_ID={nsf_award_id}"
-                    ),
-                })
+                linked_rows.append(
+                    {
+                        "github_link": row.link,
+                        "nsf_award_id": nsf_award_id,
+                        "nsf_link": (
+                            f"https://www.nsf.gov/awardsearch/"
+                            f"showAward?AWD_ID={nsf_award_id}"
+                        ),
+                    }
+                )
             except HTTPError:
-                failed_rows.append({
-                    "github_link": row.link,
-                    "nsf_award_id": nsf_award_id,
-                    "reason": "nsf-award-id-request-error",
-                })
-        
+                failed_rows.append(
+                    {
+                        "github_link": row.link,
+                        "nsf_award_id": nsf_award_id,
+                        "reason": "nsf-award-id-request-error",
+                    }
+                )
+
         # Sleep for a bit to not get throttled by GitHub
         time.sleep(sleep_time)
-    
+
     # Merge all data and store to outputs
     linked_data = pd.DataFrame(linked_rows)
     linked_data.to_parquet(out_path)
@@ -199,9 +203,7 @@ def main() -> None:
     # Setup logging
     logging.basicConfig(
         level=log_level,
-        format=(
-            "[%(levelname)4s: %(module)s:%(lineno)4s %(asctime)s] %(message)s"
-        ),
+        format=("[%(levelname)4s: %(module)s:%(lineno)4s %(asctime)s] %(message)s"),
     )
 
     # Run func
@@ -215,9 +217,9 @@ def main() -> None:
         log.error("=============================================")
         sys.exit(1)
 
+
 ###############################################################################
 # Allow caller to directly run this module (usually in development scenarios)
 
 if __name__ == "__main__":
     main()
-
