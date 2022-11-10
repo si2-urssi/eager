@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
-        <title>soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link - soft-search 0.1.dev1+gfe244b6 documentation</title>
+        <title>soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link - soft-search 0.1.dev1+g848700c documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+gfe244b6 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g848700c documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+gfe244b6 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+g848700c documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -335,7 +335,7 @@
         <span class="p">)</span>
         <span class="n">mark_template_repo</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">possible_gen_from_template</span> <span class="ow">in</span> <span class="n">possible_generated_from_template_texts</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">possible_gen_from_template</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">starts_with</span><span class="p">(</span><span class="s2">&quot;generated from&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">possible_gen_from_template</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;generated from&quot;</span><span class="p">):</span>
                 <span class="n">mark_template_repo</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">possible_forked_texts</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span>
@@ -344,7 +344,7 @@
         <span class="p">)</span>
         <span class="n">mark_forked_repo</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">possible_from_fork</span> <span class="ow">in</span> <span class="n">possible_forked_texts</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">possible_from_fork</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">starts_with</span><span class="p">(</span><span class="s2">&quot;forked from&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">possible_from_fork</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;forked from&quot;</span><span class="p">):</span>
                 <span class="n">mark_forked_repo</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># Find all 7 digit numbers</span>
