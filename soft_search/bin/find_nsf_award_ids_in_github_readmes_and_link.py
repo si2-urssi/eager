@@ -131,7 +131,7 @@ def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
         )
         mark_template_repo = False
         for possible_gen_from_template in possible_generated_from_template_texts:
-            if possible_gen_from_template.text.starts_with("generated from"):
+            if possible_gen_from_template.text.startswith("generated from"):
                 mark_template_repo = True
 
         possible_forked_texts = soup.find_all(
@@ -140,7 +140,7 @@ def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
         )
         mark_forked_repo = False
         for possible_from_fork in possible_forked_texts:
-            if possible_from_fork.text.starts_with("forked from"):
+            if possible_from_fork.text.startswith("forked from"):
                 mark_forked_repo = True
 
         # Find all 7 digit numbers
