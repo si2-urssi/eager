@@ -124,6 +124,25 @@ def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
             )
             continue
 
+        # Check if this repo is a fork or from a template
+        possible_generated_from_template_texts = soup.find_all(
+            "span",
+            class_="text-small lh-condensed-ultra no-wrap mt-1 color-fg-muted",
+        )
+        mark_template_repo = False
+        for possible_gen_from_template in possible_generated_from_template_texts:
+            if possible_gen_from_template.text.starts_with("generated from"):
+                mark_template_repo = True
+
+        possible_forked_texts = soup.find_all(
+            "span",
+            class_="text-small lh-condensed-ultra no-wrap mt-1",
+        )
+        mark_forked_repo = False
+        for possible_from_fork in possible_forked_texts:
+            if possible_from_fork.text.starts_with("forked from"):
+                mark_forked_repo = True
+
         # Find all 7 digit numbers
         # This is obviously very inclusive
         # We _hope_ to filter some out in the NSF checking in a second
@@ -158,7 +177,41 @@ def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
                 award_response.raise_for_status()
 
                 # Safety check further
-                award_response.json()
+                data = award_response.json()
+                if "response" in data:
+                    response_data = data["response"]
+                    if "award" in response_data:
+                        award_data = response_data["award"]
+
+                        # No award found with this id
+                        if len(award_data) == 0:
+                            failed_rows.append(
+                                {
+                                    "github_link": row.link,
+                                    "nsf_award_id": nsf_award_id,
+                                    "reason": "no-nsf-award-with-matching-id",
+                                }
+                            )
+                            continue
+
+                    else:
+                        failed_rows.append(
+                            {
+                                "github_link": row.link,
+                                "nsf_award_id": nsf_award_id,
+                                "reason": "nsf-award-id-request-error",
+                            }
+                        )
+                        continue
+                else:
+                    failed_rows.append(
+                        {
+                            "github_link": row.link,
+                            "nsf_award_id": nsf_award_id,
+                            "reason": "nsf-award-id-request-error",
+                        }
+                    )
+                    continue
 
                 # Seems like a match, add it
                 linked_rows.append(
@@ -169,6 +222,8 @@ def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
                             f"https://www.nsf.gov/awardsearch/"
                             f"showAward?AWD_ID={nsf_award_id}"
                         ),
+                        "from_template_repo": mark_template_repo,
+                        "is_a_fork": mark_forked_repo,
                     }
                 )
             except HTTPError:
