@@ -124,3 +124,5 @@ example-readmes.txt
 github-awards.csv
 linked-github-nsf-results*
 trained-soft-search-transformer-*
+trained-soft-search-transformer/
+just-train-setfit.py
