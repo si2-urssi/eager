@@ -19,6 +19,8 @@ from transformers import (
     pipeline,
 )
 
+from ..data.soft_search_2022 import SoftSearch2022DatasetFields
+
 if TYPE_CHECKING:
     from datasets.arrow_dataset import Batch
     from transformers.pipelines.base import Pipeline
@@ -105,7 +107,7 @@ def _train(
         learning_rate=3e-5,
         logging_steps=10,
         load_best_model_at_end=True,
-        metric_for_best_model="accuracy",
+        metric_for_best_model="f1",
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
         num_train_epochs=5,
@@ -114,11 +116,35 @@ def _train(
     )
 
     # Compute accuracy metrics
-    metric = load_metric("accuracy")
+    acc_metric = load_metric("accuracy")
+    pre_metric = load_metric("precision")
+    rec_metric = load_metric("recall")
+    f1_metric = load_metric("f1")
 
     def compute_metrics(eval_pred: EvalPrediction) -> Optional[Dict]:
         predictions = np.argmax(eval_pred.predictions, axis=-1)
-        return metric.compute(predictions=predictions, references=eval_pred.label_ids)
+        f1_score = f1_metric.compute(
+            predictions=predictions,
+            references=eval_pred.label_ids,
+        )
+        acc_score = acc_metric.compute(
+            predictions=predictions,
+            references=eval_pred.label_ids,
+        )
+        pre_score = pre_metric.compute(
+            predictions=predictions,
+            references=eval_pred.label_ids,
+        )
+        rec_score = rec_metric.compute(
+            predictions=predictions,
+            references=eval_pred.label_ids,
+        )
+        return {
+            **f1_score,
+            **acc_score,
+            **pre_score,
+            **rec_score,
+        }
 
     # Trainer
     trainer = Trainer(
@@ -209,7 +235,7 @@ def _train_and_upload_transformer(seed: int = 0) -> Path:
     import numpy as np
     import torch
 
-    from soft_search.data import load_joined_soft_search_2022
+    from soft_search.data import load_soft_search_2022
 
     # Set a bunch of seeds for reproducibility
     torch.manual_seed(0)
@@ -217,7 +243,7 @@ def _train_and_upload_transformer(seed: int = 0) -> Path:
     np.random.seed(0)
 
     # Load data, train
-    df = load_joined_soft_search_2022()
+    df = load_soft_search_2022()
     model, _ = _train(
         df,
         model_storage_dir=DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
@@ -227,6 +253,7 @@ def _train_and_upload_transformer(seed: int = 0) -> Path:
             hub_strategy="end",
             hub_token=os.environ["HUGGINGFACE_TOKEN"],
         ),
+        text_col=SoftSearch2022DatasetFields.abstract_text,
     )
 
     return model
