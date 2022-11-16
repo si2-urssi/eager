@@ -1,7 +1,6 @@
 # soft-search
 
-[![Build Status](https://github.com/si2-urssi/soft-search/workflows/CI/badge.svg)](https://github.com/si2-urssi/soft-search/actions)
-[![Documentation](https://github.com/si2-urssi/soft-search/workflows/Documentation/badge.svg)](https://si2-urssi.github.io/soft-search)
+[![CI](https://github.com/si2-urssi/eager/actions/workflows/ci.yml/badge.svg)](https://github.com/si2-urssi/eager/actions/workflows/ci.yml)[![Documentation](https://github.com/si2-urssi/eager/actions/workflows/docs.yml/badge.svg)](https://si2-urssi.github.io/eager/)
 
 searching for software promises in grant applications
 
