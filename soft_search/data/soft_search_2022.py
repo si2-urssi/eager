@@ -3,13 +3,13 @@
 
 
 from pathlib import Path
-from typing import List, Dict, Union
+from typing import Dict, List, Optional, Union
 
 import pandas as pd
-
-from ..constants import NSFFields, PredictionLabels
 import requests
 from tqdm.contrib.concurrent import thread_map
+
+from ..constants import NSFFields, PredictionLabels
 
 ###############################################################################
 
@@ -40,6 +40,7 @@ class SoftSearch2022DatasetFields:
     label = "label"
     from_template_repo = "from_template_repo"
     is_a_fork = "is_a_fork"
+
 
 ALL_SOFT_SEARCH_2022_DATASET_FIELDS = [
     getattr(SoftSearch2022DatasetFields, a)
@@ -183,51 +184,49 @@ def _prepare_soft_search_2022(
 
     # Clean Lindsey
     lindsey_df = lindsey_df[["include/exclude", "link"]]
-    lindsey_df = lindsey_df[~lindsey_df[
-        "include/exclude"
-    ].isna()]
+    lindsey_df = lindsey_df[~lindsey_df["include/exclude"].isna()]
 
     # Clean Richard
     richard_df = richard_df[["include/exclude", "link"]]
-    richard_df = richard_df[~richard_df[
-        "include/exclude"
-    ].isna()]
+    richard_df = richard_df[~richard_df["include/exclude"].isna()]
 
     # Join and clean after merge
     data_lindsey = lindsey_df.join(
-        linked_nsf_github_df.set_index("github_link"), on="link",
+        linked_nsf_github_df.set_index("github_link"),
+        on="link",
     )
     data_richard = richard_df.join(
-        linked_nsf_github_df.set_index("github_link"), on="link",
+        linked_nsf_github_df.set_index("github_link"),
+        on="link",
     )
     data = pd.concat([data_lindsey, data_richard])
     data = data.drop_duplicates(subset=["link", "nsf_award_id"])
     data = data.dropna(subset=["nsf_award_id"])
 
-    def _thread_abstract_text(award_id: int) -> Dict[str, Union[int, str]]:
+    def _thread_abstract_text(award_id: int) -> Optional[Dict[str, Union[int, str]]]:
         response_data = requests.get(
             f"https://api.nsf.gov/"
             f"services/v1/awards/{award_id}.json"
             f"?printFields={NSFFields.abstractText}"
         ).json()
-        
+
         # Handle data existance
         if "response" not in response_data:
             return None
         response_subset = response_data["response"]
-        
+
         if "award" not in response_subset:
             return None
         award_data = response_subset["award"]
-        
+
         if len(award_data) == 0:
             return None
         single_award = award_data[0]
-        
+
         # Return the award id and the abstract text
         return {
             "award_id": award_id,
-            "abstract_text": single_award[NSFFields.abstractText]
+            "abstract_text": single_award[NSFFields.abstractText],
         }
 
     # Thread gather texts
@@ -258,15 +257,18 @@ def _prepare_soft_search_2022(
     # Replace include and exclude with int
     data[SoftSearch2022DatasetFields.label] = data[
         SoftSearch2022DatasetFields.label
-    ].replace({
-        "exclude": PredictionLabels.SoftwareNotPredicted,
-        "include": PredictionLabels.SoftwarePredicted,
-    })
+    ].replace(
+        {
+            "exclude": PredictionLabels.SoftwareNotPredicted,
+            "include": PredictionLabels.SoftwarePredicted,
+        }
+    )
 
     # Store to standard location
     data.to_parquet(SOFT_SEARCH_2022_DS_PATH)
 
     return SOFT_SEARCH_2022_DS_PATH
+
 
 def load_soft_search_2022() -> pd.DataFrame:
     """

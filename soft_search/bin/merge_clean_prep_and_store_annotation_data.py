@@ -9,13 +9,11 @@ import time
 import traceback
 from pathlib import Path
 
-from typing import Dict, Union
-
 import pandas as pd
 import requests
-from tqdm.contrib.concurrent import thread_map
-
-from soft_search.constants import NSFFields
+from bs4 import BeautifulSoup
+from requests.exceptions import HTTPError
+from tqdm import tqdm
 
 ###############################################################################
 
@@ -39,16 +37,12 @@ class Args(argparse.Namespace):
         p.add_argument(
             "lindsey_data",
             type=Path,
-            help=(
-                "Path to annotation data from Lindsey",
-            ),
+            help="Path to annotation data from Lindsey",
         )
         p.add_argument(
             "richard_data",
             type=Path,
-            help=(
-                "Path to annotation data from Richard",
-            ),
+            help="Path to annotation data from Richard",
         )
         p.add_argument(
             "-o",
