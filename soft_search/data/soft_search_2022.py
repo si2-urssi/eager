@@ -3,11 +3,13 @@
 
 
 from pathlib import Path
-from typing import List, Union
+from typing import List, Dict, Union
 
 import pandas as pd
 
 from ..constants import NSFFields, PredictionLabels
+import requests
+from tqdm.contrib.concurrent import thread_map
 
 ###############################################################################
 
@@ -31,13 +33,13 @@ ALL_SOFT_SEARCH_2022_IRR_DATASET_FIELDS = [
 
 
 class SoftSearch2022DatasetFields:
-    id_ = "id"
-    url = "url"
-    abstractText = NSFFields.abstractText
-    projectOutComesReport = NSFFields.projectOutComesReport
-    stated_software_will_be_created = "stated_software_will_be_created"
-    stated_software_was_created = "stated_software_was_created"
-
+    github_link = "github_link"
+    nsf_award_id = "nsf_award_id"
+    nsf_award_link = "nsf_award_link"
+    abstract_text = "abstract_text"
+    label = "label"
+    from_template_repo = "from_template_repo"
+    is_a_fork = "is_a_fork"
 
 ALL_SOFT_SEARCH_2022_DATASET_FIELDS = [
     getattr(SoftSearch2022DatasetFields, a)
@@ -138,16 +140,27 @@ def _prepare_soft_search_2022_irr(
     return SOFT_SEARCH_2022_IRR_PATH
 
 
-def _prepare_soft_search_2022(raw: Union[str, Path, pd.DataFrame]) -> Path:
+def _prepare_soft_search_2022(
+    linked_nsf_github_repos: Union[str, Path, pd.DataFrame],
+    lindsey_data: Union[str, Path, pd.DataFrame],
+    richard_data: Union[str, Path, pd.DataFrame],
+) -> Path:
     """
-    Function to prepare the manually labelled data downloaded from Google Drive
-    into the stored dataset.
+    Function to prepare the manually labelled data and store in repo.
 
     Parameters
     ----------
-    raw: Union[str, Path, pd.DataFrame]
-        The path or in-memory pandas DataFrame for the raw manually labelled data.
-        Only CSV file format is supported when providing a file path.
+    linked_nsf_github_repos: Union[str, Path, pd.DataFrame]
+        The path or in-memory pandas DataFrame for the linked GitHub repositories
+        to the NSF Awards produced by the
+        `find-nsf-award-ids-in-github-readmes-and-link` script.
+        Only Parquet file format is supported when providing a file path.
+    lindsey_data: Union[str, Path, pd.DataFrame]
+        The path or in-memory pandas DataFrame for the raw manually labelled
+        data from Lindsey. Only CSV file format is supported when providing a file path.
+    richard_data: Union[str, Path, pd.DataFrame]
+        The path or in-memory pandas DataFrame for the raw manually labelled
+        data from Richard. Only CSV file format is supported when providing a file path.
 
     Returns
     -------
@@ -155,34 +168,105 @@ def _prepare_soft_search_2022(raw: Union[str, Path, pd.DataFrame]) -> Path:
         The Path to the prepared and stored parquet file.
     """
     # Read data
-    if isinstance(raw, (str, Path)):
-        df = pd.read_csv(raw)
+    if isinstance(linked_nsf_github_repos, (str, Path)):
+        linked_nsf_github_df = pd.read_parquet(linked_nsf_github_repos)
     else:
-        df = raw
+        linked_nsf_github_df = linked_nsf_github_repos
+    if isinstance(lindsey_data, (str, Path)):
+        lindsey_df = pd.read_csv(lindsey_data)
+    else:
+        lindsey_df = lindsey_data
+    if isinstance(richard_data, (str, Path)):
+        richard_df = pd.read_csv(richard_data)
+    else:
+        richard_df = richard_data
 
-    # Select columns
-    df = df[ALL_SOFT_SEARCH_2022_DATASET_FIELDS]
+    # Clean Lindsey
+    lindsey_df = lindsey_df[["include/exclude", "link"]]
+    lindsey_df = lindsey_df[~lindsey_df[
+        "include/exclude"
+    ].isna()]
 
-    # Remove any rows with "unsure" values
-    df = df[df[SoftSearch2022DatasetFields.stated_software_was_created] != "unsure"]
-    df = df[df[SoftSearch2022DatasetFields.stated_software_will_be_created] != "unsure"]
+    # Clean Richard
+    richard_df = richard_df[["include/exclude", "link"]]
+    richard_df = richard_df[~richard_df[
+        "include/exclude"
+    ].isna()]
 
-    # Remap values
-    software_values_map = {
-        "yes": PredictionLabels.SoftwarePredicted,
-        "no": PredictionLabels.SoftwareNotPredicted,
-    }
-    df[SoftSearch2022DatasetFields.stated_software_was_created] = df[
-        SoftSearch2022DatasetFields.stated_software_was_created
-    ].map(software_values_map)
-    df[SoftSearch2022DatasetFields.stated_software_will_be_created] = df[
-        SoftSearch2022DatasetFields.stated_software_will_be_created
-    ].map(software_values_map)
+    # Join and clean after merge
+    data_lindsey = lindsey_df.join(
+        linked_nsf_github_df.set_index("github_link"), on="link",
+    )
+    data_richard = richard_df.join(
+        linked_nsf_github_df.set_index("github_link"), on="link",
+    )
+    data = pd.concat([data_lindsey, data_richard])
+    data = data.drop_duplicates(subset=["link", "nsf_award_id"])
+    data = data.dropna(subset=["nsf_award_id"])
 
-    # Store
-    df.to_parquet(SOFT_SEARCH_2022_DS_PATH)
+    def _thread_abstract_text(award_id: int) -> Dict[str, Union[int, str]]:
+        response_data = requests.get(
+            f"https://api.nsf.gov/"
+            f"services/v1/awards/{award_id}.json"
+            f"?printFields={NSFFields.abstractText}"
+        ).json()
+        
+        # Handle data existance
+        if "response" not in response_data:
+            return None
+        response_subset = response_data["response"]
+        
+        if "award" not in response_subset:
+            return None
+        award_data = response_subset["award"]
+        
+        if len(award_data) == 0:
+            return None
+        single_award = award_data[0]
+        
+        # Return the award id and the abstract text
+        return {
+            "award_id": award_id,
+            "abstract_text": single_award[NSFFields.abstractText]
+        }
+
+    # Thread gather texts
+    abstract_texts_list = thread_map(
+        _thread_abstract_text,
+        data.nsf_award_id.unique(),
+        desc="Getting NSF Award Abstracts",
+    )
+
+    # Filter failed values
+    abstract_texts = pd.DataFrame([at for at in abstract_texts_list if at is not None])
+
+    # Join to original data frame
+    data = data.join(abstract_texts.set_index("award_id"), on="nsf_award_id")
+
+    # Drop any rows that are missing abstract text
+    data = data.dropna(subset=["abstract_text"])
+
+    # Rename to standard set
+    data = data.rename(
+        columns={
+            "include/exclude": SoftSearch2022DatasetFields.label,
+            "link": SoftSearch2022DatasetFields.github_link,
+            "nsf_link": SoftSearch2022DatasetFields.nsf_award_link,
+        },
+    )
+
+    # Replace include and exclude with int
+    data[SoftSearch2022DatasetFields.label] = data[
+        SoftSearch2022DatasetFields.label
+    ].replace({
+        "exclude": PredictionLabels.SoftwareNotPredicted,
+        "include": PredictionLabels.SoftwarePredicted,
+    })
+
+    # Store to standard location
+    data.to_parquet(SOFT_SEARCH_2022_DS_PATH)
+
     return SOFT_SEARCH_2022_DS_PATH
-
 
 def load_soft_search_2022() -> pd.DataFrame:
     """
@@ -206,53 +290,3 @@ def load_soft_search_2022_irr() -> pd.DataFrame:
         The dataset.
     """
     return pd.read_parquet(SOFT_SEARCH_2022_IRR_PATH)
-
-
-def load_joined_soft_search_2022() -> pd.DataFrame:
-    """
-    Load the Software Search 2022 manually labelled dataset and then use both
-    the "stated_software_was_created" and "stated_software_will_be_created" values
-    and the "abstractText" and "projectOutcomesDoc" as data for training.
-
-    Their values will be dumped to "label" and "text" columns respectively.
-
-    Returns
-    -------
-    pd.DataFrame
-        The joined dataset.
-    """
-    # Load basic
-    df = load_soft_search_2022()
-
-    # Select columns of interest
-    software_pre = df[
-        [
-            SoftSearch2022DatasetFields.id_,
-            SoftSearch2022DatasetFields.abstractText,
-            SoftSearch2022DatasetFields.stated_software_will_be_created,
-        ]
-    ]
-    software_post = df[
-        [
-            SoftSearch2022DatasetFields.id_,
-            SoftSearch2022DatasetFields.projectOutComesReport,
-            SoftSearch2022DatasetFields.stated_software_was_created,
-        ]
-    ]
-
-    # Map column values
-    software_pre = software_pre.rename(
-        columns={
-            SoftSearch2022DatasetFields.abstractText: "text",
-            SoftSearch2022DatasetFields.stated_software_will_be_created: "label",
-        }
-    )
-    software_post = software_post.rename(
-        columns={
-            SoftSearch2022DatasetFields.projectOutComesReport: "text",
-            SoftSearch2022DatasetFields.stated_software_was_created: "label",
-        }
-    )
-
-    # Concat and return
-    return pd.concat([software_pre, software_post], ignore_index=True)
