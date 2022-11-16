@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
-        <title>soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link - soft-search 0.1.dev1+gb5d58fa documentation</title>
+        <title>soft_search.bin.merge_clean_prep_and_store_annotation_data - soft-search 0.1.dev1+gb5d58fa documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -201,7 +201,7 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link</h1><div class="highlight"><pre>
+          <h1>Source code for soft_search.bin.merge_clean_prep_and_store_annotation_data</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
@@ -226,32 +226,33 @@
 <span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="Args"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link.Args">[docs]</a><span class="k">class</span> <span class="nc">Args</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">):</span>
+<div class="viewcode-block" id="Args"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.merge_clean_prep_and_store_annotation_data.Args">[docs]</a><span class="k">class</span> <span class="nc">Args</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__parse</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__parse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-            <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;find-nsf-award-ids-in-github-readmes-and-link&quot;</span><span class="p">,</span>
+            <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;merge-clean-prep-and-store-annotation-data&quot;</span><span class="p">,</span>
             <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-                <span class="s2">&quot;Scrape each repository&#39;s README for NSF award ID, &quot;</span>
-                <span class="s2">&quot;attempt to verify the ID is valid, &quot;</span>
-                <span class="s2">&quot;and add to a &#39;verified&#39; dataset.&quot;</span>
+                <span class="s2">&quot;Merge annotations from Richard and Lindsey, fetch abstracts, &quot;</span>
+                <span class="s2">&quot;clean, and then store to project.&quot;</span>
             <span class="p">),</span>
         <span class="p">)</span>
         <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;gh_data&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lindsey_data&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-                <span class="s2">&quot;The path to the GitHub dataset to parse and link with &quot;</span>
-                <span class="s2">&quot;NSF Awards. Must be provided as a CSV.&quot;</span>
-            <span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to annotation data from Lindsey&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;richard_data&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to annotation data from Richard&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
             <span class="s2">&quot;--out&quot;</span><span class="p">,</span>
             <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;out&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;linked-github-nsf-results.parquet&quot;</span><span class="p">),</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;soft-search-2022-data.parquet&quot;</span><span class="p">),</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span>
             <span class="n">help</span><span class="o">=</span><span class="p">(</span>
                 <span class="s2">&quot;The path to the linked GitHub and NSF results. &quot;</span>
@@ -449,7 +450,7 @@
     <span class="n">failed_data</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">out_path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.errors.parquet&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.merge_clean_prep_and_store_annotation_data.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># Get args</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">Args</span><span class="p">()</span>
 

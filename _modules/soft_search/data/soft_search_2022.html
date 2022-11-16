@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
-        <title>soft_search.data.soft_search_2022 - soft-search 0.1.dev1+gaf5fc90 documentation</title>
+        <title>soft_search.data.soft_search_2022 - soft-search 0.1.dev1+gb5d58fa documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+gaf5fc90 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+gb5d58fa documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+gaf5fc90 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+gb5d58fa documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -207,9 +207,11 @@
 
 
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">tqdm.contrib.concurrent</span> <span class="kn">import</span> <span class="n">thread_map</span>
 
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">NSFFields</span><span class="p">,</span> <span class="n">PredictionLabels</span>
 
@@ -235,12 +237,13 @@
 
 
 <div class="viewcode-block" id="SoftSearch2022DatasetFields"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.soft_search_2022.SoftSearch2022DatasetFields">[docs]</a><span class="k">class</span> <span class="nc">SoftSearch2022DatasetFields</span><span class="p">:</span>
-    <span class="n">id_</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;url&quot;</span>
-    <span class="n">abstractText</span> <span class="o">=</span> <span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span>
-    <span class="n">projectOutComesReport</span> <span class="o">=</span> <span class="n">NSFFields</span><span class="o">.</span><span class="n">projectOutComesReport</span>
-    <span class="n">stated_software_will_be_created</span> <span class="o">=</span> <span class="s2">&quot;stated_software_will_be_created&quot;</span>
-    <span class="n">stated_software_was_created</span> <span class="o">=</span> <span class="s2">&quot;stated_software_was_created&quot;</span></div>
+    <span class="n">github_link</span> <span class="o">=</span> <span class="s2">&quot;github_link&quot;</span>
+    <span class="n">nsf_award_id</span> <span class="o">=</span> <span class="s2">&quot;nsf_award_id&quot;</span>
+    <span class="n">nsf_award_link</span> <span class="o">=</span> <span class="s2">&quot;nsf_award_link&quot;</span>
+    <span class="n">abstract_text</span> <span class="o">=</span> <span class="s2">&quot;abstract_text&quot;</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;label&quot;</span>
+    <span class="n">from_template_repo</span> <span class="o">=</span> <span class="s2">&quot;from_template_repo&quot;</span>
+    <span class="n">is_a_fork</span> <span class="o">=</span> <span class="s2">&quot;is_a_fork&quot;</span></div>
 
 
 <span class="n">ALL_SOFT_SEARCH_2022_DATASET_FIELDS</span> <span class="o">=</span> <span class="p">[</span>
@@ -342,16 +345,27 @@
     <span class="k">return</span> <span class="n">SOFT_SEARCH_2022_IRR_PATH</span>
 
 
-<span class="k">def</span> <span class="nf">_prepare_soft_search_2022</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_prepare_soft_search_2022</span><span class="p">(</span>
+    <span class="n">linked_nsf_github_repos</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+    <span class="n">lindsey_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+    <span class="n">richard_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function to prepare the manually labelled data downloaded from Google Drive</span>
-<span class="sd">    into the stored dataset.</span>
+<span class="sd">    Function to prepare the manually labelled data and store in repo.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    raw: Union[str, Path, pd.DataFrame]</span>
-<span class="sd">        The path or in-memory pandas DataFrame for the raw manually labelled data.</span>
-<span class="sd">        Only CSV file format is supported when providing a file path.</span>
+<span class="sd">    linked_nsf_github_repos: Union[str, Path, pd.DataFrame]</span>
+<span class="sd">        The path or in-memory pandas DataFrame for the linked GitHub repositories</span>
+<span class="sd">        to the NSF Awards produced by the</span>
+<span class="sd">        `find-nsf-award-ids-in-github-readmes-and-link` script.</span>
+<span class="sd">        Only Parquet file format is supported when providing a file path.</span>
+<span class="sd">    lindsey_data: Union[str, Path, pd.DataFrame]</span>
+<span class="sd">        The path or in-memory pandas DataFrame for the raw manually labelled</span>
+<span class="sd">        data from Lindsey. Only CSV file format is supported when providing a file path.</span>
+<span class="sd">    richard_data: Union[str, Path, pd.DataFrame]</span>
+<span class="sd">        The path or in-memory pandas DataFrame for the raw manually labelled</span>
+<span class="sd">        data from Richard. Only CSV file format is supported when providing a file path.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -359,32 +373,104 @@
 <span class="sd">        The Path to the prepared and stored parquet file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Read data</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">linked_nsf_github_repos</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+        <span class="n">linked_nsf_github_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">linked_nsf_github_repos</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">raw</span>
+        <span class="n">linked_nsf_github_df</span> <span class="o">=</span> <span class="n">linked_nsf_github_repos</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lindsey_data</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+        <span class="n">lindsey_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">lindsey_data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lindsey_df</span> <span class="o">=</span> <span class="n">lindsey_data</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">richard_data</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+        <span class="n">richard_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">richard_data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">richard_df</span> <span class="o">=</span> <span class="n">richard_data</span>
 
-    <span class="c1"># Select columns</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">ALL_SOFT_SEARCH_2022_DATASET_FIELDS</span><span class="p">]</span>
+    <span class="c1"># Clean Lindsey</span>
+    <span class="n">lindsey_df</span> <span class="o">=</span> <span class="n">lindsey_df</span><span class="p">[[</span><span class="s2">&quot;include/exclude&quot;</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">]]</span>
+    <span class="n">lindsey_df</span> <span class="o">=</span> <span class="n">lindsey_df</span><span class="p">[</span><span class="o">~</span><span class="n">lindsey_df</span><span class="p">[</span><span class="s2">&quot;include/exclude&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span>
 
-    <span class="c1"># Remove any rows with &quot;unsure&quot; values</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_was_created</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;unsure&quot;</span><span class="p">]</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_will_be_created</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;unsure&quot;</span><span class="p">]</span>
+    <span class="c1"># Clean Richard</span>
+    <span class="n">richard_df</span> <span class="o">=</span> <span class="n">richard_df</span><span class="p">[[</span><span class="s2">&quot;include/exclude&quot;</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">]]</span>
+    <span class="n">richard_df</span> <span class="o">=</span> <span class="n">richard_df</span><span class="p">[</span><span class="o">~</span><span class="n">richard_df</span><span class="p">[</span><span class="s2">&quot;include/exclude&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span>
 
-    <span class="c1"># Remap values</span>
-    <span class="n">software_values_map</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;yes&quot;</span><span class="p">:</span> <span class="n">PredictionLabels</span><span class="o">.</span><span class="n">SoftwarePredicted</span><span class="p">,</span>
-        <span class="s2">&quot;no&quot;</span><span class="p">:</span> <span class="n">PredictionLabels</span><span class="o">.</span><span class="n">SoftwareNotPredicted</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="n">df</span><span class="p">[</span><span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_was_created</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
-        <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_was_created</span>
-    <span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">software_values_map</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_will_be_created</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
-        <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_will_be_created</span>
-    <span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">software_values_map</span><span class="p">)</span>
+    <span class="c1"># Join and clean after merge</span>
+    <span class="n">data_lindsey</span> <span class="o">=</span> <span class="n">lindsey_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">linked_nsf_github_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;github_link&quot;</span><span class="p">),</span>
+        <span class="n">on</span><span class="o">=</span><span class="s2">&quot;link&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">data_richard</span> <span class="o">=</span> <span class="n">richard_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">linked_nsf_github_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;github_link&quot;</span><span class="p">),</span>
+        <span class="n">on</span><span class="o">=</span><span class="s2">&quot;link&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">data_lindsey</span><span class="p">,</span> <span class="n">data_richard</span><span class="p">])</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;link&quot;</span><span class="p">,</span> <span class="s2">&quot;nsf_award_id&quot;</span><span class="p">])</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nsf_award_id&quot;</span><span class="p">])</span>
 
-    <span class="c1"># Store</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">SOFT_SEARCH_2022_DS_PATH</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_thread_abstract_text</span><span class="p">(</span><span class="n">award_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]:</span>
+        <span class="n">response_data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;https://api.nsf.gov/&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;services/v1/awards/</span><span class="si">{</span><span class="n">award_id</span><span class="si">}</span><span class="s2">.json&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;?printFields=</span><span class="si">{</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="c1"># Handle data existance</span>
+        <span class="k">if</span> <span class="s2">&quot;response&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response_data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">response_subset</span> <span class="o">=</span> <span class="n">response_data</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s2">&quot;award&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response_subset</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">award_data</span> <span class="o">=</span> <span class="n">response_subset</span><span class="p">[</span><span class="s2">&quot;award&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">award_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">single_award</span> <span class="o">=</span> <span class="n">award_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Return the award id and the abstract text</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;award_id&quot;</span><span class="p">:</span> <span class="n">award_id</span><span class="p">,</span>
+            <span class="s2">&quot;abstract_text&quot;</span><span class="p">:</span> <span class="n">single_award</span><span class="p">[</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">],</span>
+        <span class="p">}</span>
+
+    <span class="c1"># Thread gather texts</span>
+    <span class="n">abstract_texts_list</span> <span class="o">=</span> <span class="n">thread_map</span><span class="p">(</span>
+        <span class="n">_thread_abstract_text</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">nsf_award_id</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Getting NSF Award Abstracts&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Filter failed values</span>
+    <span class="n">abstract_texts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">at</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">abstract_texts_list</span> <span class="k">if</span> <span class="n">at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span>
+
+    <span class="c1"># Join to original data frame</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">abstract_texts</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;award_id&quot;</span><span class="p">),</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;nsf_award_id&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Drop any rows that are missing abstract text</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;abstract_text&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Rename to standard set</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;include/exclude&quot;</span><span class="p">:</span> <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
+            <span class="s2">&quot;link&quot;</span><span class="p">:</span> <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">github_link</span><span class="p">,</span>
+            <span class="s2">&quot;nsf_link&quot;</span><span class="p">:</span> <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">nsf_award_link</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Replace include and exclude with int</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span>
+        <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">label</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;exclude&quot;</span><span class="p">:</span> <span class="n">PredictionLabels</span><span class="o">.</span><span class="n">SoftwareNotPredicted</span><span class="p">,</span>
+            <span class="s2">&quot;include&quot;</span><span class="p">:</span> <span class="n">PredictionLabels</span><span class="o">.</span><span class="n">SoftwarePredicted</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Store to standard location</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">SOFT_SEARCH_2022_DS_PATH</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">SOFT_SEARCH_2022_DS_PATH</span>
 
 
@@ -410,56 +496,6 @@
 <span class="sd">        The dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">SOFT_SEARCH_2022_IRR_PATH</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="load_joined_soft_search_2022"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.soft_search_2022.load_joined_soft_search_2022">[docs]</a><span class="k">def</span> <span class="nf">load_joined_soft_search_2022</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Load the Software Search 2022 manually labelled dataset and then use both</span>
-<span class="sd">    the &quot;stated_software_was_created&quot; and &quot;stated_software_will_be_created&quot; values</span>
-<span class="sd">    and the &quot;abstractText&quot; and &quot;projectOutcomesDoc&quot; as data for training.</span>
-
-<span class="sd">    Their values will be dumped to &quot;label&quot; and &quot;text&quot; columns respectively.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    pd.DataFrame</span>
-<span class="sd">        The joined dataset.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Load basic</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">load_soft_search_2022</span><span class="p">()</span>
-
-    <span class="c1"># Select columns of interest</span>
-    <span class="n">software_pre</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
-        <span class="p">[</span>
-            <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">id_</span><span class="p">,</span>
-            <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">,</span>
-            <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_will_be_created</span><span class="p">,</span>
-        <span class="p">]</span>
-    <span class="p">]</span>
-    <span class="n">software_post</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
-        <span class="p">[</span>
-            <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">id_</span><span class="p">,</span>
-            <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">projectOutComesReport</span><span class="p">,</span>
-            <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_was_created</span><span class="p">,</span>
-        <span class="p">]</span>
-    <span class="p">]</span>
-
-    <span class="c1"># Map column values</span>
-    <span class="n">software_pre</span> <span class="o">=</span> <span class="n">software_pre</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
-        <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
-            <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
-            <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_will_be_created</span><span class="p">:</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">)</span>
-    <span class="n">software_post</span> <span class="o">=</span> <span class="n">software_post</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
-        <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
-            <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">projectOutComesReport</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
-            <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">stated_software_was_created</span><span class="p">:</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">)</span>
-
-    <span class="c1"># Concat and return</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">software_pre</span><span class="p">,</span> <span class="n">software_post</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </pre></div>
         </article>
       </div>
