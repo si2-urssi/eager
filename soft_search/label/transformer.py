@@ -18,13 +18,16 @@ from transformers import (
     TrainingArguments,
     pipeline,
 )
+from sklearn.model_selection import train_test_split
 
 from ..data.soft_search_2022 import SoftSearch2022DatasetFields
+from ..constants import DEFAULT_SEMANTIC_EMBEDDING_MODEL
 
 if TYPE_CHECKING:
     from datasets.arrow_dataset import Batch
     from transformers.pipelines.base import Pipeline
     from transformers.tokenization_utils_base import BatchEncoding
+    from transformers.trainer_utils import TrainOutput
 
 ###############################################################################
 
@@ -33,33 +36,100 @@ log = logging.getLogger(__name__)
 ###############################################################################
 
 DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH = Path("soft-search-transformer/").resolve()
-DEFAULT_BASE_MODEL = "distilbert-base-uncased-finetuned-sst-2-english"
 TRANSFORMER_LABEL_COL = "transformer_label"
 HUGGINGFACE_HUB_SOFT_SEARCH_MODEL = "evamaxfield/soft-search"
 
 ###############################################################################
 
 
-def _train(
-    df: Union[str, Path, pd.DataFrame],
-    label_col: str = "label",
-    text_col: str = "text",
+def train(
+    train_df: Union[str, Path, pd.DataFrame],
+    test_df: Union[str, Path, pd.DataFrame],
+    text_col: str = SoftSearch2022DatasetFields.abstract_text,
+    label_col: str = SoftSearch2022DatasetFields.label,
     model_storage_dir: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
-    base_model: str = DEFAULT_BASE_MODEL,
+    base_model: str = DEFAULT_SEMANTIC_EMBEDDING_MODEL,
     extra_training_args: Dict[str, Any] = {},
-) -> Tuple[Path, Trainer]:
+) -> Tuple[Path, Trainer, "TrainOutput", Dict[str, float]]:
+    """
+    Fine-tune a transformer model to classify the provided labels.
+
+    This function will both train and evaluate the performance of the
+    fine-tuned transformer.
+
+    Parameters
+    ----------
+    train_df: Union[str, Path, pd.DataFrame]
+        The data to use for training.
+        Only CSV file format is supported when providing a file path.
+    test_df: Union[str, Path, pd.DataFrame]
+        The data to use for training.
+        Only CSV file format is supported when providing a file path.
+    text_col: str
+        The column name which contains the raw text.
+        Default: "abstract_text"
+    label_col: str
+        The column name which contains the labels.
+        Default: "label"
+    model_storage_dir: Union[str, Path]
+        The path to store the model to.
+        Default: "soft-search-transformer/"
+    base_model: str
+        The base model to fine-tune.
+        Default: "distilbert-base-uncased-finetuned-sst-2-english"
+
+    Returns
+    -------
+    Path
+        The path to the stored model.
+    Trainer
+        The Trainer object.
+    TrainOutput
+        The final output of the trainer.train() call.
+    Dict[str, float]
+        The evaluation metrics.
+
+    Examples
+    --------
+    Example training from supplied manually labelled data.
+
+    >>> from soft_search.data import load_joined_soft_search_2022
+    >>> from soft_search.label import transformer
+    >>> from sklearn.model_selection import train_test_split
+    >>> df = load_joined_soft_search_2022()
+    >>> train, test = train_test_split(
+    ...     df,
+    ...     test_size=0.2,
+    ...     stratify=df["label"]
+    ... )
+    >>> model = transformer.train(train)
+
+    See Also
+    --------
+    label
+        A function to apply a model across a pandas DataFrame.
+    """
     # Handle storage dir
     model_storage_dir = Path(model_storage_dir).resolve()
 
     # Read DataFrame
-    if isinstance(df, (str, Path)):
-        df = pd.read_csv(df)
+    if isinstance(train_df, (str, Path)):
+        train_df = pd.read_csv(train_df)
+    # Read DataFrame
+    if isinstance(test_df, (str, Path)):
+        test_df = pd.read_csv(test_df)
 
     # Rename cols
-    df = df.copy(deep=True)
-    df = df[[label_col, text_col]]
-    df = df.rename(columns={label_col: "label", text_col: "text"})
-    label_names = df["label"].unique().tolist()
+    train_df = train_df.copy(deep=True)
+    train_df = train_df[[label_col, text_col]]
+    train_df = train_df.rename(columns={label_col: "label", text_col: "text"})
+    test_df = test_df.copy(deep=True)
+    test_df = test_df[[label_col, text_col]]
+    test_df = test_df.rename(columns={label_col: "label", text_col: "text"})
+
+    # Train and test should have the same label names
+    # only grab from train
+    label_names = train_dataset["label"].unique().tolist()
 
     # Construct label to id and vice-versa LUTs
     label2id, id2label = dict(), dict()
@@ -68,18 +138,10 @@ def _train(
         id2label[str(i)] = label
 
     # Cast to dataset
-    dataset = Dataset.from_pandas(df)
-    dataset = dataset.class_encode_column("label")
-
-    # Get splits
-    dataset_dict = dataset.train_test_split(test_size=0.25, stratify_by_column="label")
-
-    # Log splits
-    log.info(
-        f"Training dataset splits:\n"
-        f"\t'train': {len(dataset_dict['train'])}\n"
-        f"\t'test': {len(dataset_dict['test'])}"
-    )
+    train_dataset = Dataset.from_pandas(train_df)
+    test_dataset = Dataset.from_pandas(test_df)
+    train_dataset = train_dataset.class_encode_column("label")
+    test_dataset = test_dataset.class_encode_column("label")
 
     # Preprocess
     tokenizer = AutoTokenizer.from_pretrained(base_model)
@@ -88,7 +150,8 @@ def _train(
         return tokenizer(examples["text"], truncation=True)
 
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
-    tokenized_dataset_dict = dataset_dict.map(preprocess_function, batched=True)
+    tokenized_train_dataset = train_dataset.map(preprocess_function, batched=True)
+    tokenized_test_dataset = test_dataset.map(preprocess_function, batched=True)
 
     # AutoModel
     model = AutoModelForSequenceClassification.from_pretrained(
@@ -150,82 +213,20 @@ def _train(
     trainer = Trainer(
         model=model,
         args=training_args,
-        train_dataset=tokenized_dataset_dict["train"],
-        eval_dataset=tokenized_dataset_dict["test"],
+        train_dataset=tokenized_train_dataset,
+        eval_dataset=tokenized_test_dataset,
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics,
     )
 
     # Train
-    trainer.train()
+    epoch_metrics = trainer.train()
+    eval_metrics = trainer.evaluate(tokenized_test_dataset)
 
     # Store model
     trainer.save_model()
-    return model_storage_dir, trainer
-
-
-def train(
-    df: Union[str, Path, pd.DataFrame],
-    label_col: str = "label",
-    text_col: str = "text",
-    model_storage_dir: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
-    base_model: str = DEFAULT_BASE_MODEL,
-) -> Path:
-    """
-    Fine-tune a transformer model to classify the provided labels.
-
-    Parameters
-    ----------
-    df: Union[str, Path, pd.DataFrame]
-        The data to use for training.
-        Only CSV file format is supported when providing a file path.
-    label_col: str
-        The column name which contains the labels.
-        Default: "label"
-    text_col: str
-        The column name which contains the raw text.
-        Default: "text"
-    model_storage_dir: Union[str, Path]
-        The path to store the model to.
-        Default: "soft-search-transformer/"
-    base_model: str
-        The base model to fine-tune.
-        Default: "distilbert-base-uncased-finetuned-sst-2-english"
-
-    Returns
-    -------
-    Path
-        The path to the stored model.
-
-    Examples
-    --------
-    Example training from supplied manually labelled data.
-
-    >>> from soft_search.data import load_joined_soft_search_2022
-    >>> from soft_search.label import transformer
-    >>> from sklearn.model_selection import train_test_split
-    >>> df = load_joined_soft_search_2022()
-    >>> train, test = train_test_split(
-    ...     df,
-    ...     test_size=0.3,
-    ...     stratify=df["label"]
-    ... )
-    >>> model = transformer.train(train)
-
-    See Also
-    --------
-    label
-        A function to apply a model across a pandas DataFrame.
-    """
-    model_storage_dir, _ = _train(
-        df=df,
-        label_col=label_col,
-        text_col=text_col,
-        model_storage_dir=model_storage_dir,
-        base_model=base_model,
-    )
-    return model_storage_dir
+    return model_storage_dir, trainer, epoch_metrics, eval_metrics
 
 
 def _train_and_upload_transformer(seed: int = 0) -> Path:
@@ -244,16 +245,16 @@ def _train_and_upload_transformer(seed: int = 0) -> Path:
 
     # Load data, train
     df = load_soft_search_2022()
-    model, _ = _train(
-        df,
-        model_storage_dir=DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
+    train_df, test_df = train_test_split(df, test_size=0.2)
+    model, _, _, _ = train(
+        train_df,
+        test_df,
         extra_training_args=dict(
             push_to_hub=True,
             hub_model_id=HUGGINGFACE_HUB_SOFT_SEARCH_MODEL,
             hub_strategy="end",
             hub_token=os.environ["HUGGINGFACE_TOKEN"],
         ),
-        text_col=SoftSearch2022DatasetFields.abstract_text,
     )
 
     return model
@@ -265,7 +266,7 @@ def _apply_transformer(text: str, classifier: "Pipeline") -> str:
 
 def label(
     df: pd.DataFrame,
-    apply_column: str = "text",
+    apply_column: str = SoftSearch2022DatasetFields.abstract_text,
     label_column: str = TRANSFORMER_LABEL_COL,
     model: Union[str, Path] = HUGGINGFACE_HUB_SOFT_SEARCH_MODEL,
 ) -> pd.DataFrame:
