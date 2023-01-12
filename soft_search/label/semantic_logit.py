@@ -38,6 +38,16 @@ def train(
     label_col: str = SoftSearch2022DatasetFields.label,
     model_storage_path: Union[str, Path] = DEFAULT_SOFT_SEARCH_TFIDF_LOGIT_PATH,
 ) -> Tuple[Path, LogisticRegressionCV, SentenceTransformer, EvaluationMetrics]:
+    # Handle storage dir
+    model_storage_path = Path(model_storage_path).resolve()
+
+    # Read DataFrame
+    if isinstance(train_df, (str, Path)):
+        train_df = pd.read_csv(train_df)
+    # Read DataFrame
+    if isinstance(test_df, (str, Path)):
+        test_df = pd.read_csv(test_df)
+
     # Get semantic transformer
     text_transformer = get_transformer()
 
@@ -74,5 +84,5 @@ def train(
     )
 
 
-def label():
+def label() -> None:
     pass

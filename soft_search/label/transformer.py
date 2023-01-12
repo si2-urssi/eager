@@ -47,7 +47,7 @@ def train(
     test_df: Union[str, Path, pd.DataFrame],
     text_col: str = SoftSearch2022DatasetFields.abstract_text,
     label_col: str = SoftSearch2022DatasetFields.label,
-    model_storage_dir: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
+    model_storage_path: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
     base_model: str = DEFAULT_SEMANTIC_EMBEDDING_MODEL,
     extra_training_args: Dict[str, Any] = {},
 ) -> Tuple[Path, Trainer, "TrainOutput", Dict[str, float]]:
@@ -71,7 +71,7 @@ def train(
     label_col: str
         The column name which contains the labels.
         Default: "label"
-    model_storage_dir: Union[str, Path]
+    model_storage_path: Union[str, Path]
         The path to store the model to.
         Default: "soft-search-transformer/"
     base_model: str
@@ -110,7 +110,7 @@ def train(
         A function to apply a model across a pandas DataFrame.
     """
     # Handle storage dir
-    model_storage_dir = Path(model_storage_dir).resolve()
+    model_storage_path = Path(model_storage_path).resolve()
 
     # Read DataFrame
     if isinstance(train_df, (str, Path)):
@@ -164,7 +164,7 @@ def train(
 
     # Training Args
     training_args = TrainingArguments(
-        output_dir=model_storage_dir,
+        output_dir=model_storage_path,
         evaluation_strategy="epoch",
         save_strategy="epoch",
         learning_rate=3e-5,
@@ -226,7 +226,7 @@ def train(
 
     # Store model
     trainer.save_model()
-    return model_storage_dir, trainer, epoch_metrics, eval_metrics
+    return model_storage_path, trainer, epoch_metrics, eval_metrics
 
 
 def _train_and_upload_transformer(seed: int = 0) -> Path:

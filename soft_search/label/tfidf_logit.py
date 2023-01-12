@@ -5,7 +5,7 @@ import logging
 import pickle
 import re
 from pathlib import Path
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 
 import pandas as pd
 from nltk.stem.porter import PorterStemmer
@@ -33,7 +33,7 @@ def setup_tfidf_vectorizer() -> TfidfVectorizer:
     stemmer = PorterStemmer()
     pattern = re.compile(r"(?u)\b\w\w+\b")
 
-    def stem(text: str):
+    def stem(text: str) -> List[str]:
         tokens = pattern.findall(text)
         stems = [stemmer.stem(item) for item in tokens]
         return stems
@@ -55,6 +55,16 @@ def train(
     label_col: str = SoftSearch2022DatasetFields.label,
     model_storage_path: Union[str, Path] = DEFAULT_SOFT_SEARCH_TFIDF_LOGIT_PATH,
 ) -> Tuple[Path, LogisticRegressionCV, TfidfVectorizer, EvaluationMetrics]:
+    # Handle storage dir
+    model_storage_path = Path(model_storage_path).resolve()
+
+    # Read DataFrame
+    if isinstance(train_df, (str, Path)):
+        train_df = pd.read_csv(train_df)
+    # Read DataFrame
+    if isinstance(test_df, (str, Path)):
+        test_df = pd.read_csv(test_df)
+
     # Get vectorizer
     text_transformer = setup_tfidf_vectorizer()
 
@@ -91,5 +101,5 @@ def train(
     )
 
 
-def label():
+def label() -> None:
     pass

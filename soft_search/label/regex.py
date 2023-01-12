@@ -42,6 +42,10 @@ def train(
     text_col: str = SoftSearch2022DatasetFields.abstract_text,
     label_col: str = SoftSearch2022DatasetFields.label,
 ) -> EvaluationMetrics:
+    # Read DataFrame
+    if isinstance(df, (str, Path)):
+        df = pd.read_csv(df)
+
     # Eval
     preds = df[text_col].apply(_apply_regex).to_numpy()
     pre, rec, f1, _ = precision_recall_fscore_support(
