@@ -2,10 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import re
+from pathlib import Path
+from typing import Union
 
 import pandas as pd
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
+from ..data.soft_search_2022 import SoftSearch2022DatasetFields
 from ..constants import PredictionLabels
+from ..metrics import EvaluationMetrics
+
 
 ###############################################################################
 # Constants
@@ -15,7 +21,6 @@ SOFTWARE_LIKE_PATTERNS = (
     r"(?:binar|librar)(?:y|ies))?|algorithms?|tools?).*"
 )
 COMPILED_SOFTWARE_LIKE_PATTERNS = re.compile(SOFTWARE_LIKE_PATTERNS)
-
 REGEX_LABEL_COL = "regex_match"
 
 ###############################################################################
@@ -31,6 +36,27 @@ def _apply_regex(text: str) -> str:
 
     # Not Found
     return PredictionLabels.SoftwareNotPredicted
+
+
+def train(
+    df: Union[str, Path, pd.DataFrame],
+    text_col: str = SoftSearch2022DatasetFields.abstract_text,
+    label_col: str = SoftSearch2022DatasetFields.label,
+) -> EvaluationMetrics:
+    # Eval
+    preds = df[text_col].apply(_apply_regex).to_numpy()
+    pre, rec, f1, _ = precision_recall_fscore_support(
+        df[label_col],
+        preds,
+        average="weighted",
+    )
+    acc = accuracy_score(df[label_col], preds)
+    return EvaluationMetrics(
+        precision=pre,
+        recall=rec,
+        f1=f1,
+        accuracy=acc,
+    )
 
 
 def label(
