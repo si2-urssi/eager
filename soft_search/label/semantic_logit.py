@@ -2,19 +2,18 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import pickle
 from pathlib import Path
 from typing import Tuple, Union
-import pickle
 
 import pandas as pd
-
 from sentence_transformers import SentenceTransformer
 from sklearn.linear_model import LogisticRegressionCV
-from sklearn.metrics import precision_recall_fscore_support, accuracy_score
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
+from ..constants import DEFAULT_SEMANTIC_EMBEDDING_MODEL
 from ..data.soft_search_2022 import SoftSearch2022DatasetFields
 from ..metrics import EvaluationMetrics
-from ..constants import DEFAULT_SEMANTIC_EMBEDDING_MODEL
 
 ###############################################################################
 

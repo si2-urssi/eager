@@ -6,12 +6,11 @@ from pathlib import Path
 from typing import Union
 
 import pandas as pd
-from sklearn.metrics import precision_recall_fscore_support, accuracy_score
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
-from ..data.soft_search_2022 import SoftSearch2022DatasetFields
 from ..constants import PredictionLabels
+from ..data.soft_search_2022 import SoftSearch2022DatasetFields
 from ..metrics import EvaluationMetrics
-
 
 ###############################################################################
 # Constants

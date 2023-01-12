@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 from datasets import Dataset, load_metric
+from sklearn.model_selection import train_test_split
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
@@ -18,10 +19,9 @@ from transformers import (
     TrainingArguments,
     pipeline,
 )
-from sklearn.model_selection import train_test_split
 
-from ..data.soft_search_2022 import SoftSearch2022DatasetFields
 from ..constants import DEFAULT_SEMANTIC_EMBEDDING_MODEL
+from ..data.soft_search_2022 import SoftSearch2022DatasetFields
 
 if TYPE_CHECKING:
     from datasets.arrow_dataset import Batch
@@ -129,7 +129,7 @@ def train(
 
     # Train and test should have the same label names
     # only grab from train
-    label_names = train_dataset["label"].unique().tolist()
+    label_names = train_df["label"].unique().tolist()
 
     # Construct label to id and vice-versa LUTs
     label2id, id2label = dict(), dict()

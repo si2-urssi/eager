@@ -2,17 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import pickle
+import re
 from pathlib import Path
 from typing import Tuple, Union
-import pickle
 
 import pandas as pd
-
-from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem.porter import PorterStemmer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegressionCV
-from sklearn.metrics import precision_recall_fscore_support, accuracy_score
-import re
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 from ..data.soft_search_2022 import SoftSearch2022DatasetFields
 from ..metrics import EvaluationMetrics
