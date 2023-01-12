@@ -5,12 +5,6 @@
 class PredictionLabels:
     SoftwarePredicted = "software-predicted"
     SoftwareNotPredicted = "software-not-predicted"
-    ModelPredicted = "model-predicted"
-    ModelNotPredicted = "model-not-predicted"
-    AlgorithmPredicted = "algorithm-predicted"
-    AlgorithmNotPredicted = "algorithm-not-predicted"
-    DatabasePredicted = "database-predicted"
-    DatabaseNotPredicted = "database-not-predicted"
 
 
 class NSFFields:
@@ -60,3 +54,6 @@ class NSFPrograms:
     Mathematical_and_Physical_Sciences = "MPS"
     Social_Behavioral_and_Economic_Sciences = "SBE"
     Technology_Innovation_and_Partnerships = "TIP"
+
+
+DEFAULT_SEMANTIC_EMBEDDING_MODEL = "distilbert-base-uncased-finetuned-sst-2-english"
