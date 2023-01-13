@@ -101,7 +101,7 @@ include-package-data = true
 exclude = ["*docs/*", "*tests/*"]
 
 [tool.setuptools.package-data]
-"*" = ["*.parquet", "*.json", "*.bin", "*.txt", "*.yaml", ".pkl", "py.typed"]
+"*" = ["*.parquet", "*.json", "*.bin", "*.txt", "*.yaml", "*.pkl", "py.typed"]
 
 # tools
 [tool.black]
