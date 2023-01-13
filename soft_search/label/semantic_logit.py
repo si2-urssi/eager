@@ -57,14 +57,14 @@ def train(
     )
 
     # Fit the pipeline
-    pipeline.fit(train_df[text_col].to_numpy(), train_df[label_col])
+    pipeline.fit(train_df[text_col], train_df[label_col])
 
     # Save the pipeline
     with open(model_storage_path, "wb") as open_f:
         pickle.dump(pipeline, open_f)
 
     # Eval
-    preds = pipeline.predict(test_df[text_col].to_numpy())
+    preds = pipeline.predict(test_df[text_col])
     pre, rec, f1, _ = precision_recall_fscore_support(
         test_df[label_col],
         preds,
