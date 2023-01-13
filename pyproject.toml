@@ -28,6 +28,7 @@ classifiers = [
 dynamic = ["version"]
 dependencies = [
   "beautifulsoup4~=4.11",
+  "dataclasses-json~=0.5",
   "datasets~=2.0",
   "python-dotenv~=0.21",
   "ghapi~=1.0",
@@ -92,6 +93,7 @@ get-nsf-award-set-for-soft-search-2022 = "soft_search.bin.get_nsf_award_set_for_
 train-and-upload-soft-search-2022-transformer = "soft_search.bin.train_and_upload_soft_search_2022_transformer:main"
 find-nsf-award-ids-in-github-readmes-and-link = "soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link:main"
 merge-clean-prep-and-store-annotation-data = "soft_search.bin.merge_clean_prep_and_store_annotation_data:main"
+fit-and-eval-all-models = "soft_search.bin.fit_and_eval_all_models:main"
 
 
 # build settings
