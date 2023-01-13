@@ -49,15 +49,19 @@ def fit_and_eval_all_models(
     metrics = [regex_metrics, tfidf_logit_metrics, semantic_logit_metrics]
 
     if train_transformer:
-        _, _, _, transformer_metrics = transformer.train(
-            train_df=train_df,
-            test_df=test_df,
-            extra_training_args={
+        extra_training_args = {}
+        if archive:
+            extra_training_args = {
                 "push_to_hub": True,
                 "hub_model_id": HUGGINGFACE_HUB_SOFT_SEARCH_MODEL,
                 "hub_strategy": "end",
                 "hub_token": os.environ["HUGGINGFACE_TOKEN"],
-            },
+            }
+
+        _, _, _, transformer_metrics = transformer.train(
+            train_df=train_df,
+            test_df=test_df,
+            extra_training_args=extra_training_args,
         )
 
         metrics.append(transformer_metrics)
