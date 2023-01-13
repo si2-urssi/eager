@@ -20,7 +20,11 @@ clean:
 	rm -fr .pytest_cache
 	rm -fr .mypy_cache
 	rm -fr soft-search-transformer
-
+	rm -fr soft-search-semantic-logit.pkl
+	rm -fr soft-search-tfidf-logit.pkl
+	rm -fr .ipynb_checkpoints
+	rm -fr .ruff_cache/
+	rm -fr .coverage.*
 
 # install with all deps
 install:
