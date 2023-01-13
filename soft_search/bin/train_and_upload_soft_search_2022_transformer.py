@@ -5,15 +5,10 @@ import argparse
 import logging
 import sys
 import traceback
-from datetime import datetime
 
 from soft_search.label import transformer
 
 ###############################################################################
-
-START_DATE = datetime(2017, 1, 1)
-END_DATE = datetime(2022, 1, 1)
-
 
 class Args(argparse.Namespace):
     def __init__(self) -> None:
