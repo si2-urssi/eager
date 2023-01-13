@@ -93,6 +93,7 @@ def train(
         logit,
         text_transformer,
         EvaluationMetrics(
+            model="tfidf-logit",
             precision=pre,
             recall=rec,
             f1=f1,

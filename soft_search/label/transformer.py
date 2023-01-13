@@ -22,6 +22,7 @@ from transformers import (
 
 from ..constants import DEFAULT_SEMANTIC_EMBEDDING_MODEL
 from ..data.soft_search_2022 import SoftSearch2022DatasetFields
+from ..metrics import EvaluationMetrics
 
 if TYPE_CHECKING:
     from datasets.arrow_dataset import Batch
@@ -171,8 +172,8 @@ def train(
         logging_steps=10,
         load_best_model_at_end=True,
         metric_for_best_model="f1",
-        per_device_train_batch_size=16,
-        per_device_eval_batch_size=16,
+        per_device_train_batch_size=12,
+        per_device_eval_batch_size=12,
         num_train_epochs=5,
         weight_decay=0.01,
         **extra_training_args,
@@ -222,7 +223,14 @@ def train(
 
     # Train
     epoch_metrics = trainer.train()
-    eval_metrics = trainer.evaluate(tokenized_test_dataset)
+    raw_eval_metrics = trainer.evaluate(tokenized_test_dataset)
+    eval_metrics = EvaluationMetrics(
+        model="fine-tuned-transformer",
+        accuracy=raw_eval_metrics["eval_accuracy"],
+        precision=raw_eval_metrics["eval_precision"],
+        recall=raw_eval_metrics["eval_recall"],
+        f1=raw_eval_metrics["eval_f1"],
+    )
 
     # Store model
     trainer.save_model()
@@ -231,17 +239,12 @@ def train(
 
 def _train_and_upload_transformer(seed: int = 0) -> Path:
     import os
-    import random
 
-    import numpy as np
-    import torch
+    from ..data import load_soft_search_2022
+    from ..seed import set_seed
 
-    from soft_search.data import load_soft_search_2022
-
-    # Set a bunch of seeds for reproducibility
-    torch.manual_seed(0)
-    random.seed(0)
-    np.random.seed(0)
+    # Set global seed
+    set_seed(seed)
 
     # Load data, train
     df = load_soft_search_2022()

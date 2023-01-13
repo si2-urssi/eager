@@ -55,6 +55,7 @@ def train(
     )
     acc = accuracy_score(df[label_col], preds)
     return EvaluationMetrics(
+        model="regex",
         precision=pre,
         recall=rec,
         f1=f1,

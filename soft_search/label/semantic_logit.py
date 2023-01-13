@@ -76,6 +76,7 @@ def train(
         clf,
         text_transformer,
         EvaluationMetrics(
+            model="semantic-logit",
             precision=pre,
             recall=rec,
             f1=f1,
