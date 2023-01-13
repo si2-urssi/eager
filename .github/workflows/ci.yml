@@ -97,6 +97,10 @@ jobs:
     - name: Archive Models
       run: |
         fit-and-eval-all-models --archive --no-transformer
+    - name: Build Wheel
+      run: |
+        pip install build wheel
+        python -m build
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
