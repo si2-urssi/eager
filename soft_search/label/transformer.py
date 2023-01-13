@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import logging
 from functools import partial
@@ -50,7 +49,7 @@ def train(
     label_col: str = SoftSearch2022DatasetFields.label,
     model_storage_path: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
     base_model: str = DEFAULT_SEMANTIC_EMBEDDING_MODEL,
-    extra_training_args: Dict[str, Any] = {},
+    extra_training_args: Optional[Dict[str, Any]] = None,
 ) -> Tuple[Path, Trainer, "TrainOutput", EvaluationMetrics]:
     """
     Fine-tune a transformer model to classify the provided labels.
@@ -78,6 +77,8 @@ def train(
     base_model: str
         The base model to fine-tune.
         Default: "distilbert-base-uncased-finetuned-sst-2-english"
+    extra_training_args: Optional[Dict[str, Any]]
+        Any extra arguments to pass to the Trainer object.
 
     Returns
     -------
@@ -133,7 +134,7 @@ def train(
     label_names = train_df["label"].unique().tolist()
 
     # Construct label to id and vice-versa LUTs
-    label2id, id2label = dict(), dict()
+    label2id, id2label = {}, {}
     for i, label in enumerate(label_names):
         label2id[label] = str(i)
         id2label[str(i)] = label
@@ -162,6 +163,10 @@ def train(
         id2label=id2label,
         ignore_mismatched_sizes=True,
     )
+
+    # Catch None extra args
+    if extra_training_args is None:
+        extra_training_args = {}
 
     # Training Args
     training_args = TrainingArguments(
@@ -252,12 +257,12 @@ def _train_and_upload_transformer(seed: int = 0) -> Path:
     model, _, _, _ = train(
         train_df,
         test_df,
-        extra_training_args=dict(
-            push_to_hub=True,
-            hub_model_id=HUGGINGFACE_HUB_SOFT_SEARCH_MODEL,
-            hub_strategy="end",
-            hub_token=os.environ["HUGGINGFACE_TOKEN"],
-        ),
+        extra_training_args={
+            "push_to_hub": True,
+            "hub_model_id": HUGGINGFACE_HUB_SOFT_SEARCH_MODEL,
+            "hub_strategy": "end",
+            "hub_token": os.environ["HUGGINGFACE_TOKEN"],
+        },
     )
 
     return model

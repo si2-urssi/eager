@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 
 class PredictionLabels:
@@ -22,21 +21,21 @@ class NSFFields:
 
     id_ = "id"
     agency = "agency"
-    awardeeName = "awardeeName"
-    awardeeStateCode = "awardeeStateCode"
-    fundsObligatedAmt = "fundsObligatedAmt"
-    piFirstName = "piFirstName"
-    piLastName = "piLastName"
-    publicAccessMandate = "publicAccessMandate"
+    awardeeName = "awardeeName"  # noqa: N815
+    awardeeStateCode = "awardeeStateCode"  # noqa: N815
+    fundsObligatedAmt = "fundsObligatedAmt"  # noqa: N815
+    piFirstName = "piFirstName"  # noqa: N815
+    piLastName = "piLastName"  # noqa: N815
+    publicAccessMandate = "publicAccessMandate"  # noqa: N815
     date = "date"
     title = "title"
-    abstractText = "abstractText"
-    projectOutComesReport = "projectOutComesReport"
-    piEmail = "piEmail"
-    publicationResearch = "publicationResearch"
-    publicationConference = "publicationConference"
-    startDate = "startDate"
-    expDate = "expDate"
+    abstractText = "abstractText"  # noqa: N815
+    projectOutComesReport = "projectOutComesReport"  # noqa: N815
+    piEmail = "piEmail"  # noqa: N815
+    publicationResearch = "publicationResearch"  # noqa: N815
+    publicationConference = "publicationConference"  # noqa: N815
+    startDate = "startDate"  # noqa: N815
+    expDate = "expDate"  # noqa: N815
 
 
 ALL_NSF_FIELDS = [getattr(NSFFields, a) for a in dir(NSFFields) if "__" not in a]

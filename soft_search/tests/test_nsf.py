@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from datetime import datetime
 from typing import List, Union
@@ -8,6 +7,7 @@ import pytest
 
 from soft_search.constants import NSFFields
 from soft_search.nsf import get_nsf_dataset
+
 
 ###############################################################################
 

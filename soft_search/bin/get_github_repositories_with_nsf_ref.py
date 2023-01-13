@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import argparse
 import logging
@@ -91,7 +90,7 @@ class Args(argparse.Namespace):
 ###############################################################################
 
 
-def main() -> None:
+def main() -> None:  # noqa: C901
     # Get args
     args = Args()
 
@@ -138,11 +137,11 @@ def main() -> None:
                     page_results = api(
                         "/search/code",
                         "GET ",
-                        query=dict(
-                            q=complete_query,
-                            per_page=BATCH_SIZE,
-                            page=page,
-                        ),
+                        query={
+                            "q": complete_query,
+                            "per_page": BATCH_SIZE,
+                            "page": page,
+                        },
                     )
                     total_count = page_results["total_count"]
                     real_count = total_count if total_count < 1000 else 1000

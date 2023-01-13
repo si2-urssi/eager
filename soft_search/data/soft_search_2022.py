@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 
 from pathlib import Path
@@ -72,7 +71,7 @@ def _prepare_soft_search_2022_irr(
         The Path to the prepared and stored parquet file.
     """
     # Fix data
-    EXCLUDE_INCLUDE_VALUES_MAP = {
+    exclude_include_values_map = {
         "exclude": "exclude",
         "include": "include",
         "include ": "include",
@@ -130,7 +129,7 @@ def _prepare_soft_search_2022_irr(
         # Rename values
         subset[SoftSearch2022IRRDatasetFields.include_in_definition] = subset[
             SoftSearch2022IRRDatasetFields.include_in_definition
-        ].map(EXCLUDE_INCLUDE_VALUES_MAP)
+        ].map(exclude_include_values_map)
 
         # Add column for annotator
         subset[SoftSearch2022IRRDatasetFields.annotator] = annotator_label

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import argparse
 import logging
@@ -76,7 +75,11 @@ class Args(argparse.Namespace):
 ###############################################################################
 
 
-def _parse_repos(gh_data_path: Path, out_path: Path, sleep_time: int) -> None:
+def _parse_repos(  # noqa: C901
+    gh_data_path: Path,
+    out_path: Path,
+    sleep_time: int,
+) -> None:
     # Load GitHub Data
     github_data = pd.read_csv(gh_data_path)
 

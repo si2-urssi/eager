@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import logging
 import pickle
@@ -69,19 +68,19 @@ def train(
     text_transformer = setup_tfidf_vectorizer()
 
     # Get encodings
-    X_train = text_transformer.fit_transform(train_df[text_col])
-    X_test = text_transformer.transform(test_df[text_col])
+    x_train = text_transformer.fit_transform(train_df[text_col])
+    x_test = text_transformer.transform(test_df[text_col])
 
     # Logit Model
     logit = LogisticRegressionCV(max_iter=10000)
-    logit.fit(X_train, train_df[label_col])
+    logit.fit(x_train, train_df[label_col])
 
     # Store model
     with open(model_storage_path, "wb") as open_f:
         pickle.dump(logit, open_f)
 
     # Eval
-    preds = logit.predict(X_test)
+    preds = logit.predict(x_test)
     pre, rec, f1, _ = precision_recall_fscore_support(
         test_df[label_col],
         preds,

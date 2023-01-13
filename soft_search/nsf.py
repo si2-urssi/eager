@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from datetime import datetime
 from typing import List, Optional, Union
@@ -88,7 +87,7 @@ def get_nsf_dataset(
     """
     Fetch an NSF awards dataset.
     Wraps the NSF Award Search API:
-    https://www.research.gov/common/webapi/awardapisearch-v1.htm
+    https://www.research.gov/common/webapi/awardapisearch-v1.htm.
 
     Parameters
     ----------

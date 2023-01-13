@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Stored datasets."""
 
 from pathlib import Path
