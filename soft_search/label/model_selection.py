@@ -19,6 +19,7 @@ def fit_and_eval_all_models(
     test_size: float = 0.2,
     seed: int = 0,
     archive: bool = False,
+    train_transformer: bool = True,
 ) -> pd.DataFrame:
     # Set global seed
     set_seed(seed)
@@ -39,38 +40,37 @@ def fit_and_eval_all_models(
         train_df=train_df,
         test_df=test_df,
     )
-    semantic_logit_pipeline_path, _, semantic_logit_metrics = semantic_logit.train(
+    _, _, semantic_logit_metrics = semantic_logit.train(
         train_df=train_df,
         test_df=test_df,
-    )
-    _, _, _, transformer_metrics = transformer.train(
-        train_df=train_df,
-        test_df=test_df,
-        extra_training_args={
-            "push_to_hub": True,
-            "hub_model_id": HUGGINGFACE_HUB_SOFT_SEARCH_MODEL,
-            "hub_strategy": "end",
-            "hub_token": os.environ["HUGGINGFACE_TOKEN"],
-        },
     )
 
+    # Store all metrics
+    metrics = [regex_metrics, tfidf_logit_metrics, semantic_logit_metrics]
+
+    if train_transformer:
+        _, _, _, transformer_metrics = transformer.train(
+            train_df=train_df,
+            test_df=test_df,
+            extra_training_args={
+                "push_to_hub": True,
+                "hub_model_id": HUGGINGFACE_HUB_SOFT_SEARCH_MODEL,
+                "hub_strategy": "end",
+                "hub_token": os.environ["HUGGINGFACE_TOKEN"],
+            },
+        )
+
+        metrics.append(transformer_metrics)
+
     # Archive
+    # We only save the tfidf-logit pipeline because the semantic pipeline
     if archive:
         shutil.copy2(
             tfidf_logit_pipeline_path,
             _DATA_DIR,
         )
-        shutil.copy2(
-            semantic_logit_pipeline_path,
-            _DATA_DIR,
-        )
 
     # Create dataframe with metrics
     return pd.DataFrame(
-        [
-            regex_metrics.to_dict(),
-            tfidf_logit_metrics.to_dict(),
-            semantic_logit_metrics.to_dict(),
-            transformer_metrics.to_dict(),
-        ]
+        [m.to_dict() for m in metrics],
     ).sort_values(by="f1", ascending=False)

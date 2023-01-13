@@ -39,6 +39,12 @@ class Args(argparse.Namespace):
             help="Archive all models.",
         )
         p.add_argument(
+            "--no-transformer",
+            dest="no_transformer",
+            action="store_true",
+            help="Do not train and evalute the fine-tuned transformer.",
+        )
+        p.add_argument(
             "--debug",
             dest="debug",
             action="store_true",
@@ -69,7 +75,12 @@ def main() -> None:
 
     # Try training and storage
     try:
-        results = fit_and_eval_all_models(args.test_size, args.seed, args.archive)
+        results = fit_and_eval_all_models(
+            test_size=args.test_size,
+            seed=args.seed,
+            archive=args.archive,
+            train_transformer=not args.no_transformer,
+        )
         print(results)
     except Exception as e:
         log.error("=============================================")
