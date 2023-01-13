@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from dataclasses import dataclass
+
 from dataclasses_json import DataClassJsonMixin
 
 ###############################################################################

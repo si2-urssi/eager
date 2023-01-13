@@ -10,6 +10,7 @@ from soft_search.label.model_selection import fit_and_eval_all_models
 
 ###############################################################################
 
+
 class Args(argparse.Namespace):
     def __init__(self) -> None:
         self.__parse()
@@ -28,15 +29,9 @@ class Args(argparse.Namespace):
             dest="test_size",
             type=float,
             default=0.2,
-            help="Test size to use for data splits."
+            help="Test size to use for data splits.",
         )
-        p.add_argument(
-            "-s",
-            "--seed",
-            type=int,
-            default=0,
-            help="Random seed."
-        )
+        p.add_argument("-s", "--seed", type=int, default=0, help="Random seed.")
         p.add_argument(
             "--debug",
             dest="debug",

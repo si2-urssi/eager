@@ -51,7 +51,7 @@ def train(
     model_storage_path: Union[str, Path] = DEFAULT_SOFT_SEARCH_TRANSFORMER_PATH,
     base_model: str = DEFAULT_SEMANTIC_EMBEDDING_MODEL,
     extra_training_args: Dict[str, Any] = {},
-) -> Tuple[Path, Trainer, "TrainOutput", Dict[str, float]]:
+) -> Tuple[Path, Trainer, "TrainOutput", EvaluationMetrics]:
     """
     Fine-tune a transformer model to classify the provided labels.
 
@@ -87,7 +87,7 @@ def train(
         The Trainer object.
     TrainOutput
         The final output of the trainer.train() call.
-    Dict[str, float]
+    EvaluationMetrics
         The evaluation metrics.
 
     Examples

@@ -10,6 +10,7 @@ from soft_search.label import transformer
 
 ###############################################################################
 
+
 class Args(argparse.Namespace):
     def __init__(self) -> None:
         self.__parse()

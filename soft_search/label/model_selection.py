@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from sklearn.model_selection import train_test_split
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
-from ..data.soft_search_2022 import load_soft_search_2022, SoftSearch2022DatasetFields
-from . import regex, semantic_logit, tfidf_logit, transformer
+from ..data.soft_search_2022 import SoftSearch2022DatasetFields, load_soft_search_2022
 from ..seed import set_seed
+from . import regex, semantic_logit, tfidf_logit, transformer
 
 ###############################################################################
+
 
 def fit_and_eval_all_models(test_size: float = 0.2, seed: int = 0) -> pd.DataFrame:
     # Set global seed
@@ -40,9 +41,11 @@ def fit_and_eval_all_models(test_size: float = 0.2, seed: int = 0) -> pd.DataFra
     )
 
     # Create dataframe with metrics
-    return pd.DataFrame([
-        regex_metrics.to_dict(),
-        tfidf_logit_metrics.to_dict(),
-        semantic_logit_metrics.to_dict(),
-        transformer_metrics.to_dict(),
-    ]).sort_values(by="f1", ascending=False)
+    return pd.DataFrame(
+        [
+            regex_metrics.to_dict(),
+            tfidf_logit_metrics.to_dict(),
+            semantic_logit_metrics.to_dict(),
+            transformer_metrics.to_dict(),
+        ]
+    ).sort_values(by="f1", ascending=False)
