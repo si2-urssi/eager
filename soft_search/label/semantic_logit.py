@@ -6,17 +6,24 @@ from pathlib import Path
 from typing import Tuple, Union
 
 import pandas as pd
-from sentence_transformers import SentenceTransformer
+from embetter.text import SentenceEncoder
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+from sklearn.pipeline import Pipeline, make_pipeline
 
 from ..constants import DEFAULT_SEMANTIC_EMBEDDING_MODEL
+from ..data import _DATA_DIR
 from ..data.soft_search_2022 import SoftSearch2022DatasetFields
 from ..metrics import EvaluationMetrics
 
 ###############################################################################
 
-DEFAULT_SOFT_SEARCH_TFIDF_LOGIT_PATH = Path("soft-search-semantic-logit.pkl").resolve()
+DEFAULT_SOFT_SEARCH_SEMANTIC_LOGIT_PATH = Path(
+    "soft-search-semantic-logit.pkl"
+).resolve()
+ARCHIVED_SOFT_SEARCH_SEMANTIC_LOGIT_PATH = (
+    _DATA_DIR / DEFAULT_SOFT_SEARCH_SEMANTIC_LOGIT_PATH.name
+)
 TFIDF_LOGIT_LABEL = "semantic_logit_label"
 
 ###############################################################################
@@ -26,17 +33,13 @@ log = logging.getLogger(__name__)
 ###############################################################################
 
 
-def get_transformer() -> SentenceTransformer:
-    return SentenceTransformer(DEFAULT_SEMANTIC_EMBEDDING_MODEL)
-
-
 def train(
     train_df: Union[str, Path, pd.DataFrame],
     test_df: Union[str, Path, pd.DataFrame],
     text_col: str = SoftSearch2022DatasetFields.abstract_text,
     label_col: str = SoftSearch2022DatasetFields.label,
-    model_storage_path: Union[str, Path] = DEFAULT_SOFT_SEARCH_TFIDF_LOGIT_PATH,
-) -> Tuple[Path, LogisticRegressionCV, SentenceTransformer, EvaluationMetrics]:
+    model_storage_path: Union[str, Path] = DEFAULT_SOFT_SEARCH_SEMANTIC_LOGIT_PATH,
+) -> Tuple[Path, Pipeline, EvaluationMetrics]:
     # Handle storage dir
     model_storage_path = Path(model_storage_path).resolve()
 
@@ -47,23 +50,21 @@ def train(
     if isinstance(test_df, (str, Path)):
         test_df = pd.read_csv(test_df)
 
-    # Get semantic transformer
-    text_transformer = get_transformer()
+    # Build the pipeline
+    pipeline = make_pipeline(
+        SentenceEncoder(DEFAULT_SEMANTIC_EMBEDDING_MODEL),
+        LogisticRegressionCV(max_iter=10000),
+    )
 
-    # Get encodings
-    x_train = text_transformer.encode(train_df[text_col].to_numpy())
-    x_test = text_transformer.encode(test_df[text_col].to_numpy())
+    # Fit the pipeline
+    pipeline.fit(train_df[text_col].to_numpy(), train_df[label_col])
 
-    # Logit Model
-    logit = LogisticRegressionCV(max_iter=10000)
-    clf = logit.fit(x_train, train_df[label_col])
-
-    # Store model
+    # Save the pipeline
     with open(model_storage_path, "wb") as open_f:
-        pickle.dump(clf, open_f)
+        pickle.dump(pipeline, open_f)
 
     # Eval
-    preds = logit.predict(x_test)
+    preds = pipeline.predict(test_df[text_col].to_numpy())
     pre, rec, f1, _ = precision_recall_fscore_support(
         test_df[label_col],
         preds,
@@ -72,8 +73,7 @@ def train(
     acc = accuracy_score(test_df[label_col], preds)
     return (
         model_storage_path,
-        clf,
-        text_transformer,
+        pipeline,
         EvaluationMetrics(
             model="semantic-logit",
             precision=pre,

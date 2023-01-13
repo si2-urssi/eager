@@ -32,6 +32,13 @@ class Args(argparse.Namespace):
         )
         p.add_argument("-s", "--seed", type=int, default=0, help="Random seed.")
         p.add_argument(
+            "-a",
+            "--archive",
+            dest="archive",
+            action="store_true",
+            help="Archive all models.",
+        )
+        p.add_argument(
             "--debug",
             dest="debug",
             action="store_true",
@@ -62,7 +69,7 @@ def main() -> None:
 
     # Try training and storage
     try:
-        results = fit_and_eval_all_models(args.test_size, args.seed)
+        results = fit_and_eval_all_models(args.test_size, args.seed, args.archive)
         print(results)
     except Exception as e:
         log.error("=============================================")

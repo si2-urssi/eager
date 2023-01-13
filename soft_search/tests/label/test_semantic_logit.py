@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from sklearn.linear_model import LogisticRegressionCV
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
 
 from soft_search.data.soft_search_2022 import (
     SoftSearch2022DatasetFields,
@@ -24,15 +24,14 @@ def test_semantic_logit_train() -> None:
     )
 
     # Train and get eval metrics
-    model_path, logit, text_transformer, eval_metrics = semantic_logit.train(
+    model_path, pipeline, eval_metrics = semantic_logit.train(
         train_df=train_df,
         test_df=test_df,
     )
 
     # Basic assertions
     assert model_path.resolve(strict=True)
-    assert isinstance(logit, LogisticRegressionCV)
+    assert isinstance(pipeline, Pipeline)
     assert isinstance(eval_metrics, EvaluationMetrics)
 
-    # Asserts type and that we can encode again
-    assert text_transformer.encode("hello my name is eva") is not None
+    assert pipeline.predict(["this will definitely produce software"]) is not None
