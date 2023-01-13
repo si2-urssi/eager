@@ -12,6 +12,14 @@ soft\_search.bin.find\_nsf\_award\_ids\_in\_github\_readmes\_and\_link module
    :undoc-members:
    :show-inheritance:
 
+soft\_search.bin.fit\_and\_eval\_all\_models module
+---------------------------------------------------
+
+.. automodule:: soft_search.bin.fit_and_eval_all_models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 soft\_search.bin.get\_github\_repositories\_with\_nsf\_ref module
 -----------------------------------------------------------------
 

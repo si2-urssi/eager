@@ -4,10 +4,34 @@ soft\_search.label package
 Submodules
 ----------
 
+soft\_search.label.model\_selection module
+------------------------------------------
+
+.. automodule:: soft_search.label.model_selection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 soft\_search.label.regex module
 -------------------------------
 
 .. automodule:: soft_search.label.regex
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+soft\_search.label.semantic\_logit module
+-----------------------------------------
+
+.. automodule:: soft_search.label.semantic_logit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+soft\_search.label.tfidf\_logit module
+--------------------------------------
+
+.. automodule:: soft_search.label.tfidf_logit
    :members:
    :undoc-members:
    :show-inheritance:

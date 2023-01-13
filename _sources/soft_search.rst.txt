@@ -22,10 +22,26 @@ soft\_search.constants module
    :undoc-members:
    :show-inheritance:
 
+soft\_search.metrics module
+---------------------------
+
+.. automodule:: soft_search.metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 soft\_search.nsf module
 -----------------------
 
 .. automodule:: soft_search.nsf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+soft\_search.seed module
+------------------------
+
+.. automodule:: soft_search.seed
    :members:
    :undoc-members:
    :show-inheritance:

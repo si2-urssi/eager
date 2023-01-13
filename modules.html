@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="soft_search package" href="soft_search.html" /><link rel="prev" title="Installation" href="installation.html" />
 
-    <!-- Generated with Sphinx 6.1.1 and Furo 2022.12.07 -->
-        <title>soft_search - soft-search 0.1.dev1+gd537462 documentation</title>
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>soft_search - soft-search 0.1.dev1+g3cfab88 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">soft-search 0.1.dev1+gd537462 documentation</div></a>
+      <a href="index.html"><div class="brand">soft-search 0.1.dev1+g3cfab88 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+gd537462 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+g3cfab88 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -212,6 +212,7 @@
 <li class="toctree-l3"><a class="reference internal" href="soft_search.bin.html">soft_search.bin package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.bin.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.bin.html#module-soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link">soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="soft_search.bin.html#module-soft_search.bin.fit_and_eval_all_models">soft_search.bin.fit_and_eval_all_models module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.bin.html#module-soft_search.bin.get_github_repositories_with_nsf_ref">soft_search.bin.get_github_repositories_with_nsf_ref module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.bin.html#module-soft_search.bin.get_nsf_award_set_for_soft_search_2022">soft_search.bin.get_nsf_award_set_for_soft_search_2022 module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.bin.html#module-soft_search.bin.merge_clean_prep_and_store_annotation_data">soft_search.bin.merge_clean_prep_and_store_annotation_data module</a></li>
@@ -228,7 +229,10 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="soft_search.label.html">soft_search.label package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.label.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="soft_search.label.html#module-soft_search.label.model_selection">soft_search.label.model_selection module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.label.html#module-soft_search.label.regex">soft_search.label.regex module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="soft_search.label.html#module-soft_search.label.semantic_logit">soft_search.label.semantic_logit module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="soft_search.label.html#module-soft_search.label.tfidf_logit">soft_search.label.tfidf_logit module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.label.html#module-soft_search.label.transformer">soft_search.label.transformer module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.label.html#module-soft_search.label">Module contents</a></li>
 </ul>
@@ -272,20 +276,29 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="soft_search.html#soft_search.constants.PredictionLabels"><code class="docutils literal notranslate"><span class="pre">PredictionLabels</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.constants.PredictionLabels.AlgorithmNotPredicted"><code class="docutils literal notranslate"><span class="pre">PredictionLabels.AlgorithmNotPredicted</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.constants.PredictionLabels.AlgorithmPredicted"><code class="docutils literal notranslate"><span class="pre">PredictionLabels.AlgorithmPredicted</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.constants.PredictionLabels.DatabaseNotPredicted"><code class="docutils literal notranslate"><span class="pre">PredictionLabels.DatabaseNotPredicted</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.constants.PredictionLabels.DatabasePredicted"><code class="docutils literal notranslate"><span class="pre">PredictionLabels.DatabasePredicted</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.constants.PredictionLabels.ModelNotPredicted"><code class="docutils literal notranslate"><span class="pre">PredictionLabels.ModelNotPredicted</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.constants.PredictionLabels.ModelPredicted"><code class="docutils literal notranslate"><span class="pre">PredictionLabels.ModelPredicted</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.constants.PredictionLabels.SoftwareNotPredicted"><code class="docutils literal notranslate"><span class="pre">PredictionLabels.SoftwareNotPredicted</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.constants.PredictionLabels.SoftwarePredicted"><code class="docutils literal notranslate"><span class="pre">PredictionLabels.SoftwarePredicted</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="soft_search.html#module-soft_search.metrics">soft_search.metrics module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="soft_search.html#soft_search.metrics.EvaluationMetrics"><code class="docutils literal notranslate"><span class="pre">EvaluationMetrics</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.metrics.EvaluationMetrics.accuracy"><code class="docutils literal notranslate"><span class="pre">EvaluationMetrics.accuracy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.metrics.EvaluationMetrics.f1"><code class="docutils literal notranslate"><span class="pre">EvaluationMetrics.f1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.metrics.EvaluationMetrics.model"><code class="docutils literal notranslate"><span class="pre">EvaluationMetrics.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.metrics.EvaluationMetrics.precision"><code class="docutils literal notranslate"><span class="pre">EvaluationMetrics.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="soft_search.html#soft_search.metrics.EvaluationMetrics.recall"><code class="docutils literal notranslate"><span class="pre">EvaluationMetrics.recall</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="soft_search.html#module-soft_search.nsf">soft_search.nsf module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="soft_search.html#soft_search.nsf.get_nsf_dataset"><code class="docutils literal notranslate"><span class="pre">get_nsf_dataset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="soft_search.html#module-soft_search.seed">soft_search.seed module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="soft_search.html#soft_search.seed.set_seed"><code class="docutils literal notranslate"><span class="pre">set_seed()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="soft_search.html#module-soft_search">Module contents</a></li>

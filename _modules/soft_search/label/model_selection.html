@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>soft_search.label.regex - soft-search 0.1.dev1+g3cfab88 documentation</title>
+        <title>soft_search.label.model_selection - soft-search 0.1.dev1+g3cfab88 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -201,107 +201,58 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for soft_search.label.regex</h1><div class="highlight"><pre>
+          <h1>Source code for soft_search.label.model_selection</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
-
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">precision_recall_fscore_support</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 
-<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">PredictionLabels</span>
-<span class="kn">from</span> <span class="nn">..data.soft_search_2022</span> <span class="kn">import</span> <span class="n">SoftSearch2022DatasetFields</span>
-<span class="kn">from</span> <span class="nn">..metrics</span> <span class="kn">import</span> <span class="n">EvaluationMetrics</span>
-
-<span class="c1">###############################################################################</span>
-<span class="c1"># Constants</span>
-
-<span class="n">SOFTWARE_LIKE_PATTERNS</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="sa">r</span><span class="s2">&quot;.*(?:software(?:\s(?:code|tool|suite|program|application|framework)s?|&quot;</span>
-    <span class="sa">r</span><span class="s2">&quot;(?:binar|librar)(?:y|ies))?|algorithms?|tools?).*&quot;</span>
-<span class="p">)</span>
-<span class="n">COMPILED_SOFTWARE_LIKE_PATTERNS</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">SOFTWARE_LIKE_PATTERNS</span><span class="p">)</span>
-<span class="n">REGEX_LABEL_COL</span> <span class="o">=</span> <span class="s2">&quot;regex_match&quot;</span>
+<span class="kn">from</span> <span class="nn">..data.soft_search_2022</span> <span class="kn">import</span> <span class="n">SoftSearch2022DatasetFields</span><span class="p">,</span> <span class="n">load_soft_search_2022</span>
+<span class="kn">from</span> <span class="nn">..seed</span> <span class="kn">import</span> <span class="n">set_seed</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">regex</span><span class="p">,</span> <span class="n">semantic_logit</span><span class="p">,</span> <span class="n">tfidf_logit</span><span class="p">,</span> <span class="n">transformer</span>
 
 <span class="c1">###############################################################################</span>
 
 
-<span class="k">def</span> <span class="nf">_apply_regex</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="c1"># Try match</span>
-    <span class="n">match_or_none</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">COMPILED_SOFTWARE_LIKE_PATTERNS</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+<div class="viewcode-block" id="fit_and_eval_all_models"><a class="viewcode-back" href="../../../soft_search.label.html#soft_search.label.model_selection.fit_and_eval_all_models">[docs]</a><span class="k">def</span> <span class="nf">fit_and_eval_all_models</span><span class="p">(</span><span class="n">test_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="c1"># Set global seed</span>
+    <span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
-    <span class="c1"># Found</span>
-    <span class="k">if</span> <span class="n">match_or_none</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">PredictionLabels</span><span class="o">.</span><span class="n">SoftwarePredicted</span>
+    <span class="c1"># Load core data</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">load_soft_search_2022</span><span class="p">()</span>
 
-    <span class="c1"># Not Found</span>
-    <span class="k">return</span> <span class="n">PredictionLabels</span><span class="o">.</span><span class="n">SoftwareNotPredicted</span>
-
-
-<div class="viewcode-block" id="train"><a class="viewcode-back" href="../../../soft_search.label.html#soft_search.label.regex.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
-    <span class="n">df</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
-    <span class="n">text_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">abstract_text</span><span class="p">,</span>
-    <span class="n">label_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EvaluationMetrics</span><span class="p">:</span>
-    <span class="c1"># Read DataFrame</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-
-    <span class="c1"># Eval</span>
-    <span class="n">preds</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">text_col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_apply_regex</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-    <span class="n">pre</span><span class="p">,</span> <span class="n">rec</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">precision_recall_fscore_support</span><span class="p">(</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">label_col</span><span class="p">],</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">average</span><span class="o">=</span><span class="s2">&quot;weighted&quot;</span><span class="p">,</span>
+    <span class="c1"># Split the data</span>
+    <span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span>
+        <span class="n">stratify</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">SoftSearch2022DatasetFields</span><span class="o">.</span><span class="n">label</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">label_col</span><span class="p">],</span> <span class="n">preds</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">EvaluationMetrics</span><span class="p">(</span>
-        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;regex&quot;</span><span class="p">,</span>
-        <span class="n">precision</span><span class="o">=</span><span class="n">pre</span><span class="p">,</span>
-        <span class="n">recall</span><span class="o">=</span><span class="n">rec</span><span class="p">,</span>
-        <span class="n">f1</span><span class="o">=</span><span class="n">f1</span><span class="p">,</span>
-        <span class="n">accuracy</span><span class="o">=</span><span class="n">acc</span><span class="p">,</span>
-    <span class="p">)</span></div>
 
+    <span class="c1"># Run each model</span>
+    <span class="n">regex_metrics</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">test_df</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">tfidf_logit_metrics</span> <span class="o">=</span> <span class="n">tfidf_logit</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="o">=</span><span class="n">train_df</span><span class="p">,</span>
+        <span class="n">test_df</span><span class="o">=</span><span class="n">test_df</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">semantic_logit_metrics</span> <span class="o">=</span> <span class="n">semantic_logit</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="o">=</span><span class="n">train_df</span><span class="p">,</span>
+        <span class="n">test_df</span><span class="o">=</span><span class="n">test_df</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">transformer_metrics</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="o">=</span><span class="n">train_df</span><span class="p">,</span>
+        <span class="n">test_df</span><span class="o">=</span><span class="n">test_df</span><span class="p">,</span>
+    <span class="p">)</span>
 
-<div class="viewcode-block" id="label"><a class="viewcode-back" href="../../../soft_search.label.html#soft_search.label.regex.label">[docs]</a><span class="k">def</span> <span class="nf">label</span><span class="p">(</span>
-    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-    <span class="n">apply_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
-    <span class="n">label_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">REGEX_LABEL_COL</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    In-place add a new column to the provided pandas DataFrame with a label</span>
-<span class="sd">    of software predicted or not solely based off a regex match for various</span>
-<span class="sd">    software-like and adjacent terminology.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    df: pd.DataFrame</span>
-<span class="sd">        The pandas DataFrame to in-place add a column with the</span>
-<span class="sd">        regex matched software outcome labels.</span>
-<span class="sd">    apply_column: str</span>
-<span class="sd">        The column to use for &quot;prediction&quot;.</span>
-<span class="sd">        Default: &quot;text&quot;</span>
-<span class="sd">    label_column: str</span>
-<span class="sd">        The name of the column to add with outcome &quot;prediction&quot;.</span>
-<span class="sd">        Default: &quot;regex_match&quot;</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    pd.DataFrame</span>
-<span class="sd">        The same pandas DataFrame but with a new column added in-place containing</span>
-<span class="sd">        the software outcome &quot;prediction&quot;.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    soft_search.nsf.get_nsf_dataset</span>
-<span class="sd">        Function to get an NSF dataset for prediction.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">df</span><span class="p">[</span><span class="n">label_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">apply_column</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_apply_regex</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">df</span></div>
+    <span class="c1"># Create dataframe with metrics</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">regex_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="n">tfidf_logit_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="n">semantic_logit_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="n">transformer_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+        <span class="p">]</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 </pre></div>
         </article>
       </div>
