@@ -1,6 +1,7 @@
 # soft-search
 
-[![CI](https://github.com/si2-urssi/eager/actions/workflows/ci.yml/badge.svg)](https://github.com/si2-urssi/eager/actions/workflows/ci.yml)[![Documentation](https://github.com/si2-urssi/eager/actions/workflows/docs.yml/badge.svg)](https://si2-urssi.github.io/eager/)
+[![Build Status](https://github.com/si2-urssi/eager/workflows/CI/badge.svg)](https://github.com/si2-urssi/eager/actions)
+[![Documentation](https://github.com/si2-urssi/eager/workflows/Documentation/badge.svg)](https://si2-urssi.github.io/eager)
 
 searching for software promises in grant applications
 
@@ -9,7 +10,7 @@ searching for software promises in grant applications
 ## Installation
 
 **Stable Release:** `pip install soft-search`<br>
-**Development Head:** `pip install git+https://github.com/si2-urssi/soft-search.git`
+**Development Head:** `pip install git+https://github.com/si2-urssi/eager.git`
 
 ## Quickstart
 
@@ -21,7 +22,7 @@ df = load_soft_search_2022()
 
 ## Documentation
 
-For full package documentation please visit [si2-urssi.github.io/soft-search](https://si2-urssi.github.io/soft-search).
+For full package documentation please visit [si2-urssi.github.io/eager](https://si2-urssi.github.io/eager).
 
 ## Development
 
