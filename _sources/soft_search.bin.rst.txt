@@ -44,14 +44,6 @@ soft\_search.bin.merge\_clean\_prep\_and\_store\_annotation\_data module
    :undoc-members:
    :show-inheritance:
 
-soft\_search.bin.train\_and\_upload\_soft\_search\_2022\_transformer module
----------------------------------------------------------------------------
-
-.. automodule:: soft_search.bin.train_and_upload_soft_search_2022_transformer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

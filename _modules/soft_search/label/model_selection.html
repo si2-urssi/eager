@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>soft_search.label.model_selection - soft-search 0.1.dev1+ge6c1461 documentation</title>
+        <title>soft_search.label.model_selection - soft-search 0.1.dev1+g0784060 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+ge6c1461 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g0784060 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+ge6c1461 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+g0784060 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -204,17 +204,27 @@
           <h1>Source code for soft_search.label.model_selection</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 
+<span class="kn">from</span> <span class="nn">..data</span> <span class="kn">import</span> <span class="n">_DATA_DIR</span>
 <span class="kn">from</span> <span class="nn">..data.soft_search_2022</span> <span class="kn">import</span> <span class="n">SoftSearch2022DatasetFields</span><span class="p">,</span> <span class="n">load_soft_search_2022</span>
 <span class="kn">from</span> <span class="nn">..seed</span> <span class="kn">import</span> <span class="n">set_seed</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">regex</span><span class="p">,</span> <span class="n">semantic_logit</span><span class="p">,</span> <span class="n">tfidf_logit</span><span class="p">,</span> <span class="n">transformer</span>
+<span class="kn">from</span> <span class="nn">.transformer</span> <span class="kn">import</span> <span class="n">HUGGINGFACE_HUB_SOFT_SEARCH_MODEL</span>
 
 <span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="fit_and_eval_all_models"><a class="viewcode-back" href="../../../soft_search.label.html#soft_search.label.model_selection.fit_and_eval_all_models">[docs]</a><span class="k">def</span> <span class="nf">fit_and_eval_all_models</span><span class="p">(</span><span class="n">test_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="fit_and_eval_all_models"><a class="viewcode-back" href="../../../soft_search.label.html#soft_search.label.model_selection.fit_and_eval_all_models">[docs]</a><span class="k">def</span> <span class="nf">fit_and_eval_all_models</span><span class="p">(</span>
+    <span class="n">test_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">archive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">train_transformer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="c1"># Set global seed</span>
     <span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
@@ -230,27 +240,43 @@
 
     <span class="c1"># Run each model</span>
     <span class="n">regex_metrics</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">test_df</span><span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">tfidf_logit_metrics</span> <span class="o">=</span> <span class="n">tfidf_logit</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">tfidf_logit_pipeline_path</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">tfidf_logit_metrics</span> <span class="o">=</span> <span class="n">tfidf_logit</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
         <span class="n">train_df</span><span class="o">=</span><span class="n">train_df</span><span class="p">,</span>
         <span class="n">test_df</span><span class="o">=</span><span class="n">test_df</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">semantic_logit_metrics</span> <span class="o">=</span> <span class="n">semantic_logit</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-        <span class="n">train_df</span><span class="o">=</span><span class="n">train_df</span><span class="p">,</span>
-        <span class="n">test_df</span><span class="o">=</span><span class="n">test_df</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">transformer_metrics</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">semantic_logit_metrics</span> <span class="o">=</span> <span class="n">semantic_logit</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
         <span class="n">train_df</span><span class="o">=</span><span class="n">train_df</span><span class="p">,</span>
         <span class="n">test_df</span><span class="o">=</span><span class="n">test_df</span><span class="p">,</span>
     <span class="p">)</span>
 
+    <span class="c1"># Store all metrics</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">regex_metrics</span><span class="p">,</span> <span class="n">tfidf_logit_metrics</span><span class="p">,</span> <span class="n">semantic_logit_metrics</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">train_transformer</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">transformer_metrics</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+            <span class="n">train_df</span><span class="o">=</span><span class="n">train_df</span><span class="p">,</span>
+            <span class="n">test_df</span><span class="o">=</span><span class="n">test_df</span><span class="p">,</span>
+            <span class="n">extra_training_args</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;push_to_hub&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">&quot;hub_model_id&quot;</span><span class="p">:</span> <span class="n">HUGGINGFACE_HUB_SOFT_SEARCH_MODEL</span><span class="p">,</span>
+                <span class="s2">&quot;hub_strategy&quot;</span><span class="p">:</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;hub_token&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;HUGGINGFACE_TOKEN&quot;</span><span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="n">metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transformer_metrics</span><span class="p">)</span>
+
+    <span class="c1"># Archive</span>
+    <span class="c1"># We only save the tfidf-logit pipeline because the semantic pipeline</span>
+    <span class="k">if</span> <span class="n">archive</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span>
+            <span class="n">tfidf_logit_pipeline_path</span><span class="p">,</span>
+            <span class="n">_DATA_DIR</span><span class="p">,</span>
+        <span class="p">)</span>
+
     <span class="c1"># Create dataframe with metrics</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-        <span class="p">[</span>
-            <span class="n">regex_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
-            <span class="n">tfidf_logit_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
-            <span class="n">semantic_logit_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
-            <span class="n">transformer_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
-        <span class="p">]</span>
+        <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">],</span>
     <span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 </pre></div>
         </article>
