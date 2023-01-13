@@ -28,7 +28,7 @@ def test_semantic_logit_train() -> None:
         train_df=train_df,
         test_df=test_df,
     )
-    
+
     # Basic assertions
     assert model_path.resolve(strict=True)
     assert isinstance(logit, LogisticRegressionCV)
