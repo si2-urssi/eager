@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>soft_search.bin.get_github_repositories_with_nsf_ref - soft-search 0.1.dev1+g3cfab88 documentation</title>
+        <title>soft_search.bin.get_github_repositories_with_nsf_ref - soft-search 0.1.dev1+gd1d6d88 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g3cfab88 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+gd1d6d88 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+g3cfab88 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+gd1d6d88 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -203,7 +203,6 @@
         <article role="main">
           <h1>Source code for soft_search.bin.get_github_repositories_with_nsf_ref</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -295,7 +294,7 @@
 <span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.get_github_repositories_with_nsf_ref.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.get_github_repositories_with_nsf_ref.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: C901</span>
     <span class="c1"># Get args</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">Args</span><span class="p">()</span>
 
@@ -342,11 +341,11 @@
                     <span class="n">page_results</span> <span class="o">=</span> <span class="n">api</span><span class="p">(</span>
                         <span class="s2">&quot;/search/code&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;GET &quot;</span><span class="p">,</span>
-                        <span class="n">query</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-                            <span class="n">q</span><span class="o">=</span><span class="n">complete_query</span><span class="p">,</span>
-                            <span class="n">per_page</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span>
-                            <span class="n">page</span><span class="o">=</span><span class="n">page</span><span class="p">,</span>
-                        <span class="p">),</span>
+                        <span class="n">query</span><span class="o">=</span><span class="p">{</span>
+                            <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="n">complete_query</span><span class="p">,</span>
+                            <span class="s2">&quot;per_page&quot;</span><span class="p">:</span> <span class="n">BATCH_SIZE</span><span class="p">,</span>
+                            <span class="s2">&quot;page&quot;</span><span class="p">:</span> <span class="n">page</span><span class="p">,</span>
+                        <span class="p">},</span>
                     <span class="p">)</span>
                     <span class="n">total_count</span> <span class="o">=</span> <span class="n">page_results</span><span class="p">[</span><span class="s2">&quot;total_count&quot;</span><span class="p">]</span>
                     <span class="n">real_count</span> <span class="o">=</span> <span class="n">total_count</span> <span class="k">if</span> <span class="n">total_count</span> <span class="o">&lt;</span> <span class="mi">1000</span> <span class="k">else</span> <span class="mi">1000</span>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="soft_search.bin package" href="soft_search.bin.html" /><link rel="prev" title="soft_search" href="modules.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>soft_search package - soft-search 0.1.dev1+g3cfab88 documentation</title>
+        <title>soft_search package - soft-search 0.1.dev1+gd1d6d88 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">soft-search 0.1.dev1+g3cfab88 documentation</div></a>
+      <a href="index.html"><div class="brand">soft-search 0.1.dev1+gd1d6d88 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+g3cfab88 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+gd1d6d88 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -539,7 +539,7 @@ parameter.</p>
 <span class="sig-prename descclassname"><span class="pre">soft_search.nsf.</span></span><span class="sig-name descname"><span class="pre">get_nsf_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">program_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BIO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'NSF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Grant'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['abstractText',</span> <span class="pre">'agency',</span> <span class="pre">'awardeeName',</span> <span class="pre">'awardeeStateCode',</span> <span class="pre">'date',</span> <span class="pre">'expDate',</span> <span class="pre">'fundsObligatedAmt',</span> <span class="pre">'id',</span> <span class="pre">'piEmail',</span> <span class="pre">'piFirstName',</span> <span class="pre">'piLastName',</span> <span class="pre">'projectOutComesReport',</span> <span class="pre">'publicAccessMandate',</span> <span class="pre">'publicationConference',</span> <span class="pre">'publicationResearch',</span> <span class="pre">'startDate',</span> <span class="pre">'title']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_project_outcomes_doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/soft_search/nsf.html#get_nsf_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#soft_search.nsf.get_nsf_dataset" title="Permalink to this definition">#</a></dt>
 <dd><p>Fetch an NSF awards dataset.
 Wraps the NSF Award Search API:
-<a class="reference external" href="https://www.research.gov/common/webapi/awardapisearch-v1.htm">https://www.research.gov/common/webapi/awardapisearch-v1.htm</a></p>
+<a class="reference external" href="https://www.research.gov/common/webapi/awardapisearch-v1.htm">https://www.research.gov/common/webapi/awardapisearch-v1.htm</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
