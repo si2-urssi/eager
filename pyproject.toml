@@ -17,6 +17,9 @@ requires-python = ">=3.8"
 license = { text = "MIT License" }
 authors = [
   { email = "evamxb@uw.edu", name = "Eva Maxfield Brown" },
+  { email = "nmweber@uw.edu", name = "Nic Weber" },
+  { email = "lsschwar@uw.edu", name = "Lindsey Schwartz" },
+  { email = "lwhuang@uw.edu", name = "Richard Lewei Huang" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -87,9 +90,7 @@ dev = [
 get-github-repositories-with-nsf-ref = "soft_search.bin.get_github_repositories_with_nsf_ref:main"
 get-nsf-award-set-for-soft-search-2022 = "soft_search.bin.get_nsf_award_set_for_soft_search_2022:main"
 find-nsf-award-ids-in-github-readmes-and-link = "soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link:main"
-merge-clean-prep-and-store-annotation-data = "soft_search.bin.merge_clean_prep_and_store_annotation_data:main"
 fit-and-eval-all-models = "soft_search.bin.fit_and_eval_all_models:main"
-
 
 # build settings
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
