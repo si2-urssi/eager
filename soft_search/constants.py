@@ -5,6 +5,7 @@ class PredictionLabels:
     SoftwarePredicted = "software-predicted"
     SoftwareNotPredicted = "software-not-predicted"
 
+
 class NSFFields:
     """
     Fields that can be provided to the `get_nsf_dataset` function `dataset_fields`

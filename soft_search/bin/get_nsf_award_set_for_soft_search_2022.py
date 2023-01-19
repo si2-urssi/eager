@@ -14,6 +14,7 @@ from soft_search.constants import NSFPrograms
 
 ###############################################################################
 
+
 class Args(argparse.Namespace):
     def __init__(self) -> None:
         self.__parse()
