@@ -4,7 +4,6 @@ import argparse
 import logging
 import sys
 import traceback
-from datetime import datetime
 from pathlib import Path
 from typing import List
 
@@ -15,10 +14,6 @@ from soft_search.constants import NSFPrograms
 
 ###############################################################################
 
-START_DATE = datetime(2017, 1, 1)
-END_DATE = datetime(2022, 1, 1)
-
-
 class Args(argparse.Namespace):
     def __init__(self) -> None:
         self.__parse()
@@ -27,9 +22,25 @@ class Args(argparse.Namespace):
         p = argparse.ArgumentParser(
             prog="get-nsf-award-set-for-soft-search-2022",
             description=(
-                "Get the NSF awards set used for manually "
-                "labelling software outcomes."
+                "Get the NSF awards dataset for use in "
+                "downstream prediction of software."
             ),
+        )
+        p.add_argument(
+            "-s",
+            "--start-date",
+            dest="start_date",
+            default="2016-01-01",
+            type=str,
+            help="ISO format string with the date to start gathering awards for.",
+        )
+        p.add_argument(
+            "-e",
+            "--end-date",
+            dest="end_date",
+            default="2023-01-01",
+            type=str,
+            help="ISO format string with the date to end gathering awards for.",
         )
         p.add_argument(
             "-o",
@@ -37,7 +48,7 @@ class Args(argparse.Namespace):
             dest="outfile",
             default=Path("./soft-search-awards.csv"),
             type=Path,
-            help="The path to store the dataset CSV.",
+            help="The path to store the dataset CSV (and Parquet with the same name).",
         )
         p.add_argument(
             "--debug",
@@ -75,23 +86,23 @@ def main() -> None:
         # Get chunks
         program_chunks: List[pd.DataFrame] = []
         for program in [
-            # NSFPrograms.Biological_Sciences,
+            NSFPrograms.Biological_Sciences,
             NSFPrograms.Computer_and_Information_Science_and_Engineering,
-            # NSFPrograms.Engineering,
-            # NSFPrograms.Environmental_Research_and_Education,
-            # NSFPrograms.Geosciences,
-            # NSFPrograms.Mathematical_and_Physical_Sciences,
-            # NSFPrograms.Social_Behavioral_and_Economic_Sciences,
+            NSFPrograms.Engineering,
+            NSFPrograms.Environmental_Research_and_Education,
+            NSFPrograms.Geosciences,
+            NSFPrograms.Mathematical_and_Physical_Sciences,
+            NSFPrograms.Social_Behavioral_and_Economic_Sciences,
         ]:
             log.info(f"Gathering {program} dataset chunk...")
-            program_chunks.append(
-                nsf.get_nsf_dataset(
-                    start_date=START_DATE,
-                    end_date=END_DATE,
-                    program_name=program,
-                    require_project_outcomes_doc=False,
-                )
+            chunk = nsf.get_nsf_dataset(
+                start_date=args.start_date,
+                end_date=args.end_date,
+                program_name=program,
+                require_project_outcomes_doc=False,
             )
+            chunk["majorProgram"] = program
+            program_chunks.append(chunk)
 
         # Concat and report size
         awards = (
@@ -104,6 +115,7 @@ def main() -> None:
         # Store
         outfile = args.outfile.resolve()
         awards.to_csv(outfile, index=False)
+        awards.to_parquet(outfile.with_suffix(".parquet"))
         log.info(f"Awards dataset stored to: '{outfile}'.")
     except Exception as e:
         log.error("=============================================")

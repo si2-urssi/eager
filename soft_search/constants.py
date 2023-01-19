@@ -5,7 +5,6 @@ class PredictionLabels:
     SoftwarePredicted = "software-predicted"
     SoftwareNotPredicted = "software-not-predicted"
 
-
 class NSFFields:
     """
     Fields that can be provided to the `get_nsf_dataset` function `dataset_fields`
@@ -34,6 +33,7 @@ class NSFFields:
     piEmail = "piEmail"  # noqa: N815
     publicationResearch = "publicationResearch"  # noqa: N815
     publicationConference = "publicationConference"  # noqa: N815
+    fundProgramName = "fundProgramName"  # noqa: N815
     startDate = "startDate"  # noqa: N815
     expDate = "expDate"  # noqa: N815
 
