@@ -36,14 +36,6 @@ soft\_search.bin.get\_nsf\_award\_set\_for\_soft\_search\_2022 module
    :undoc-members:
    :show-inheritance:
 
-soft\_search.bin.merge\_clean\_prep\_and\_store\_annotation\_data module
-------------------------------------------------------------------------
-
-.. automodule:: soft_search.bin.merge_clean_prep_and_store_annotation_data
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
