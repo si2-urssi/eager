@@ -70,6 +70,51 @@ from soft_search.label.model_selection import fit_and_eval_all_models
 results = fit_and_eval_all_models()
 ```
 
+## Annotated Dataset Creation
+
+1. We queried GitHub for repositories with references to NSF Awards.
+  - We specifically queried for the terms: "National Science Foundation", "NSF Award",
+    "NSF Grant", "Supported by the NSF", and "Supported by NSF". This script is available
+    with the command `get-github-repositories-with-nsf-ref`. The code for the script is
+    available at the following link:
+    https://github.com/si2-urssi/eager/blob/main/soft_search/bin/get_github_repositories_with_nsf_ref.py
+2. We manually labeled each of the discovered repositories as "software"
+   or "not software" and cleaned up the dataset to only include awards 
+   which have a valid NSF Award ID.
+  - A script was written to find all NSF Award IDs within a repositories README.md file
+    and check that each NSF Award ID found was valid (if we could successfully query
+    that award ID using the NSF API). Only valid NSF Award IDs were kept and therefore,
+    only GitHub repositories which contained valid NSF Award IDs were kept in the
+    dataset. This script is available with the command
+    `find-nsf-award-ids-in-github-readmes-and-link`. The code for the script is
+    available at the following link:
+    https://github.com/si2-urssi/eager/blob/main/soft_search/bin/find_nsf_award_ids_in_github_readmes_and_link.py
+  - A function was written to merge all of the manual annotations and the NSF Award IDs
+    found. This function also stored the cleaned and prepared data to the project data
+    directory. The code for this function is available at the following link:
+    https://github.com/si2-urssi/eager/blob/main/soft_search/data/soft_search_2022.py#L143
+  - The manually labeled, cleaned, prepared, and stored data is made available with the
+    following code:
+     ```python
+     from soft_search.data import load_soft_search_2022
+
+     data = load_soft_search_2022()
+     ```
+  - Prior to the manual annotation process, we conducted multiple rounds of
+    annotation trials to ensure we had agreement on our labeling definitions.
+    The final annotation trial results which resulted in an inter-rater
+    reliability (Fleiss Kappa score) of 0.8918 (near perfect) is available
+    via the following function:
+    ```python
+    from soft_search.data import load_soft_search_2022_irr
+
+    data = load_soft_search_2022_irr()
+    ```
+    Additionally, the code for calculating the Fleiss Kappa Statistic
+    is available at the following link:
+    https://github.com/si2-urssi/eager/blob/main/soft_search/data/irr.py
+
+
 ## Documentation
 
 For full package documentation please visit [si2-urssi.github.io/eager](https://si2-urssi.github.io/eager).
