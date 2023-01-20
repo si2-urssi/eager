@@ -8,9 +8,10 @@ from pathlib import Path
 from typing import List
 
 import pandas as pd
+from tqdm import tqdm
 
 from soft_search import nsf
-from soft_search.constants import NSFPrograms
+from soft_search.constants import ALL_NSF_PROGRAMS
 
 ###############################################################################
 
@@ -86,15 +87,7 @@ def main() -> None:
     try:
         # Get chunks
         program_chunks: List[pd.DataFrame] = []
-        for program in [
-            NSFPrograms.Biological_Sciences,
-            NSFPrograms.Computer_and_Information_Science_and_Engineering,
-            NSFPrograms.Engineering,
-            NSFPrograms.Environmental_Research_and_Education,
-            NSFPrograms.Geosciences,
-            NSFPrograms.Mathematical_and_Physical_Sciences,
-            NSFPrograms.Social_Behavioral_and_Economic_Sciences,
-        ]:
+        for program in tqdm(ALL_NSF_PROGRAMS, desc="Iterating major programs..."):
             log.info(f"Gathering {program} dataset chunk...")
             chunk = nsf.get_nsf_dataset(
                 start_date=args.start_date,
