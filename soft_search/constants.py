@@ -35,8 +35,38 @@ class NSFFields:
     publicationResearch = "publicationResearch"  # noqa: N815
     publicationConference = "publicationConference"  # noqa: N815
     fundProgramName = "fundProgramName"  # noqa: N815
+    awardAgencyCode = "awardAgencyCode"  # noqa: N815
+    fundAgencyCode = "fundAgencyCode"  # noqa: N815
+    parentDunsNumber = "parentDunsNumber"  # noqa: N815
+    primaryProgram = "primaryProgram"  # noqa: N815
     startDate = "startDate"  # noqa: N815
     expDate = "expDate"  # noqa: N815
+    rpp = "rpp"
+    awardeeCity = "awardeeCity"
+    awardeeCountryCode = "awardeeCountryCode"
+    awardeeCounty = "awardeeCounty"
+    awardeeDistrictCode = "awardeeDistrictCode"
+    awardeeZipCode = "awardeeZipCode"
+    cfdaNumber = "cfdaNumber"
+    coPDPI = "coPDPI"
+    estimatedTotalAmt = "estimatedTotalAmt"
+    dunsNumber = "dunsNumber"
+    pdPIName = "pdPIName"
+    perfCity = "perfCity"
+    perfCountryCode = "perfCountryCode"
+    perfCounty = "perfCounty"
+    perfDistrictCode = "perfDistrictCode"
+    perfLocation = "perfLocation"
+    perfStateCode = "perfStateCode"
+    perfZipCode = "perfZipCode"
+    poName = "poName"
+    transType = "transType"
+    awardee = "awardee"
+    poPhone = "poPhone"
+    poEmail = "poEmail"
+    awardeeAddress = "awardeeAddress"
+    perfAddress = "perfAddress"
+    piPhone = "piPhone"
 
 
 ALL_NSF_FIELDS = [getattr(NSFFields, a) for a in dir(NSFFields) if "__" not in a]
@@ -47,13 +77,34 @@ class NSFPrograms:
     Computer_and_Information_Science_and_Engineering = "CISE"
     Education_and_Human_Resources = "EHR"
     Engineering = "ENG"
-    Environmental_Research_and_Education = "ERE"
     Geosciences = "GEO"
     Integrative_Activities = "OIA"
     International_Science_and_Engineering = "OISE"
     Mathematical_and_Physical_Sciences = "MPS"
     Social_Behavioral_and_Economic_Sciences = "SBE"
     Technology_Innovation_and_Partnerships = "TIP"
+
+
+ALL_NSF_PROGRAMS = [getattr(NSFPrograms, a) for a in dir(NSFPrograms) if "__" not in a]
+
+
+CFDA_NUMBER_TO_PROGRAM_LUT = {
+    "47.041": NSFPrograms.Engineering,
+    "47.049": NSFPrograms.Mathematical_and_Physical_Sciences,
+    "47.050": NSFPrograms.Geosciences,
+    "47.070": NSFPrograms.Computer_and_Information_Science_and_Engineering,
+    "47.074": NSFPrograms.Biological_Sciences,
+    "47.075": NSFPrograms.Social_Behavioral_and_Economic_Sciences,
+    "47.076": NSFPrograms.Education_and_Human_Resources,
+    "47.079": NSFPrograms.International_Science_and_Engineering,
+    "47.083": NSFPrograms.Integrative_Activities,
+    "47.084": NSFPrograms.Technology_Innovation_and_Partnerships,
+}
+
+
+NSF_PROGRAM_TO_CFDA_NUMBER_LUT = {
+    code: number for number, code in CFDA_NUMBER_TO_PROGRAM_LUT.items()
+}
 
 
 DEFAULT_SEMANTIC_EMBEDDING_MODEL = "distilbert-base-uncased-finetuned-sst-2-english"
