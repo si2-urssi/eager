@@ -5,18 +5,19 @@ from typing import List, Optional, Union
 
 import pandas as pd
 import requests
+from tqdm import tqdm
 
-from .constants import ALL_NSF_FIELDS, NSFPrograms
+from .constants import ALL_NSF_FIELDS, NSF_PROGRAM_TO_CFDA_NUMBER_LUT, NSFPrograms
 
 ###############################################################################
 # Constants
 
 _NSF_API_URL_TEMPLATE = (
     "https://api.nsf.gov/services/v1/awards.json?"
-    "fundProgramName={program_name}"
     "&agency={agency}"
     "&dateStart={start_date}"
     "&dateEnd={end_date}"
+    "&cfdaNumber={cfda_number}"
     "&transType={transaction_type}"
     "&printFields={dataset_fields}"
     "&projectOutcomesOnly={require_project_outcomes}"
@@ -50,7 +51,7 @@ def _parse_nsf_datetime(dt: Union[str, datetime]) -> str:
 def _get_nsf_chunk(
     start_date: str,
     end_date: str,
-    program_name: str,
+    cfda_number: str,
     agency: str,
     transaction_type: str,
     dataset_fields: str,
@@ -62,7 +63,7 @@ def _get_nsf_chunk(
         _NSF_API_URL_TEMPLATE.format(
             start_date=start_date,
             end_date=end_date,
-            program_name=program_name,
+            cfda_number=cfda_number,
             agency=agency,
             transaction_type=transaction_type,
             dataset_fields=dataset_fields,
@@ -168,32 +169,37 @@ def get_nsf_dataset(
     # Convert required project outcomes bool to str
     str_require_project_outcomes = str(require_project_outcomes_doc).lower()
 
+    # Reverse lookup the cfda number from the name
+    cfda_number = NSF_PROGRAM_TO_CFDA_NUMBER_LUT[program_name]
+
     # Run gather
     current_offset = 1
     chunks: List[pd.DataFrame] = []
-    while True:
-        # Get chunk
-        chunk = _get_nsf_chunk(
-            start_date=formatted_start_date,
-            end_date=formatted_end_date,
-            program_name=program_name,
-            agency=agency,
-            transaction_type=transaction_type,
-            dataset_fields=str_dataset_fields,
-            require_project_outcomes=str_require_project_outcomes,
-            offset=current_offset,
-        )
-        chunks.append(chunk)
+    with tqdm(desc="Iterating data chunks...") as pbar:
+        while True:
+            # Get chunk
+            chunk = _get_nsf_chunk(
+                start_date=formatted_start_date,
+                end_date=formatted_end_date,
+                cfda_number=cfda_number,
+                agency=agency,
+                transaction_type=transaction_type,
+                dataset_fields=str_dataset_fields,
+                require_project_outcomes=str_require_project_outcomes,
+                offset=current_offset,
+            )
+            chunks.append(chunk)
 
-        # Check chunk length
-        # The default request size for NSF is 25
-        # If we received less than 25 results,
-        # we can assume we are done.
-        if len(chunk) < 25:
-            break
+            # Check chunk length
+            # The default request size for NSF is 25
+            # If we received less than 25 results,
+            # we can assume we are done.
+            if len(chunk) < 25:
+                break
 
-        # Update state
-        current_offset += 25
+            # Update state
+            current_offset += 25
+            pbar.update(1)
 
     # Concat all awards
     return (
