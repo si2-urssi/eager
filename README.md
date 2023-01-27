@@ -54,6 +54,13 @@ df = load_soft_search_2022()
 
 ### Reproducible Models
 
+| model                  	| accuracy 	| precision 	| recall   	| f1       	|
+|------------------------	|----------	|-----------	|----------	|----------	|
+| tfidf-logit            	| 0.696682 	| 0.684450  	| 0.696682 	| 0.686327 	|
+| semantic-logit         	| 0.682464 	| 0.663943  	| 0.682464 	| 0.633984 	|
+| fine-tuned-transformer 	| 0.710900 	| 0.576923  	| 0.616438 	| 0.596026 	|
+| regex                  	| 0.526066 	| 0.537927  	| 0.526066 	| 0.531303 	|
+
 To train and evaluate all of our models you can run the following:
 
 ```bash
