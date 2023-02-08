@@ -42,9 +42,7 @@ def fit_and_eval_all_models(
         subset = data.dropna(subset=[text_col])
 
         # Store the "predictive_source" column value
-        predictive_source = {
-            "predictive_source": text_col.replace("_", "-")
-        }
+        predictive_source = {"predictive_source": text_col.replace("_", "-")}
 
         # Split the data
         train_df, test_df = train_test_split(
@@ -60,17 +58,19 @@ def fit_and_eval_all_models(
             text_col=text_col,
             label_col=SoftSearch2022DatasetFields.label,
         )
-        results.append({
-            **predictive_source,
-            **regex_metrics.to_dict(),
-        })
+        results.append(
+            {
+                **predictive_source,
+                **regex_metrics.to_dict(),
+            }
+        )
 
         # TFIDF
         if text_col == SoftSearch2022DatasetFields.abstract_text:
             tfidf_output_path = ABSTRACT_SOURCE_TFIDF_LOGIT_PATH
         else:
             tfidf_output_path = OUTCOMES_SOURCE_TFIDF_LOGIT_PATH
-        
+
         tfidf_logit_pipeline_path, _, tfidf_logit_metrics = tfidf_logit.train(
             train_df=train_df,
             test_df=test_df,
@@ -78,10 +78,12 @@ def fit_and_eval_all_models(
             label_col=SoftSearch2022DatasetFields.label,
             model_storage_path=tfidf_output_path,
         )
-        results.append({
-            **predictive_source,
-            **tfidf_logit_metrics.to_dict(),
-        })
+        results.append(
+            {
+                **predictive_source,
+                **tfidf_logit_metrics.to_dict(),
+            }
+        )
 
         # Archive
         # We only save the tfidf-logit pipeline because it typically performs the best
@@ -90,7 +92,7 @@ def fit_and_eval_all_models(
                 tfidf_logit_pipeline_path,
                 _DATA_DIR,
             )
-        
+
         # Semantic
         _, _, semantic_logit_metrics = semantic_logit.train(
             train_df=train_df,
@@ -98,10 +100,12 @@ def fit_and_eval_all_models(
             text_col=text_col,
             label_col=SoftSearch2022DatasetFields.label,
         )
-        results.append({
-            **predictive_source,
-            **semantic_logit_metrics.to_dict(),
-        })
+        results.append(
+            {
+                **predictive_source,
+                **semantic_logit_metrics.to_dict(),
+            }
+        )
 
         # Transformer
         if train_transformer:
@@ -122,12 +126,18 @@ def fit_and_eval_all_models(
                 label_col=SoftSearch2022DatasetFields.label,
             )
 
-            results.append({
-                **predictive_source,
-                **transformer_metrics.to_dict(),
-            })
+            results.append(
+                {
+                    **predictive_source,
+                    **transformer_metrics.to_dict(),
+                }
+            )
 
     # Create dataframe with metrics
-    return pd.DataFrame(results).sort_values(by="f1", ascending=False).reset_index(
-        drop=True,
+    return (
+        pd.DataFrame(results)
+        .sort_values(by="f1", ascending=False)
+        .reset_index(
+            drop=True,
+        )
     )

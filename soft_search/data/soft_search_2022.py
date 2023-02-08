@@ -27,6 +27,7 @@ RICHARD_GH_REPOS_ANNOTATION_PATH = (
     Path(__file__).parent / "gh-repo-annotations-richard.csv"
 )
 
+
 class SoftSearch2022IRRDatasetFields:
     annotator = "annotator"
     github_link = "github_link"
@@ -247,10 +248,12 @@ def _prepare_soft_search_2022(
     data = data.dropna(subset=["nsf_award_id"])
 
     # Get both the abstract and the project outcomes report
-    get_nsf_fields = ",".join([
-        NSFFields.abstractText,
-        NSFFields.projectOutComesReport,
-    ])
+    get_nsf_fields = ",".join(
+        [
+            NSFFields.abstractText,
+            NSFFields.projectOutComesReport,
+        ]
+    )
 
     def _thread_text_prediction_cols(
         award_id: int,

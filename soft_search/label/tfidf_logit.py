@@ -17,12 +17,12 @@ from ..metrics import EvaluationMetrics
 
 ###############################################################################
 
-ABSTRACT_SOURCE_TFIDF_LOGIT_PATH = (
-    Path("soft-search-tfidf-logit-from-abstract.pkl").resolve()
-)
-OUTCOMES_SOURCE_TFIDF_LOGIT_PATH = (
-    Path("soft-search-tfidf-logit-from-outcomes.pkl").resolve()
-)
+ABSTRACT_SOURCE_TFIDF_LOGIT_PATH = Path(
+    "soft-search-tfidf-logit-from-abstract.pkl"
+).resolve()
+OUTCOMES_SOURCE_TFIDF_LOGIT_PATH = Path(
+    "soft-search-tfidf-logit-from-outcomes.pkl"
+).resolve()
 ARCHIVED_SOFT_SEARCH_ABSTRACT_SOURCE_TFIDF_LOGIT_PATH = (
     _DATA_DIR / ABSTRACT_SOURCE_TFIDF_LOGIT_PATH.name
 )
