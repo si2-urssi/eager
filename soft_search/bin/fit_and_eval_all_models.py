@@ -36,7 +36,7 @@ class Args(argparse.Namespace):
             "--archive",
             dest="archive",
             action="store_true",
-            help="Archive all models.",
+            help="Archive tfidf-logit (usually the best performing) models.",
         )
         p.add_argument(
             "--no-transformer",

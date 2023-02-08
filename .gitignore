@@ -122,8 +122,10 @@ gh-search-results/
 irr-diffs.csv
 example-readmes.txt
 github-awards.csv
-linked-github-nsf-results*
+linked-github-nsf-results.errors.parquet
 trained-soft-search-transformer-*
 trained-soft-search-transformer/
 soft-search-semantic-logit.pkl
 soft-search-tfidf-logit.pkl
+soft-search-tfidf-logit-*.pkl
+soft-search-awards.parquet

@@ -54,12 +54,16 @@ df = load_soft_search_2022()
 
 ### Reproducible Models
 
-| model                  	| accuracy 	| precision 	| recall   	| f1       	|
-|------------------------	|----------	|-----------	|----------	|----------	|
-| tfidf-logit            	| 0.696682 	| 0.684450  	| 0.696682 	| 0.686327 	|
-| semantic-logit         	| 0.682464 	| 0.663943  	| 0.682464 	| 0.633984 	|
-| fine-tuned-transformer 	| 0.710900 	| 0.576923  	| 0.616438 	| 0.596026 	|
-| regex                  	| 0.526066 	| 0.537927  	| 0.526066 	| 0.531303 	|
+| predictive_source 	| model                  	| accuracy 	| precision 	| recall   	| f1       	|
+|-------------------	|------------------------	|----------	|-----------	|----------	|----------	|
+| project-outcomes  	| tfidf-logit            	| 0.744898 	| 0.745106  	| 0.744898 	| 0.744925 	|
+| project-outcomes  	| fine-tuned-transformer 	| 0.673469 	| 0.637931  	| 0.770833 	| 0.698113 	|
+| abstract-text     	| tfidf-logit            	| 0.673913 	| 0.673960  	| 0.673913 	| 0.673217 	|
+| abstract-text     	| fine-tuned-transformer 	| 0.635870 	| 0.607843  	| 0.696629 	| 0.649215 	|
+| project-outcomes  	| semantic-logit         	| 0.632653 	| 0.632568  	| 0.632653 	| 0.632347 	|
+| abstract-text     	| semantic-logit         	| 0.630435 	| 0.630156  	| 0.630435 	| 0.629997 	|
+| abstract-text     	| regex                  	| 0.516304 	| 0.514612  	| 0.516304 	| 0.513610 	|
+| project-outcomes  	| regex                  	| 0.510204 	| 0.507086  	| 0.510204 	| 0.481559 	|
 
 To train and evaluate all of our models you can run the following:
 
@@ -85,6 +89,19 @@ results = fit_and_eval_all_models()
     with the command `get-github-repositories-with-nsf-ref`. The code for the script is
     available at the following link:
     https://github.com/si2-urssi/eager/blob/main/soft_search/bin/get_github_repositories_with_nsf_ref.py
+  - Note: the `get-github-repositories-with-nsf-ref` script produces a directory of CSV
+    files. This is useful for paginated queries and protecting against potential crashes
+    but the actual stored data in the repo (and the data we use going forward) is
+    the a DataFrame with all of these chunks concatenated together and duplicate GitHub
+    repositories removed.
+  - Because the `get-github-repositories-with-nsf-ref` script depends on the returned
+    data from GitHub themselves, we have archived the data produced by the original run
+    of this script to the repository and made it available as follows:
+    ```python
+    from soft_search.data import load_github_repos_with_nsf_refs_2022
+
+    data = load_github_repos_with_nsf_refs_2022()
+    ```
 2. We manually labeled each of the discovered repositories as "software"
    or "not software" and cleaned up the dataset to only include awards 
    which have a valid NSF Award ID.

@@ -17,11 +17,18 @@ from ..metrics import EvaluationMetrics
 
 ###############################################################################
 
-DEFAULT_SOFT_SEARCH_TFIDF_LOGIT_PATH = Path("soft-search-tfidf-logit.pkl").resolve()
-ARCHIVED_SOFT_SEARCH_TFIDF_LOGIT_PATH = (
-    _DATA_DIR / DEFAULT_SOFT_SEARCH_TFIDF_LOGIT_PATH.name
+ABSTRACT_SOURCE_TFIDF_LOGIT_PATH = (
+    Path("soft-search-tfidf-logit-from-abstract.pkl").resolve()
 )
-TFIDF_LOGIT_LABEL = "tfidf_logit_label"
+OUTCOMES_SOURCE_TFIDF_LOGIT_PATH = (
+    Path("soft-search-tfidf-logit-from-outcomes.pkl").resolve()
+)
+ARCHIVED_SOFT_SEARCH_ABSTRACT_SOURCE_TFIDF_LOGIT_PATH = (
+    _DATA_DIR / ABSTRACT_SOURCE_TFIDF_LOGIT_PATH.name
+)
+ARCHIVED_SOFT_SEARCH_OUTCOMES_SOURCE_TFIDF_LOGIT_PATH = (
+    _DATA_DIR / OUTCOMES_SOURCE_TFIDF_LOGIT_PATH.name
+)
 
 ###############################################################################
 
@@ -35,7 +42,7 @@ def train(
     test_df: Union[str, Path, pd.DataFrame],
     text_col: str = SoftSearch2022DatasetFields.abstract_text,
     label_col: str = SoftSearch2022DatasetFields.label,
-    model_storage_path: Union[str, Path] = DEFAULT_SOFT_SEARCH_TFIDF_LOGIT_PATH,
+    model_storage_path: Union[str, Path] = ABSTRACT_SOURCE_TFIDF_LOGIT_PATH,
 ) -> Tuple[Path, Pipeline, EvaluationMetrics]:
     # Handle storage dir
     model_storage_path = Path(model_storage_path).resolve()

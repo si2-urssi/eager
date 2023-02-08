@@ -24,7 +24,6 @@ DEFAULT_SOFT_SEARCH_SEMANTIC_LOGIT_PATH = Path(
 ARCHIVED_SOFT_SEARCH_SEMANTIC_LOGIT_PATH = (
     _DATA_DIR / DEFAULT_SOFT_SEARCH_SEMANTIC_LOGIT_PATH.name
 )
-TFIDF_LOGIT_LABEL = "semantic_logit_label"
 
 ###############################################################################
 
