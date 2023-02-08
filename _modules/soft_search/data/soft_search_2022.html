@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>soft_search.data.soft_search_2022 - soft-search 0.1.dev1+gb4483ab documentation</title>
+        <title>soft_search.data.soft_search_2022 - soft-search 0.1.dev1+g8dbd6fc documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+gb4483ab documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g8dbd6fc documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+gb4483ab documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+g8dbd6fc documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -218,6 +218,18 @@
 
 <span class="n">SOFT_SEARCH_2022_DS_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;soft-search-2022-labelled.parquet&quot;</span>
 <span class="n">SOFT_SEARCH_2022_IRR_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;soft-search-2022-irr.parquet&quot;</span>
+<span class="n">GH_REPOS_WITH_NSF_REF_2022_PATH</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;gh-search-results-duplicates-removed.csv&quot;</span>
+<span class="p">)</span>
+<span class="n">GH_REPOS_LINKED_TO_NSF_IDS_PATH</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;linked-github-nsf-results.parquet&quot;</span>
+<span class="p">)</span>
+<span class="n">LINDSEY_GH_REPOS_ANNOTATION_PATH</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;gh-repo-annotations-lindsey.csv&quot;</span>
+<span class="p">)</span>
+<span class="n">RICHARD_GH_REPOS_ANNOTATION_PATH</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;gh-repo-annotations-richard.csv&quot;</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="SoftSearch2022IRRDatasetFields"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.soft_search_2022.SoftSearch2022IRRDatasetFields">[docs]</a><span class="k">class</span> <span class="nc">SoftSearch2022IRRDatasetFields</span><span class="p">:</span>
@@ -240,6 +252,7 @@
     <span class="n">nsf_award_id</span> <span class="o">=</span> <span class="s2">&quot;nsf_award_id&quot;</span>
     <span class="n">nsf_award_link</span> <span class="o">=</span> <span class="s2">&quot;nsf_award_link&quot;</span>
     <span class="n">abstract_text</span> <span class="o">=</span> <span class="s2">&quot;abstract_text&quot;</span>
+    <span class="n">project_outcomes</span> <span class="o">=</span> <span class="s2">&quot;project_outcomes&quot;</span>
     <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;label&quot;</span>
     <span class="n">from_template_repo</span> <span class="o">=</span> <span class="s2">&quot;from_template_repo&quot;</span>
     <span class="n">is_a_fork</span> <span class="o">=</span> <span class="s2">&quot;is_a_fork&quot;</span></div>
@@ -254,12 +267,25 @@
 <span class="c1">###############################################################################</span>
 
 
+<div class="viewcode-block" id="load_github_repos_with_nsf_refs_2022"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.soft_search_2022.load_github_repos_with_nsf_refs_2022">[docs]</a><span class="k">def</span> <span class="nf">load_github_repos_with_nsf_refs_2022</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the GitHub repositories with references to NSF dataset.</span>
+
+<span class="sd">    Created via the `get-github-repositories-with-nsf-ref` bin script.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        The dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">GH_REPOS_WITH_NSF_REF_2022_PATH</span><span class="p">)</span></div>
+
+
 <span class="k">def</span> <span class="nf">_prepare_soft_search_2022_irr</span><span class="p">(</span>
     <span class="n">all_annos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function to prepare the manually labelled data downloaded from Google Drive</span>
-<span class="sd">    into the stored dataset.</span>
+<span class="sd">    Prepare and store sample annotation data for use in future IRR calculation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -344,13 +370,32 @@
     <span class="k">return</span> <span class="n">SOFT_SEARCH_2022_IRR_PATH</span>
 
 
+<div class="viewcode-block" id="load_linked_github_repositories_with_nsf_awards_2022"><a class="viewcode-back" href="../../../soft_search.data.html#soft_search.data.soft_search_2022.load_linked_github_repositories_with_nsf_awards_2022">[docs]</a><span class="k">def</span> <span class="nf">load_linked_github_repositories_with_nsf_awards_2022</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the GitHub repositories linked to specific NSF award IDs dataset.</span>
+
+<span class="sd">    Created via the `find-nsf-award-ids-in-github-readmes-and-link` bin script.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        The dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">GH_REPOS_LINKED_TO_NSF_IDS_PATH</span><span class="p">)</span></div>
+
+
 <span class="k">def</span> <span class="nf">_prepare_soft_search_2022</span><span class="p">(</span>
-    <span class="n">linked_nsf_github_repos</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
-    <span class="n">lindsey_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
-    <span class="n">richard_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+    <span class="n">linked_nsf_github_repos</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">GH_REPOS_LINKED_TO_NSF_IDS_PATH</span>
+    <span class="p">),</span>
+    <span class="n">lindsey_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="n">LINDSEY_GH_REPOS_ANNOTATION_PATH</span><span class="p">,</span>
+    <span class="n">richard_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="n">RICHARD_GH_REPOS_ANNOTATION_PATH</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function to prepare the manually labelled data and store in repo.</span>
+<span class="sd">    Prepare the soft search dataset for storage in the package.</span>
+
+<span class="sd">    Merge various dataframes together. Fetch NSF fields for each NSF Award ID. Drop</span>
+<span class="sd">    duplicates. Store to parquet in the project data archive.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -406,11 +451,21 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;link&quot;</span><span class="p">,</span> <span class="s2">&quot;nsf_award_id&quot;</span><span class="p">])</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nsf_award_id&quot;</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_thread_abstract_text</span><span class="p">(</span><span class="n">award_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]:</span>
+    <span class="c1"># Get both the abstract and the project outcomes report</span>
+    <span class="n">get_nsf_fields</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">,</span>
+            <span class="n">NSFFields</span><span class="o">.</span><span class="n">projectOutComesReport</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_thread_text_prediction_cols</span><span class="p">(</span>
+        <span class="n">award_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]:</span>
         <span class="n">response_data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;https://api.nsf.gov/&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;services/v1/awards/</span><span class="si">{</span><span class="n">award_id</span><span class="si">}</span><span class="s2">.json&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;?printFields=</span><span class="si">{</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;?printFields=</span><span class="si">{</span><span class="n">get_nsf_fields</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
         <span class="c1"># Handle data existance</span>
@@ -430,20 +485,21 @@
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;award_id&quot;</span><span class="p">:</span> <span class="n">award_id</span><span class="p">,</span>
             <span class="s2">&quot;abstract_text&quot;</span><span class="p">:</span> <span class="n">single_award</span><span class="p">[</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">],</span>
+            <span class="s2">&quot;project_outcomes&quot;</span><span class="p">:</span> <span class="n">single_award</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">projectOutComesReport</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">}</span>
 
     <span class="c1"># Thread gather texts</span>
     <span class="n">abstract_texts_list</span> <span class="o">=</span> <span class="n">thread_map</span><span class="p">(</span>
-        <span class="n">_thread_abstract_text</span><span class="p">,</span>
+        <span class="n">_thread_text_prediction_cols</span><span class="p">,</span>
         <span class="n">data</span><span class="o">.</span><span class="n">nsf_award_id</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span>
         <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Getting NSF Award Abstracts&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Filter failed values</span>
-    <span class="n">abstract_texts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">at</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">abstract_texts_list</span> <span class="k">if</span> <span class="n">at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span>
+    <span class="n">extra_items</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">at</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">abstract_texts_list</span> <span class="k">if</span> <span class="n">at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span>
 
     <span class="c1"># Join to original data frame</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">abstract_texts</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;award_id&quot;</span><span class="p">),</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;nsf_award_id&quot;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extra_items</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;award_id&quot;</span><span class="p">),</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;nsf_award_id&quot;</span><span class="p">)</span>
 
     <span class="c1"># Drop any rows that are missing abstract text</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;abstract_text&quot;</span><span class="p">])</span>
@@ -466,6 +522,18 @@
             <span class="s2">&quot;include&quot;</span><span class="p">:</span> <span class="n">PredictionLabels</span><span class="o">.</span><span class="n">SoftwarePredicted</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
+
+    <span class="c1"># We want to drop duplicates of nsf award id</span>
+    <span class="c1"># There should only be 1 example of an NSF award ID</span>
+    <span class="c1"># no need to duplicate the examples</span>
+    <span class="c1"># NOTE: before we drop duplicates we sort by label descending so that</span>
+    <span class="c1"># &quot;if an nsf award id has a label of `software-predicted`&quot; it retains that label</span>
+    <span class="c1"># i.e. prior to this line, an award may have multiple examples in the dataset</span>
+    <span class="c1"># some of those examples produce software and some do not produce software</span>
+    <span class="c1"># if ANY of those examples produce software, we want to label the award as producing</span>
+    <span class="c1"># software</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nsf_award_id&quot;</span><span class="p">])</span>
 
     <span class="c1"># Store to standard location</span>
     <span class="n">data</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">SOFT_SEARCH_2022_DS_PATH</span><span class="p">)</span>

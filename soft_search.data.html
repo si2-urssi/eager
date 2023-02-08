@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="soft_search.label package" href="soft_search.label.html" /><link rel="prev" title="soft_search.bin package" href="soft_search.bin.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>soft_search.data package - soft-search 0.1.dev1+gb4483ab documentation</title>
+        <title>soft_search.data package - soft-search 0.1.dev1+g8dbd6fc documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">soft-search 0.1.dev1+gb4483ab documentation</div></a>
+      <a href="index.html"><div class="brand">soft-search 0.1.dev1+g8dbd6fc documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+gb4483ab documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+g8dbd6fc documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -294,6 +294,11 @@ inter-rater reliability data.</p>
 <span class="sig-name descname"><span class="pre">nsf_award_link</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'nsf_award_link'</span></em><a class="headerlink" href="#soft_search.data.soft_search_2022.SoftSearch2022DatasetFields.nsf_award_link" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soft_search.data.soft_search_2022.SoftSearch2022DatasetFields.project_outcomes">
+<span class="sig-name descname"><span class="pre">project_outcomes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'project_outcomes'</span></em><a class="headerlink" href="#soft_search.data.soft_search_2022.SoftSearch2022DatasetFields.project_outcomes" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -325,6 +330,36 @@ inter-rater reliability data.</p>
 <span class="sig-name descname"><span class="pre">notes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'notes'</span></em><a class="headerlink" href="#soft_search.data.soft_search_2022.SoftSearch2022IRRDatasetFields.notes" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="soft_search.data.soft_search_2022.load_github_repos_with_nsf_refs_2022">
+<span class="sig-prename descclassname"><span class="pre">soft_search.data.soft_search_2022.</span></span><span class="sig-name descname"><span class="pre">load_github_repos_with_nsf_refs_2022</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/soft_search/data/soft_search_2022.html#load_github_repos_with_nsf_refs_2022"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#soft_search.data.soft_search_2022.load_github_repos_with_nsf_refs_2022" title="Permalink to this definition">#</a></dt>
+<dd><p>Load the GitHub repositories with references to NSF dataset.</p>
+<p>Created via the <cite>get-github-repositories-with-nsf-ref</cite> bin script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>The dataset.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="soft_search.data.soft_search_2022.load_linked_github_repositories_with_nsf_awards_2022">
+<span class="sig-prename descclassname"><span class="pre">soft_search.data.soft_search_2022.</span></span><span class="sig-name descname"><span class="pre">load_linked_github_repositories_with_nsf_awards_2022</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/soft_search/data/soft_search_2022.html#load_linked_github_repositories_with_nsf_awards_2022"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#soft_search.data.soft_search_2022.load_linked_github_repositories_with_nsf_awards_2022" title="Permalink to this definition">#</a></dt>
+<dd><p>Load the GitHub repositories linked to specific NSF award IDs dataset.</p>
+<p>Created via the <cite>find-nsf-award-ids-in-github-readmes-and-link</cite> bin script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>The dataset.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -461,6 +496,7 @@ inter-rater reliability data.</p>
 <li><a class="reference internal" href="#soft_search.data.soft_search_2022.SoftSearch2022DatasetFields.label"><code class="docutils literal notranslate"><span class="pre">SoftSearch2022DatasetFields.label</span></code></a></li>
 <li><a class="reference internal" href="#soft_search.data.soft_search_2022.SoftSearch2022DatasetFields.nsf_award_id"><code class="docutils literal notranslate"><span class="pre">SoftSearch2022DatasetFields.nsf_award_id</span></code></a></li>
 <li><a class="reference internal" href="#soft_search.data.soft_search_2022.SoftSearch2022DatasetFields.nsf_award_link"><code class="docutils literal notranslate"><span class="pre">SoftSearch2022DatasetFields.nsf_award_link</span></code></a></li>
+<li><a class="reference internal" href="#soft_search.data.soft_search_2022.SoftSearch2022DatasetFields.project_outcomes"><code class="docutils literal notranslate"><span class="pre">SoftSearch2022DatasetFields.project_outcomes</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#soft_search.data.soft_search_2022.SoftSearch2022IRRDatasetFields"><code class="docutils literal notranslate"><span class="pre">SoftSearch2022IRRDatasetFields</span></code></a><ul>
@@ -471,6 +507,8 @@ inter-rater reliability data.</p>
 <li><a class="reference internal" href="#soft_search.data.soft_search_2022.SoftSearch2022IRRDatasetFields.notes"><code class="docutils literal notranslate"><span class="pre">SoftSearch2022IRRDatasetFields.notes</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#soft_search.data.soft_search_2022.load_github_repos_with_nsf_refs_2022"><code class="docutils literal notranslate"><span class="pre">load_github_repos_with_nsf_refs_2022()</span></code></a></li>
+<li><a class="reference internal" href="#soft_search.data.soft_search_2022.load_linked_github_repositories_with_nsf_awards_2022"><code class="docutils literal notranslate"><span class="pre">load_linked_github_repositories_with_nsf_awards_2022()</span></code></a></li>
 <li><a class="reference internal" href="#soft_search.data.soft_search_2022.load_soft_search_2022"><code class="docutils literal notranslate"><span class="pre">load_soft_search_2022()</span></code></a></li>
 <li><a class="reference internal" href="#soft_search.data.soft_search_2022.load_soft_search_2022_irr"><code class="docutils literal notranslate"><span class="pre">load_soft_search_2022_irr()</span></code></a></li>
 </ul>
