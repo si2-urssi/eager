@@ -14,7 +14,18 @@ from ..constants import NSFFields, PredictionLabels
 
 SOFT_SEARCH_2022_DS_PATH = Path(__file__).parent / "soft-search-2022-labelled.parquet"
 SOFT_SEARCH_2022_IRR_PATH = Path(__file__).parent / "soft-search-2022-irr.parquet"
-
+GH_REPOS_WITH_NSF_REF_2022_PATH = (
+    Path(__file__).parent / "gh-search-results-duplicates-removed.csv"
+)
+GH_REPOS_LINKED_TO_NSF_IDS_PATH = (
+    Path(__file__).parent / "linked-github-nsf-results.parquet"
+)
+LINDSEY_GH_REPOS_ANNOTATION_PATH = (
+    Path(__file__).parent / "gh-repo-annotations-lindsey.csv"
+)
+RICHARD_GH_REPOS_ANNOTATION_PATH = (
+    Path(__file__).parent / "gh-repo-annotations-richard.csv"
+)
 
 class SoftSearch2022IRRDatasetFields:
     annotator = "annotator"
@@ -36,6 +47,7 @@ class SoftSearch2022DatasetFields:
     nsf_award_id = "nsf_award_id"
     nsf_award_link = "nsf_award_link"
     abstract_text = "abstract_text"
+    project_outcomes = "project_outcomes"
     label = "label"
     from_template_repo = "from_template_repo"
     is_a_fork = "is_a_fork"
@@ -50,12 +62,25 @@ ALL_SOFT_SEARCH_2022_DATASET_FIELDS = [
 ###############################################################################
 
 
+def load_github_repos_with_nsf_refs_2022() -> pd.DataFrame:
+    """
+    Load the GitHub repositories with references to NSF dataset.
+
+    Created via the `get-github-repositories-with-nsf-ref` bin script.
+
+    Returns
+    -------
+    pd.DataFrame
+        The dataset.
+    """
+    return pd.read_csv(GH_REPOS_WITH_NSF_REF_2022_PATH)
+
+
 def _prepare_soft_search_2022_irr(
     all_annos: List[Union[str, Path, pd.DataFrame]],
 ) -> Path:
     """
-    Function to prepare the manually labelled data downloaded from Google Drive
-    into the stored dataset.
+    Prepare and store sample annotation data for use in future IRR calculation.
 
     Parameters
     ----------
@@ -140,13 +165,32 @@ def _prepare_soft_search_2022_irr(
     return SOFT_SEARCH_2022_IRR_PATH
 
 
+def load_linked_github_repositories_with_nsf_awards_2022() -> pd.DataFrame:
+    """
+    Load the GitHub repositories linked to specific NSF award IDs dataset.
+
+    Created via the `find-nsf-award-ids-in-github-readmes-and-link` bin script.
+
+    Returns
+    -------
+    pd.DataFrame
+        The dataset.
+    """
+    return pd.read_parquet(GH_REPOS_LINKED_TO_NSF_IDS_PATH)
+
+
 def _prepare_soft_search_2022(
-    linked_nsf_github_repos: Union[str, Path, pd.DataFrame],
-    lindsey_data: Union[str, Path, pd.DataFrame],
-    richard_data: Union[str, Path, pd.DataFrame],
+    linked_nsf_github_repos: Union[str, Path, pd.DataFrame] = (
+        GH_REPOS_LINKED_TO_NSF_IDS_PATH
+    ),
+    lindsey_data: Union[str, Path, pd.DataFrame] = LINDSEY_GH_REPOS_ANNOTATION_PATH,
+    richard_data: Union[str, Path, pd.DataFrame] = RICHARD_GH_REPOS_ANNOTATION_PATH,
 ) -> Path:
     """
-    Function to prepare the manually labelled data and store in repo.
+    Prepare the soft search dataset for storage in the package.
+
+    Merge various dataframes together. Fetch NSF fields for each NSF Award ID. Drop
+    duplicates. Store to parquet in the project data archive.
 
     Parameters
     ----------
@@ -202,11 +246,19 @@ def _prepare_soft_search_2022(
     data = data.drop_duplicates(subset=["link", "nsf_award_id"])
     data = data.dropna(subset=["nsf_award_id"])
 
-    def _thread_abstract_text(award_id: int) -> Optional[Dict[str, Union[int, str]]]:
+    # Get both the abstract and the project outcomes report
+    get_nsf_fields = ",".join([
+        NSFFields.abstractText,
+        NSFFields.projectOutComesReport,
+    ])
+
+    def _thread_text_prediction_cols(
+        award_id: int,
+    ) -> Optional[Dict[str, Union[int, str]]]:
         response_data = requests.get(
             f"https://api.nsf.gov/"
             f"services/v1/awards/{award_id}.json"
-            f"?printFields={NSFFields.abstractText}"
+            f"?printFields={get_nsf_fields}"
         ).json()
 
         # Handle data existance
@@ -226,20 +278,21 @@ def _prepare_soft_search_2022(
         return {
             "award_id": award_id,
             "abstract_text": single_award[NSFFields.abstractText],
+            "project_outcomes": single_award.get(NSFFields.projectOutComesReport, None),
         }
 
     # Thread gather texts
     abstract_texts_list = thread_map(
-        _thread_abstract_text,
+        _thread_text_prediction_cols,
         data.nsf_award_id.unique(),
         desc="Getting NSF Award Abstracts",
     )
 
     # Filter failed values
-    abstract_texts = pd.DataFrame([at for at in abstract_texts_list if at is not None])
+    extra_items = pd.DataFrame([at for at in abstract_texts_list if at is not None])
 
     # Join to original data frame
-    data = data.join(abstract_texts.set_index("award_id"), on="nsf_award_id")
+    data = data.join(extra_items.set_index("award_id"), on="nsf_award_id")
 
     # Drop any rows that are missing abstract text
     data = data.dropna(subset=["abstract_text"])
@@ -262,6 +315,18 @@ def _prepare_soft_search_2022(
             "include": PredictionLabels.SoftwarePredicted,
         }
     )
+
+    # We want to drop duplicates of nsf award id
+    # There should only be 1 example of an NSF award ID
+    # no need to duplicate the examples
+    # NOTE: before we drop duplicates we sort by label descending so that
+    # "if an nsf award id has a label of `software-predicted`" it retains that label
+    # i.e. prior to this line, an award may have multiple examples in the dataset
+    # some of those examples produce software and some do not produce software
+    # if ANY of those examples produce software, we want to label the award as producing
+    # software
+    data = data.sort_values(by=["label"], ascending=False)
+    data = data.drop_duplicates(subset=["nsf_award_id"])
 
     # Store to standard location
     data.to_parquet(SOFT_SEARCH_2022_DS_PATH)
