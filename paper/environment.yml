@@ -1,0 +1,37 @@
+channels:
+  - conda-forge
+dependencies:
+  # Python
+  - pip>=22.2
+  - python>=3.10,<3.11
+  - setuptools>=65
+  - wheel>=0.37.1
+  # R
+  - r-base>=4
+  - r-essentials>=3
+  - r-jsonlite
+  # Extras
+  - just
+  - _libgcc_mutex
+  - _openmp_mutex
+  - bzip2
+  - ca-certificates
+  - ld_impl_linux-64
+  - libffi
+  - libgcc-ng
+  - libgomp
+  - libnsl
+  - libsqlite
+  - libuuid
+  - libzlib
+  - ncurses
+  - openssl
+  - readline
+  - tk
+  - tzdata
+  - xz
+  - conda-forge::r-tinytex
+  - conda-forge::texlive-core
+  - pip:
+    - jupyterlab
+    - tabulate

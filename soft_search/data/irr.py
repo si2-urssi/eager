@@ -71,7 +71,9 @@ def calc_fleiss_kappa(
     return fleiss_kappa(agg_raters)
 
 
-def print_irr_summary_stats() -> None:
+def print_irr_summary_stats(  # noqa: C901
+    do_print: bool = True,
+) -> float:
     """
     Print useful statistics and summary stats using the stored
     inter-rater reliability data.
@@ -80,6 +82,17 @@ def print_irr_summary_stats() -> None:
     * Cohen's Kappa Statistic for each potential model
     * Mean number of examples for each label between the two annotators
     * The rows which differ between the two annotators
+
+    Parameters
+    ----------
+    do_print: bool
+        Should this function actually print the table
+        Default: True (yes, print the table)
+
+    Returns
+    -------
+    float
+        The overall Fliess Kappa statistic.
     """
     # Load IRR data
     data = load_soft_search_2022_irr()
@@ -131,30 +144,33 @@ def print_irr_summary_stats() -> None:
     )
 
     # Print stats
-    print("Inter-Rater Reliability Statistics and Data Summary:")
-    print("=" * 80)
-    annotator_pairs = combinations(
-        sorted_data[SoftSearch2022IRRDatasetFields.annotator].unique(), 2
-    )
-
-    # Run print
-    print(
-        f"{SoftSearch2022IRRDatasetFields.include_in_definition}: "
-        f"{kappa} ({_iterrpreted_score(kappa)})"
-    )
-    print()
-
-    # Get all possible diffs then drop duplicates
-    diffs = []
-    for anno_one, anno_two in annotator_pairs:
-        diffs.append(
-            annotations_df.loc[annotations_df[anno_one] != annotations_df[anno_two]]
+    if do_print:
+        print("Inter-Rater Reliability Statistics and Data Summary:")
+        print("=" * 80)
+        annotator_pairs = combinations(
+            sorted_data[SoftSearch2022IRRDatasetFields.annotator].unique(), 2
         )
-    diff_df = pd.concat(diffs)
-    diff_df = diff_df.drop_duplicates(subset=["github_link"]).reset_index()
 
-    print("Differing Labels:")
-    print(diff_df)
-    print()
-    print("-" * 80)
-    diff_df.to_csv("irr-diffs.csv", index=False)
+        # Run print
+        print(
+            f"{SoftSearch2022IRRDatasetFields.include_in_definition}: "
+            f"{kappa} ({_iterrpreted_score(kappa)})"
+        )
+        print()
+
+        # Get all possible diffs then drop duplicates
+        diffs = []
+        for anno_one, anno_two in annotator_pairs:
+            diffs.append(
+                annotations_df.loc[annotations_df[anno_one] != annotations_df[anno_two]]
+            )
+        diff_df = pd.concat(diffs)
+        diff_df = diff_df.drop_duplicates(subset=["github_link"]).reset_index()
+
+        print("Differing Labels:")
+        print(diff_df)
+        print()
+        print("-" * 80)
+        diff_df.to_csv("irr-diffs.csv", index=False)
+
+    return kappa

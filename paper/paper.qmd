@@ -1,0 +1,219 @@
+---
+title: "Searching for Software in NSF Awards"
+author:
+  - name: "Eva Maxfield Brown"
+    orcid: 0000-0003-2564-0373
+    affliations:
+      - name: University of Washington Information School
+  - name: "Lindsey Schwartz"
+    orcid: XXXX-XXXX-XXXX-XXXX
+    affliations:
+      - name: University of Washington Information School
+  - name: "Richard Lewei Huang"
+    orcid: XXXX-XXXX-XXXX-XXXX
+    affliations:
+      - name: University of Washington Information School
+  - name: "Nicholas Weber"
+    orcid: XXXX-XXXX-XXXX-XXXX
+    email: nmweber@uw.edu
+    affliations:
+      - name: University of Washington Information School
+
+abstract: "Some abstract!"
+
+# Styling
+# See Quarto docs for more details on styling
+# This link is for styling options specific to HTML outputs
+# https://quarto.org/docs/reference/formats/html.html
+
+## Basics
+bibliography: support/main.bib
+
+## Citation Style Language
+# See https://github.com/citation-style-language/styles for more options
+# We default to PNAS (Proceedings of the National Academy of Sciences)
+csl: support/acm-proceedings.csl
+
+## Specific for target format
+format:
+  html:
+    code-tools: true
+    standalone: true
+    embed-resources: true
+    toc: true
+    toc-location: left
+    reference-location: margin
+    citation-location: margin
+
+execute:
+  echo: false
+---
+
+## Introduction
+
+Some content!
+
+## Data Collection
+
+### Finding Software Produced by NSF Awards
+
+The first step in our data collection process was to find software outputs from National Science Foundation (NSF) funded research. Our first attempt at finding such software outputs was to search for references and promises of software production within NSF award abstracts, project outcome reports, and papers supported by each award. This initial search process had two main problems: it was time consuming to conduct and it was difficult to verify claims of software production.
+
+```{python}
+#| code-fold: true
+#| warning: false
+
+from soft_search.data.soft_search_2022 import load_github_repos_with_nsf_refs_2022
+from IPython.display import Markdown
+
+github_repos_with_nsf_refs = load_github_repos_with_nsf_refs_2022()
+github_query_terms = github_repos_with_nsf_refs["query"].unique()
+github_query_terms_str = ""
+for i, term in enumerate(github_query_terms):
+  if i == 0:
+    github_query_terms_str = f"'{term}'"
+  elif i < len(github_query_terms) - 1:
+    github_query_terms_str = f"{github_query_terms_str}, '{term}'"
+  else:
+    github_query_terms_str = f"{github_query_terms_str}, or '{term}'"
+
+Markdown(
+  f"Our solution to these issues was to instead create a Python script which used "
+  f"the GitHub API to search for repositories which included reference to financial "
+  f"support from an NSF award in the repositories README.md file. Specifically "
+  f"our script queried for README.md files which contained any of the following "
+  f"text snippets: {github_query_terms_str}. "
+  f"GitHub was selected as the basis for our search because of it's widespread "
+  f"adoption and mention in scholarly publication "
+  f"[@riseofgithubinscholarlypublication]. "
+  f"This search found {len(github_repos_with_nsf_refs)} "
+  f"unique repositories which contained a reference to the NSF in the repository's "
+  f"README.md file."
+)
+```
+
+### Software Production Annotation
+
+The next step in our data collection process was to annotate each of the GitHub repositories found as either "software" or "not software." In our initial review of the repositories we had collected, we found that the content of repositories ranged from documentation, experimental notes, course materials, collections of one-off scripts written during a research project, to more typical software libraries with installation instructions, testing, and community support and use.
+
+To come to agreement on annotation criteria we conducted multiple rounds of trial coding on samples of the data. Fleiss' kappa was used to determine if there was agreement between our research team on whether ten GitHub repositories contained 'software' or not. On each round of trial coding ten GitHub repositories were randomly selected from our dataset for each member of our research team to annotate independently. When assessing a repository, members of the research team were allowed to use any information in the repository to determine their annotation (i.e. the content of the README.md file, the repository activity, documentation availability, etc.)
+
+```{python}
+#| code-fold: true
+#| warning: false
+
+from soft_search.data.irr import print_irr_summary_stats
+from IPython.display import Markdown
+
+irr_kappa = print_irr_summary_stats(do_print=False)
+
+Markdown(
+  f"Our final round of trial coding showed that there was almost perfect agreement "
+  f"between the research team (κ={round(irr_kappa, 3)})."
+)
+```
+
+Our final annotation criteria was generally inclusive of labeling repositories as software, rather there were specific exclusion criteria that resulted in a repository being labeled as "not software". Specifically repositories were labeled as "not software" when a repository primarily consisted of:
+
+1. project documentation or research notes
+2. teaching materials for a workshop or course
+3. the source code for a project or research lab website
+4. collections of scripts specific to the analysis of a single experiment without regard to futher generalizability
+5. utility functions for accessing data without providing any additional processing capacity
+
+We then annotated all GitHub repositories in our dataset as either "software" or "not software" according to our agreed upon annotation criteria.
+
+### Linking GitHub Repositories to NSF Awards
+
+Our final step in data collection was to link the annotated GitHub repositories back to specific NSF awards. To do so, we created a script which would load the webpage for each GitHub repository, scrape the content of the README and find the specific NSF award ID number(s) referenced. While annotating the dataset, and with this script, our dataset size was reduced as we found some repositories were returned in the initial search because of the "NSF" acronym being used by other, non-United-States governmental agencies which also fund research. 
+
+When processing each repository, our Python script would load the README content, search for NSF Award ID patterns with regular expressions, and then verify that each NSF award ID found was a valid NSF award ID by requesting metadata for the award from the NSF award API.
+
+```{python}
+#| code-fold: true
+#| warning: false
+
+from soft_search.data import load_soft_search_2022
+from soft_search.data.soft_search_2022 import SoftSearch2022DatasetFields
+from soft_search.constants import PredictionLabels
+from IPython.display import Markdown
+
+soft_search_2022 = load_soft_search_2022()
+num_awards_produced_software = len(
+  soft_search_2022[
+    soft_search_2022[SoftSearch2022DatasetFields.label] == (
+      PredictionLabels.SoftwarePredicted
+    )
+  ]
+)
+num_awards_did_not_produce_software = len(
+  soft_search_2022[
+    soft_search_2022[SoftSearch2022DatasetFields.label] == (
+      PredictionLabels.SoftwareNotPredicted
+    )
+  ]
+)
+
+Markdown(
+  f"During this NSF award ID validation process we additionally completed the "
+  f"final step for constructing our dataset which was to request the text for "
+  f"the award's abstract and project outcomes report. This was the final step "
+  f"of our data collection process and allowed us to create a dataset of "
+  f"{num_awards_produced_software} unique NSF awards labeled as 'produced software' "
+  f"and {num_awards_did_not_produce_software} unique NSF awards labeled as "
+  f"'did not produce software'."
+)
+```
+
+## Predictive Models
+
+We trained multiple predictive models using different model architectures and using the two different predictive sources available (the award's abstract text or project outcomes report text). As not all awards in our set had concluded their research, the models trained on the project outcomes report text used a reduced size dataset.
+
+We trained three different models for each of the predictive sources and include a custom regular expression as a baseline for comparison. The models trained include a TF-IDF Word Embedding Logistic Regression model, a Semantic Embedding Logistic Regression model, and a Fine-tuned Transformer model.
+
+```{python}
+#| code-fold: true
+#| warning: false
+#| echo: false
+#| output: false
+
+from soft_search.label.model_selection import fit_and_eval_all_models
+
+model_results = fit_and_eval_all_models(train_transformer=False)
+```
+
+```{python}
+#| code-fold: true
+#| warning: false
+#| label: tbl-models-from-abstract
+#| tbl-cap: Model Results from Training using Abstract Text
+
+model_results[model_results["predictive_source"] == "abstract-text"].reset_index(drop=True)
+```
+
+```{python}
+#| code-fold: true
+#| warning: false
+#| label: tbl-models-from-project-outcomes
+#| tbl-cap: Model Results from Training using Project Outcomes Reports Text
+
+model_results[model_results["predictive_source"] == "project-outcomes"].reset_index(drop=True)
+```
+
+## The NSF-Soft-Search Dataset
+
+The dataset, including our software prediction values is available via a link on our GitHub README.
+
+### Trends and Observations
+
+## Discussion
+
+Our initial method for attempting to find research software was to first use data from the NSF API then look through the abstracts, project outcomes reports, and any attached papers to find references to code repositories. However as this proved to be such a manual and time consuming process we decided against it. While attempting to use this NSF first method to create the dataset, we found that many awards and papers that reference computational methods still do not provide a reference web link to their code repositories or websites. In some cases we manually found repositories related to an award or paper by manual search ourselves. While we support including references to code repositories in award abstracts, outcomes reports, and papers, future research should be conducted on how to enable reconnection of papers with code.
+
+As our dataset was entirely composed of NSF awards which ultimately released or hosted software on GitHub, it is possible that our models learned not to predict if an NSF award would produce software, but rather, if an NSF award would produce “software hosted on GitHub.”
+
+## Acknowledgements
+
+::: {.content-visible unless-format="html"}
+## References
+:::
