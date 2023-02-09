@@ -103,7 +103,6 @@ To come to agreement on annotation criteria we conducted multiple rounds of tria
 #| warning: false
 
 from soft_search.data.irr import print_irr_summary_stats
-from IPython.display import Markdown
 
 irr_kappa = print_irr_summary_stats(do_print=False)
 
@@ -136,7 +135,6 @@ When processing each repository, our Python script would load the README content
 from soft_search.data import load_soft_search_2022
 from soft_search.data.soft_search_2022 import SoftSearch2022DatasetFields
 from soft_search.constants import PredictionLabels
-from IPython.display import Markdown
 
 soft_search_2022 = load_soft_search_2022()
 num_awards_produced_software = len(
@@ -167,9 +165,7 @@ Markdown(
 
 ## Predictive Models
 
-We trained multiple predictive models using different model architectures and using the two different predictive sources available (the award's abstract text or project outcomes report text). As not all awards in our set had concluded their research, the models trained on the project outcomes report text used a reduced size dataset.
-
-We trained three different models for each of the predictive sources and include a custom regular expression as a baseline for comparison. The models trained include a TF-IDF Word Embedding Logistic Regression model, a Semantic Embedding Logistic Regression model, and a Fine-tuned Transformer model.
+We trained three different models using the text from either the award abstract or project outcomes report. The models trained include a logistic regression model trained with TF-IDF word embeddings (`tfidf-logit`), a logistic regression model trained with semantic embeddings (`semantic-logit`), and a fine-tuned transformer (`fine-tuned-transformer`). The semantic embeddings and the base model from which we fine-tuned our own transformer model was the `distilbert-base-uncased-finetuned-sst-2-english` model [@hf_canonical_model_maintainers_2022]. Additionally, we evaluated a regular expression which matched on common terms relating to software as a baseline.
 
 ```{python}
 #| code-fold: true
@@ -179,25 +175,61 @@ We trained three different models for each of the predictive sources and include
 
 from soft_search.label.model_selection import fit_and_eval_all_models
 
-model_results = fit_and_eval_all_models(train_transformer=False)
+model_results = fit_and_eval_all_models()
 ```
 
 ```{python}
 #| code-fold: true
 #| warning: false
-#| label: tbl-models-from-abstract
-#| tbl-cap: Model Results from Training using Abstract Text
+#| label: tbl-model-results-from-abstract
+#| tbl-cap: Predictive Model Results (Trained with Abstract Text)
 
-model_results[model_results["predictive_source"] == "abstract-text"].reset_index(drop=True)
+from_abstract = model_results[
+  model_results["predictive_source"] == "abstract-text"
+].reset_index(drop=True)
+
+from_abstract
+```
+
+```{python}
+
+best_model_from_abstract = from_abstract.iloc[0]
+best_model_from_abstract_name = best_model_from_abstract["model"]
+best_model_from_abstract_f1 = best_model_from_abstract["f1"]
+
+Markdown(
+  f"@tbl-model-results-from-abstract reports the results from training using "
+  f"the abstract text as input. The best performing model was the "
+  f"`{best_model_from_abstract_name}` which achieved an F1 of "
+  f"{round(best_model_from_abstract_f1, 3)}."
+)
 ```
 
 ```{python}
 #| code-fold: true
 #| warning: false
-#| label: tbl-models-from-project-outcomes
-#| tbl-cap: Model Results from Training using Project Outcomes Reports Text
+#| label: tbl-model-results-from-project-outcomes
+#| tbl-cap: Predictive Model Results (Trained with Project Outcomes Report Text)
 
-model_results[model_results["predictive_source"] == "project-outcomes"].reset_index(drop=True)
+from_po = model_results[
+  model_results["predictive_source"] == "project-outcomes"
+].reset_index(drop=True)
+
+from_po
+```
+
+```{python}
+
+best_model_from_po = from_po.iloc[0]
+best_model_from_po_name = best_model_from_po["model"]
+best_model_from_po_f1 = best_model_from_po["f1"]
+
+Markdown(
+  f"@tbl-model-results-from-project-outcomes reports the results from training using "
+  f"the project outcomes reports as input. The best performing model was the "
+  f"`{best_model_from_po_name}` which achieved an F1 of "
+  f"{round(best_model_from_po_f1, 3)}."
+)
 ```
 
 ## The NSF-Soft-Search Dataset
