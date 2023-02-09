@@ -112,6 +112,19 @@ ENV/
 # VSCode
 .vscode
 
+# Quarto generated
+_build/
+.quarto/
+/.quarto/
+index.ipynb
+index.md
+index_files/
+index.tex
+paper.ipynb
+paper.md
+paper_files/
+paper.tex
+
 # Project specific
 soft-search-awards.csv
 soft-search-transformer/
