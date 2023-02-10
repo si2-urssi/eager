@@ -11,7 +11,11 @@ import pandas as pd
 from tqdm import tqdm
 
 from soft_search import nsf
-from soft_search.constants import ALL_NSF_PROGRAMS
+from soft_search.constants import ALL_NSF_PROGRAMS, NSFFields
+from soft_search.label import (
+    load_tfidf_logit_for_prediction_from_abstract,
+    load_tfidf_logit_for_prediction_from_outcomes,
+)
 
 ###############################################################################
 
@@ -22,17 +26,18 @@ class Args(argparse.Namespace):
 
     def __parse(self) -> None:
         p = argparse.ArgumentParser(
-            prog="get-nsf-award-set-for-soft-search-2022",
+            prog="generate-nsf-soft-search-2022-dataset",
             description=(
-                "Get the NSF awards dataset for use in "
-                "downstream prediction of software."
+                "Get the NSF Awards from the last 12 years, predict "
+                "if they produced software from both the abstract and the "
+                "project outcomes report and archive the results."
             ),
         )
         p.add_argument(
             "-s",
             "--start-date",
             dest="start_date",
-            default="2016-01-01",
+            default="2010-01-01",
             type=str,
             help="ISO format string with the date to start gathering awards for.",
         )
@@ -48,7 +53,7 @@ class Args(argparse.Namespace):
             "-o",
             "--outfile",
             dest="outfile",
-            default=Path("./soft-search-awards.csv"),
+            default=Path("./nsf-soft-search-2022.csv"),
             type=Path,
             help="The path to store the dataset CSV (and Parquet with the same name).",
         )
@@ -101,10 +106,31 @@ def main() -> None:
         # Concat and report size
         awards = (
             pd.concat(program_chunks, ignore_index=True)
-            .drop_duplicates("id")
+            .drop_duplicates(NSFFields.id_)
+            .dropna(subset=[NSFFields.abstractText])
             .reset_index(drop=True)
         )
         log.info(f"Total awards found: {len(awards)}")
+
+        # Make predictions
+        log.info("Loading model and predicting software production from abstract.")
+        model = load_tfidf_logit_for_prediction_from_abstract()
+        awards["prediction_from_abstract"] = model.predict(
+            awards[NSFFields.abstractText],
+        )
+
+        log.info("Loading model and predicting software production from outcomes.")
+        model = load_tfidf_logit_for_prediction_from_outcomes()
+
+        # Subset to just awards with outcomes
+        outcomes_awards = awards.dropna(subset=[NSFFields.projectOutComesReport])
+        outcomes_awards["prediction_from_outcomes"] = model.predict(
+            outcomes_awards[NSFFields.projectOutComesReport],
+        )
+        outcomes_awards = outcomes_awards[[NSFFields.id_, "prediction_from_outcomes"]]
+        
+        # Join the outcomes predictions back to the full set
+        awards = awards.join(outcomes_awards.set_index(NSFFields.id_), on=NSFFields.id_)
 
         # Store
         outfile = args.outfile.resolve()

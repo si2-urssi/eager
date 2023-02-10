@@ -89,7 +89,7 @@ dev = [
 # https://peps.python.org/pep-0621/#entry-points
 [project.entry-points."console_scripts"]
 get-github-repositories-with-nsf-ref = "soft_search.bin.get_github_repositories_with_nsf_ref:main"
-get-nsf-award-set-for-soft-search-2022 = "soft_search.bin.get_nsf_award_set_for_soft_search_2022:main"
+generate-nsf-soft-search-2022-dataset = "soft_search.bin.generate_nsf_soft_search_2022_dataset:main"
 find-nsf-award-ids-in-github-readmes-and-link = "soft_search.bin.find_nsf_award_ids_in_github_readmes_and_link:main"
 fit-and-eval-all-models = "soft_search.bin.fit_and_eval_all_models:main"
 

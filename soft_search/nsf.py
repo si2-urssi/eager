@@ -7,7 +7,12 @@ import pandas as pd
 import requests
 from tqdm import tqdm
 
-from .constants import ALL_NSF_FIELDS, NSF_PROGRAM_TO_CFDA_NUMBER_LUT, NSFPrograms
+from .constants import (
+    ALL_NSF_FIELDS,
+    NSF_PROGRAM_TO_CFDA_NUMBER_LUT,
+    NSFFields,
+    NSFPrograms,
+)
 
 ###############################################################################
 # Constants
@@ -204,6 +209,6 @@ def get_nsf_dataset(
     # Concat all awards
     return (
         pd.concat(chunks, ignore_index=True)
-        .drop_duplicates("id")
+        .drop_duplicates(NSFFields.id_)
         .reset_index(drop=True)
     )

@@ -20,7 +20,15 @@ setup name="soft-search-paper":
 watch:
     quarto preview {{FILE_URI}} --to html
 
-# build page
-build:
-    quarto render {{FILE_URI}} --to html,pdf,docx
+# build webpage
+build-html:
+    quarto render {{FILE_URI}} --to html
     touch {{BUILD_DIR}}.nojekyll
+
+# build pdf
+build-pdf:
+    quarto render {{FILE_URI}} --to pdf
+
+# build docx
+build-docx:
+    quarto render {{FILE_URI}} --to docx
