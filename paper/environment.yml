@@ -30,8 +30,6 @@ dependencies:
   - tk
   - tzdata
   - xz
-  - conda-forge::r-tinytex
-  - conda-forge::texlive-core
   - pip:
     - jupyterlab
     - tabulate
