@@ -128,7 +128,7 @@ def main() -> None:
             outcomes_awards[NSFFields.projectOutComesReport],
         )
         outcomes_awards = outcomes_awards[[NSFFields.id_, "prediction_from_outcomes"]]
-        
+
         # Join the outcomes predictions back to the full set
         awards = awards.join(outcomes_awards.set_index(NSFFields.id_), on=NSFFields.id_)
 

@@ -81,7 +81,7 @@ def _get_nsf_chunk(
     response_json = response.json()["response"]
     if "award" in response_json:
         return pd.DataFrame(response_json["award"])
-    
+
     return pd.DataFrame()
 
 
