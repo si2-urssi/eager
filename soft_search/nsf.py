@@ -78,7 +78,11 @@ def _get_nsf_chunk(
     )
 
     # Parse and return
-    return pd.DataFrame(response.json()["response"]["award"])
+    response_json = response.json()["response"]
+    if "award" in response_json:
+        return pd.DataFrame(response_json["award"])
+    
+    return pd.DataFrame()
 
 
 def get_nsf_dataset(

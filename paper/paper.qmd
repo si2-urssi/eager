@@ -29,6 +29,9 @@ abstract: "Some abstract!"
 ## Basics
 bibliography: support/main.bib
 
+## Number sections (required for section cross ref)
+number-sections: true
+
 ## Citation Style Language
 # See https://github.com/citation-style-language/styles for more options
 # We default to PNAS (Proceedings of the National Academy of Sciences)
@@ -49,13 +52,19 @@ execute:
   echo: false
 ---
 
-## Introduction
+# Introduction
 
-Some content!
+Software production, use, and reuse is an increasingly crucial part of scholarly work [@open_source_code_repo_predict_impact;@Trisovic2021ALS]. While historically ignored, citing and referencing software used during the course of research is becoming common with new standards for software citation [@Katz2021RecognizingTV;@Du2022UnderstandingPI] and work in extracting software references in existing literature [@cz_software_mentions]. However, records of software production are not available at scale the way other bibliographic metrics are. To solve this problem, we introduce two related datasets for studying and inferring software produced as a part of research, which we refer to as the NSF-Soft-Search dataset.
 
-## Data Collection and Annotation {#sec-data-collection}
+The NSF-Soft-Search dataset is aimed at identifying research projects which are likely to have produced software during the course of a project. We start by identifying GitHub repositories which acknowledge funding from at least one National Science Foundation (NSF) award. We then annotate each GitHub repository found with a binary decision for it's contents: software or not-software (research notes, course materials, etc.). We link each annotated GitHub repository to the specific NSF award ID(s) referenced in it's README.md file. Finally, we compile the NSF-Soft-Search GitHub Annotations dataset using the annotations for each GitHub repository, and the text from the linked NSF award abstract and the project outcomes report.
 
-### Finding Software Produced by NSF Awards {#sec-finding-soft}
+Using the NSF-Soft-Search GitHub Annotations dataset, we train a variety of models which aim to predict software production using either the NSF award abstract or project outcomes report text as input. We use the best performing models to then infer software production against all awards funded by the National Science Foundation from 2010 to 2023. The predictions and metadata for each NSF award between the 2010 and 2023 period are compiled to form the NSF-Soft-Search Inferred dataset.
+
+The rest of the paper proceeds as follows. In @sec-data-collection we detail the data collection and annotation process used for creating the NSF-Soft-Search GitHub Annotations dataset. In @sec-models we briefly describe the model training process and report results for the all of the models trained. In @sec-nsf-soft-search-dataset we provide summary statistics for the NSF-Soft-Search Inferred dataset and use the dataset to observe trends in software production over time. We conclude with discussion regarding the limitations of our approach and opportunities for future work.
+
+# Data Collection and Annotation {#sec-data-collection}
+
+## Finding Software Produced by NSF Awards {#sec-finding-soft}
 
 The first step in our data collection process was to find software outputs from National Science Foundation (NSF) funded research. Our first attempt at finding such software outputs was to search for references and promises of software production within NSF award abstracts, project outcome reports, and papers supported by each award. This initial search process had two main problems: it was time consuming to conduct and it was difficult to verify claims of software production.
 
@@ -92,7 +101,7 @@ Markdown(
 )
 ```
 
-### Software Production Annotation
+## Software Production Annotation
 
 The next step in our data collection process was to annotate each of the GitHub repositories found as either "software" or "not software." In our initial review of the repositories we had collected, we found that the content of repositories ranged from documentation, experimental notes, course materials, collections of one-off scripts written during a research project, to more typical software libraries with installation instructions, testing, and community support and use.
 
@@ -122,7 +131,7 @@ Our final annotation criteria was generally inclusive of labeling repositories a
 
 We then annotated all GitHub repositories in our dataset as either "software" or "not software" according to our agreed upon annotation criteria.
 
-### Linking GitHub Repositories to NSF Awards
+## Linking GitHub Repositories to NSF Awards
 
 Our final step in the data collection process was to link the annotated GitHub repositories back to specific NSF awards. To do so, we created a script which would load the webpage for each GitHub repository, scrape the content of the README and find the specific NSF award ID number(s) referenced. While annotating the dataset, and with this script, our dataset size was reduced as we found some repositories were returned in the initial search because of the "NSF" acronym being used by other, non-United-States governmental agencies which also fund research. 
 
@@ -163,7 +172,7 @@ Markdown(
 )
 ```
 
-## Predictive Models
+# Predictive Models {#sec-models}
 
 We trained three different models using the text from either the award abstract or project outcomes report. The models trained include a logistic regression model trained with TF-IDF word embeddings (`tfidf-logit`), a logistic regression model trained with semantic embeddings (`semantic-logit`), and a fine-tuned transformer (`fine-tuned-transformer`). The semantic embeddings and the base model from which we fine-tuned our own transformer model was the `distilbert-base-uncased-finetuned-sst-2-english` model [@hf_canonical_model_maintainers_2022]. Additionally, we evaluated a regular expression which matched on common terms relating to software as a baseline. Each model was trained with 80% of the data. We then test each of the models and use F1 to rank each models performance.
 
@@ -188,7 +197,7 @@ from_abstract = model_results[
   model_results["predictive_source"] == "abstract-text"
 ].reset_index(drop=True)
 
-from_abstract
+Markdown(from_abstract.to_markdown(index=False))
 ```
 
 ```{python}
@@ -217,7 +226,7 @@ from_po = model_results[
   model_results["predictive_source"] == "project-outcomes"
 ].reset_index(drop=True)
 
-from_po
+Markdown(from_po.to_markdown(index=False))
 ```
 
 ```{python}
@@ -240,7 +249,7 @@ While the models trained with the project outcomes reports were trained with les
 
 The data used for training, and functions to reproduce these models, are made available via our Python package: [`soft-search`](https://github.com/si2-urssi/eager).
 
-## The NSF-Soft-Search Dataset
+# The NSF-Soft-Search Dataset {#sec-nsf-soft-search-dataset}
 
 We have compiled the NSF Soft(ware) Search Dataset (`NSF-Soft-Search`). The NSF-Soft-Search dataset contains the metadata, abstract text, project outcomes report text, for all NSF awarded projects during the 2010-2023 period. The NSF-Soft-Search dataset additionally contains our predictions for software production using both texts respectively. 
 
@@ -268,20 +277,19 @@ for program in full_dataset.majorProgram.unique():
     desc_table_rows.append({
         "Funding Program": program,
         "# Awards Funded": total_awards_funded,
-        "# Awards 'Produce Software'": num_awards_will_produce_software,
-        "% Awards 'Produce Software'": percent_awards_will_produce,
+        "# 'Produce Software'": num_awards_will_produce_software,
+        "% 'Produce Software'": percent_awards_will_produce,
     })
 
 desc_table = pd.DataFrame(desc_table_rows).sort_values(
-    by=["# Awards Funded", "% Awards 'Produce Software'"],
+    by=["# Awards Funded", "% 'Produce Software'"],
     ascending=False,
 ).reset_index(drop=True)
-desc_table
+Markdown(desc_table.to_markdown(index=False))
 ```
 
-### Trends and Observations
+## Trends and Observations
 
-* Trends in software production over time from abstract
 ```{python}
 #| code-fold: true
 #| warning: false
@@ -348,16 +356,21 @@ for start_year in high_soft_prog_df.startYear.unique():
         soft_produced_over_time_rows.append({
             "Funding Program": program_name,
             "Award Start Year": start_year,
-            "% Awards 'Produce Software'": predicted_count / award_count,
+            "% 'Produce Software'": predicted_count / award_count,
         })
 
 soft_produced_over_time = pd.DataFrame(soft_produced_over_time_rows)
 
+# Ensure that hue colors are consistent throughout plots
+soft_produced_over_time = soft_produced_over_time.sort_values(
+  by="Funding Program",
+)
+
 # Plot over time
-sns.barplot(
+ax = sns.barplot(
     data=soft_produced_over_time,
     x="Award Start Year",
-    y="% Awards 'Produce Software'",
+    y="% 'Produce Software'",
     hue="Funding Program",
     order=[
         str(i)
@@ -366,6 +379,14 @@ sns.barplot(
             high_soft_prog_df.startYear.astype(int).max(),
         )
     ],
+)
+sns.move_legend(
+    ax,
+    "lower center",
+    bbox_to_anchor=(.5, 1),
+    ncol=len(soft_produced_over_time["Funding Program"].unique()),
+    title="Funding Program",
+    frameon=False,
 )
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
@@ -393,17 +414,30 @@ for award_duration in high_soft_prog_df.awardDuration.unique():
         soft_produced_over_duration_rows.append({
             "Funding Program": program_name,
             "Award Duration (Years)": award_duration,
-            "% Awards 'Produce Software'": predicted_count / award_count,
+            "% 'Produce Software'": predicted_count / award_count,
         })
 
 soft_produced_over_duration = pd.DataFrame(soft_produced_over_duration_rows)
 
+# Ensure that hue colors are consistent throughout plots
+soft_produced_over_duration = soft_produced_over_duration.sort_values(
+  by="Funding Program",
+)
+
 # Plot over time
-sns.barplot(
+ax = sns.barplot(
     data=soft_produced_over_duration,
     x="Award Duration (Years)",
-    y="% Awards 'Produce Software'",
+    y="% 'Produce Software'",
     hue="Funding Program",
+)
+sns.move_legend(
+    ax,
+    "lower center",
+    bbox_to_anchor=(.5, 1),
+    ncol=len(soft_produced_over_time["Funding Program"].unique()),
+    title="Funding Program",
+    frameon=False,
 )
 plt.tight_layout()
 ```
@@ -411,26 +445,26 @@ plt.tight_layout()
 * Number of examples that initially were predicted as producing software but didn't over time
 * Number of examples that initially were not predicted to produce software but did over time
 
-## Conclusion
+# Conclusion
 
-We introduce NSF-Soft-Search, a pair of novel datasets for studying software production from NSF funded projects. The NSF-Soft-Search GitHub Annotations dataset is used to train models which aim to predict software production from either the NSF award abstract text or the project outcomes report text. We used these models to generate the NSF-Soft-Search Inferred dataset. The NSF-Soft-Search Inferred dataset includes project metadata, abstract, project outcomes report, and a predictions of software production for each NSF funded project between 2010 and 2023. We hope that NSF-Soft-Search helps further new studies and findings in understanding the role software development plays in scholarly publication.
+We introduce NSF-Soft-Search, a pair of novel datasets for studying software production from NSF funded projects. The NSF-Soft-Search GitHub Annotations dataset is used to train models which aim to predict software production from either the NSF award abstract text or the project outcomes report text. We used these models to generate the NSF-Soft-Search Inferred dataset. The NSF-Soft-Search Inferred dataset includes project metadata, abstract, project outcomes report, and predictions of software production for each NSF funded project between 2010 and 2023. We hope that NSF-Soft-Search helps further new studies and findings in understanding the role software development plays in scholarly publication.
 
 All datasets and predictive models produced by this work are available from our GitHub repository: [`si2-urssi/eager`](https://github.com/si2-urssi/eager).
 
-### Limitations
+## Limitations
 
 As discussed in @sec-data-collection, the NSF-Soft-Search GitHub Annotations dataset was entirely composed of NSF awards which ultimately released or hosted software (and other research products) on GitHub. Due to data collection strategy, it is possible that each of the predictive models learned not to predict if an NSF award would produce software, but rather, if an NSF award would produce “software hosted on GitHub.”
 
-### Future Work
+## Future Work
 
 As discussed in @sec-finding-soft, our initial method for attempting to find research software produced from NSF supported awards was to search for references and promises of software production in the abstract, project outcomes report, and attached papers of each award. While attempting this approach to create the dataset, we found that many awards and papers that reference computational methods do not provide a reference web link to their code repositories or websites. In some cases, we found repositories related to an award or paper via Google and GitHub search ourselves. While we support including references to code repositories in award abstracts, outcomes reports, and papers, future research should be conducted on how to enable reconnection of papers with code.
 
-## Acknowledgements
+# Acknowledgements
 
 We wish to thank ....
 
 This work was supported in part by NSF Grant
 
 ::: {.content-visible unless-format="html"}
-## References
+# References
 :::
