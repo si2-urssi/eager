@@ -12,6 +12,22 @@ searching for software promises in grant applications
 **Stable Release:** `pip install soft-search`<br>
 **Development Head:** `pip install git+https://github.com/si2-urssi/eager.git`
 
+## The NSF-Soft-Search Inferred Dataset
+
+Please download the 500MB NSF-Soft-Search Inferred dataset from
+[Google Drive](https://drive.google.com/file/d/1k0jvs47bCWT18GHOMXY6EdG5MIDdCiM2/view?usp=share_link).
+
+The dataset is shared as a `parquet` file and can be read in Python with
+```python
+import pandas as pd
+
+nsf_soft_search = pd.read_parquet("nsf-soft-search-2022.parquet")
+```
+
+Please view the
+[Parquet R Documentation](https://arrow.apache.org/docs/r/reference/read_parquet.html)
+for information regarding reading the dataset in R.
+
 ## Quickstart
 
 1. Load our best model (the "TF-IDF Vectorizer Logistic Regression Model")
