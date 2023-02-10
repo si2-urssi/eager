@@ -19,7 +19,8 @@ author:
     affliations:
       - name: University of Washington Information School
 
-abstract: "Some abstract!"
+abstract: |
+  Software production, use, and reuse is a crucial part of scholarly work but software products of research are in many cases not easily identifiable or discoverable. The first step of automatic linkage of research and software is identification. In this paper we present two datasets to study the identification and production of research software. The first dataset contains almost 1000 annotations of software production from National Science Foundation (NSF) awarded research projects. We use this dataset to train models which predict software production from either the text of an NSF award's abstract or project outcomes report. Our second dataset is created by applying the trained predictive models across the abstracts and project outcomes reports for all NSF funded projects between the years of 2010 and 2023. The result is an inferred dataset of software production for over XXXXX NSF awards. We release the NSF-Soft-Search dataset to aid in identifying and understanding research software production: https://github.com/si2-urssi/eager
 
 # Styling
 # See Quarto docs for more details on styling
@@ -184,7 +185,7 @@ We trained three different models using the text from either the award abstract 
 
 from soft_search.label.model_selection import fit_and_eval_all_models
 
-model_results = fit_and_eval_all_models(train_transformer=False)
+model_results = fit_and_eval_all_models()
 ```
 
 ```{python}
@@ -457,13 +458,13 @@ As discussed in @sec-data-collection, the NSF-Soft-Search GitHub Annotations dat
 
 ## Future Work
 
-As discussed in @sec-finding-soft, our initial method for attempting to find research software produced from NSF supported awards was to search for references and promises of software production in the abstract, project outcomes report, and attached papers of each award. While attempting this approach to create the dataset, we found that many awards and papers that reference computational methods do not provide a reference web link to their code repositories or websites. In some cases, we found repositories related to an award or paper via Google and GitHub search ourselves. While we support including references to code repositories in award abstracts, outcomes reports, and papers, future research should be conducted on how to enable reconnection of papers with code.
+As discussed in @sec-finding-soft, our initial method for attempting to find research software produced from NSF supported awards was to search for references and promises of software production in the abstract, project outcomes report, and attached papers of each award. While attempting this approach to create the dataset, we found that many awards and papers that reference computational methods do not provide a reference web link to their code repositories or websites. In some cases, we found repositories related to an award or paper via Google and GitHub search ourselves. While we support including references to code repositories in award abstracts, outcomes reports, and papers, future research should be conducted on how to enable automatic reconnection of papers and their software outputs.
 
 # Acknowledgements
 
 We wish to thank ....
 
-This work was supported in part by NSF Grant
+This work was supported in part by NSF Grant ####
 
 ::: {.content-visible unless-format="html"}
 # References
