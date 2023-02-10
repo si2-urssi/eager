@@ -17,12 +17,7 @@ This sub-directory is responsible for generating the 2022 JCDL Soft Search Paper
     - `just watch` to watch this directory and build just the website on file save.
 
 You may run into issues running your first `just build` command. If the issue relates to
-`tinytex` or `texlive` then try installing the latest versions:
-
-* Install:
-`sudo apt-get install texlive-xetex texlive-fonts-recommended texlive-plain-generic`
-* Or Upgrade:
-`sudo apt-get upgrade texlive-xetex texlive-fonts-recommended texlive-plain-generic`
+`tinytex` or `texlive` then try installing the latest versions: `quarto install tinytex`
 
 ### Development Commands
 

@@ -27,7 +27,7 @@ build-html:
 
 # build pdf
 build-pdf:
-    quarto render {{FILE_URI}} --to pdf
+    quarto render {{FILE_URI}} --to acm-pdf
 
 # build docx
 build-docx:

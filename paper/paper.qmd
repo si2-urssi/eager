@@ -2,25 +2,38 @@
 title: "Searching for Software in NSF Awards"
 author:
   - name: "Eva Maxfield Brown"
+    email: evamxb@uw.edu
     orcid: 0000-0003-2564-0373
-    affliations:
-      - name: University of Washington Information School
+    affliation:
+        name: University of Washington Information School
+        city: Seattle
+        state: Washington
+        country: USA
   - name: "Lindsey Schwartz"
-    orcid: XXXX-XXXX-XXXX-XXXX
-    affliations:
-      - name: University of Washington Information School
+    email: lsschwar@uw.edu
+    affliation:
+        name: University of Washington Information School
+        city: Seattle
+        state: Washington
+        country: USA
   - name: "Richard Lewei Huang"
-    orcid: XXXX-XXXX-XXXX-XXXX
-    affliations:
-      - name: University of Washington Information School
+    email: lwhuang@uw.edu
+    affliation:
+        name: University of Washington Information School
+        city: Seattle
+        state: Washington
+        country: USA
   - name: "Nicholas Weber"
-    orcid: XXXX-XXXX-XXXX-XXXX
     email: nmweber@uw.edu
-    affliations:
-      - name: University of Washington Information School
+    orcid: 0000-0002-6008-3763
+    affliation:
+        name: University of Washington Information School
+        city: Seattle
+        state: Washington
+        country: USA
 
 abstract: |
-  Software production, use, and reuse is a crucial part of scholarly work but software products of research are in many cases not easily identifiable or discoverable. The first step of automatic linkage of research and software is identification. In this paper we present two datasets to study the identification and production of research software. The first dataset contains almost 1000 annotations of software production from National Science Foundation (NSF) awarded research projects. We use this dataset to train models which predict software production from either the text of an NSF award's abstract or project outcomes report. Our second dataset is created by applying the trained predictive models across the abstracts and project outcomes reports for all NSF funded projects between the years of 2010 and 2023. The result is an inferred dataset of software production for over XXXXX NSF awards. We release the NSF-Soft-Search dataset to aid in identifying and understanding research software production: https://github.com/si2-urssi/eager
+  Software production, use, and reuse is a crucial part of scholarly work but software products of research are in many cases not easily identifiable or discoverable. The first step of automatic linkage of research and software is identification. In this paper we present two datasets to study the identification and production of research software. The first dataset contains almost 1000 annotations of software production from National Science Foundation (NSF) awarded research projects. We use this dataset to train models which predict software production from either the text of an NSF award's abstract or project outcomes report. Our second dataset is created by applying the trained predictive models across the abstracts and project outcomes reports for all NSF funded projects between the years of 2010 and 2023. The result is an inferred dataset of software production for over 150,000 NSF awards. We release the NSF-Soft-Search dataset to aid in identifying and understanding research software production: https://github.com/si2-urssi/eager
 
 # Styling
 # See Quarto docs for more details on styling
@@ -54,6 +67,37 @@ execute:
 
 keep-tex: true
 keep-ipynb: true
+
+# acm-specific metadata
+acm-metadata:
+  # comment this out to make submission anonymous
+  anonymous: true
+
+  # comment this out to build a draft version
+  # final: true
+
+  # comment this out to specify detailed document options
+  acmart-options: sigconf, review
+
+  # acm preamble information
+  copyright-year: 2023
+  acm-year: 2023
+  copyright: acmcopyright
+  doi: XXXXXXX.XXXXXXX
+  conference-acronym: JCDL
+  conference-name: Joint Conference on Digital Libraries
+  conference-date: June 26--30, 2023
+  conference-location: Santa Fe, NM
+  # price: "15.00"
+  # isbn: 978-1-4503-XXXX-X/18/06
+
+  # if present, replaces the list of authors in the page header.
+  shortauthors: Brown et al.
+  
+  keywords:
+    - datasets
+    - text classification
+    - research software
 ---
 
 # Introduction
@@ -188,7 +232,7 @@ We trained three different models using the text from either the award abstract 
 
 from soft_search.label.model_selection import fit_and_eval_all_models
 
-model_results = fit_and_eval_all_models(train_transformer=False)
+model_results = fit_and_eval_all_models()
 ```
 
 ```{python}
@@ -200,8 +244,7 @@ model_results = fit_and_eval_all_models(train_transformer=False)
 from_abstract = model_results[
   model_results["predictive_source"] == "abstract-text"
 ].reset_index(drop=True)
-
-Markdown(from_abstract.to_markdown(index=False))
+from_abstract.loc[:, from_abstract.columns != "predictive_source"]
 ```
 
 ```{python}
@@ -229,8 +272,7 @@ Markdown(
 from_po = model_results[
   model_results["predictive_source"] == "project-outcomes"
 ].reset_index(drop=True)
-
-Markdown(from_po.to_markdown(index=False))
+from_po.loc[:, from_po.columns != "predictive_source"]
 ```
 
 ```{python}
@@ -279,17 +321,17 @@ for program in full_dataset.majorProgram.unique():
     percent_awards_will_produce = num_awards_will_produce_software / total_awards_funded
     
     desc_table_rows.append({
-        "Funding Program": program,
-        "# Awards Funded": total_awards_funded,
-        "# 'Produce Software'": num_awards_will_produce_software,
-        "% 'Produce Software'": percent_awards_will_produce,
+        "Program": program,
+        "# Awards": total_awards_funded,
+        "# Software": num_awards_will_produce_software,
+        "% Software": percent_awards_will_produce,
     })
 
 desc_table = pd.DataFrame(desc_table_rows).sort_values(
-    by=["# Awards Funded", "% 'Produce Software'"],
+    by=["# Awards", "% Software"],
     ascending=False,
 ).reset_index(drop=True)
-Markdown(desc_table.to_markdown(index=False))
+desc_table
 ```
 
 ## Trends and Observations
@@ -358,7 +400,7 @@ for start_year in high_soft_prog_df.startYear.unique():
             predicted_count = 0
 
         soft_produced_over_time_rows.append({
-            "Funding Program": program_name,
+            "Program": program_name,
             "Award Start Year": start_year,
             "% 'Produce Software'": predicted_count / award_count,
         })
@@ -367,7 +409,7 @@ soft_produced_over_time = pd.DataFrame(soft_produced_over_time_rows)
 
 # Ensure that hue colors are consistent throughout plots
 soft_produced_over_time = soft_produced_over_time.sort_values(
-  by="Funding Program",
+  by="Program",
 )
 
 # Plot over time
@@ -375,26 +417,25 @@ ax = sns.barplot(
     data=soft_produced_over_time,
     x="Award Start Year",
     y="% 'Produce Software'",
-    hue="Funding Program",
+    hue="Program",
     order=[
         str(i)
-        for i in range(
-            high_soft_prog_df.startYear.astype(int).min(),
-            high_soft_prog_df.startYear.astype(int).max(),
-        )
+        for i in range(2010, 2023)
     ],
 )
 sns.move_legend(
     ax,
     "lower center",
     bbox_to_anchor=(.5, 1),
-    ncol=len(soft_produced_over_time["Funding Program"].unique()),
-    title="Funding Program",
+    ncol=len(soft_produced_over_time["Program"].unique()),
+    title="Program",
     frameon=False,
 )
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 ```
+
+Using the NSF-Soft-Search Inferred dataset we can observe trends in software production over time. @fig-soft-over-time plots the percent of awards which we predict to have produced software (using the award's abstract) over time. While there are minor deviations year-to-year in predicted software production, we observe the "Math and Physical Sciences" (MPS) funding program as funding the most awards which we predict to produce software, with "Computer and Information Science and Engineering" (CISE), and "Engineering" (ENG) close behind.
 
 ```{python}
 #| code-fold: true
@@ -416,7 +457,7 @@ for award_duration in high_soft_prog_df.awardDuration.unique():
             predicted_count = 0
 
         soft_produced_over_duration_rows.append({
-            "Funding Program": program_name,
+            "Program": program_name,
             "Award Duration (Years)": award_duration,
             "% 'Produce Software'": predicted_count / award_count,
         })
@@ -425,29 +466,39 @@ soft_produced_over_duration = pd.DataFrame(soft_produced_over_duration_rows)
 
 # Ensure that hue colors are consistent throughout plots
 soft_produced_over_duration = soft_produced_over_duration.sort_values(
-  by="Funding Program",
+  by="Program",
 )
+
+# We don't have many awards that are funded for more than 9 years
+# This leads to deceptive plots -- remove greater than 9
+soft_produced_over_duration = soft_produced_over_duration[
+  soft_produced_over_duration["Award Duration (Years)"] <= 9
+]
+
+# Filter out oddities
+soft_produced_over_duration = soft_produced_over_duration[
+  soft_produced_over_duration["Award Duration (Years)"] >= 0
+]
 
 # Plot over time
 ax = sns.barplot(
     data=soft_produced_over_duration,
     x="Award Duration (Years)",
     y="% 'Produce Software'",
-    hue="Funding Program",
+    hue="Program",
 )
 sns.move_legend(
     ax,
     "lower center",
     bbox_to_anchor=(.5, 1),
-    ncol=len(soft_produced_over_time["Funding Program"].unique()),
-    title="Funding Program",
+    ncol=len(soft_produced_over_time["Program"].unique()),
+    title="Program",
     frameon=False,
 )
 plt.tight_layout()
 ```
 
-* Number of examples that initially were predicted as producing software but didn't over time
-* Number of examples that initially were not predicted to produce software but did over time
+We can additionally observe trends in software production as award duration increases. @fig-soft-over-duration plots the percent of awards which we predict to have produced software (using the award's abstract) grouped by the award duration in years. We note that as award duration increases, the percentage of awards which are predicted to have produced software also tends to increase.
 
 # Conclusion
 
@@ -469,6 +520,4 @@ We wish to thank ....
 
 This work was supported in part by NSF Grant ####
 
-::: {.content-visible unless-format="html"}
 # References
-:::
