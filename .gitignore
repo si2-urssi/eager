@@ -142,3 +142,4 @@ soft-search-semantic-logit.pkl
 soft-search-tfidf-logit.pkl
 soft-search-tfidf-logit-*.pkl
 soft-search-awards.parquet
+nsf-soft-search-2022.*
