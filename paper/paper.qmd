@@ -51,6 +51,9 @@ format:
 
 execute:
   echo: false
+
+keep-tex: true
+keep-ipynb: true
 ---
 
 # Introduction
@@ -185,7 +188,7 @@ We trained three different models using the text from either the award abstract 
 
 from soft_search.label.model_selection import fit_and_eval_all_models
 
-model_results = fit_and_eval_all_models()
+model_results = fit_and_eval_all_models(train_transformer=False)
 ```
 
 ```{python}
