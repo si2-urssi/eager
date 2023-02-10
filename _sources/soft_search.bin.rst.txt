@@ -20,18 +20,18 @@ soft\_search.bin.fit\_and\_eval\_all\_models module
    :undoc-members:
    :show-inheritance:
 
-soft\_search.bin.get\_github\_repositories\_with\_nsf\_ref module
------------------------------------------------------------------
+soft\_search.bin.generate\_nsf\_soft\_search\_2022\_dataset module
+------------------------------------------------------------------
 
-.. automodule:: soft_search.bin.get_github_repositories_with_nsf_ref
+.. automodule:: soft_search.bin.generate_nsf_soft_search_2022_dataset
    :members:
    :undoc-members:
    :show-inheritance:
 
-soft\_search.bin.get\_nsf\_award\_set\_for\_soft\_search\_2022 module
----------------------------------------------------------------------
+soft\_search.bin.get\_github\_repositories\_with\_nsf\_ref module
+-----------------------------------------------------------------
 
-.. automodule:: soft_search.bin.get_nsf_award_set_for_soft_search_2022
+.. automodule:: soft_search.bin.get_github_repositories_with_nsf_ref
    :members:
    :undoc-members:
    :show-inheritance:

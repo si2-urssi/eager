@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>soft_search.bin.get_nsf_award_set_for_soft_search_2022 - soft-search 0.1.dev1+gf4e65ba documentation</title>
+        <title>soft_search.bin.generate_nsf_soft_search_2022_dataset - soft-search 0.1.dev1+g473dbd9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+gf4e65ba documentation</div></a>
+      <a href="../../../index.html"><div class="brand">soft-search 0.1.dev1+g473dbd9 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+gf4e65ba documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+g473dbd9 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -201,7 +201,7 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for soft_search.bin.get_nsf_award_set_for_soft_search_2022</h1><div class="highlight"><pre>
+          <h1>Source code for soft_search.bin.generate_nsf_soft_search_2022_dataset</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 
 <span class="kn">import</span> <span class="nn">argparse</span>
@@ -215,28 +215,33 @@
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">soft_search</span> <span class="kn">import</span> <span class="n">nsf</span>
-<span class="kn">from</span> <span class="nn">soft_search.constants</span> <span class="kn">import</span> <span class="n">ALL_NSF_PROGRAMS</span>
+<span class="kn">from</span> <span class="nn">soft_search.constants</span> <span class="kn">import</span> <span class="n">ALL_NSF_PROGRAMS</span><span class="p">,</span> <span class="n">NSFFields</span>
+<span class="kn">from</span> <span class="nn">soft_search.label</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">load_tfidf_logit_for_prediction_from_abstract</span><span class="p">,</span>
+    <span class="n">load_tfidf_logit_for_prediction_from_outcomes</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="Args"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.get_nsf_award_set_for_soft_search_2022.Args">[docs]</a><span class="k">class</span> <span class="nc">Args</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">):</span>
+<div class="viewcode-block" id="Args"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.generate_nsf_soft_search_2022_dataset.Args">[docs]</a><span class="k">class</span> <span class="nc">Args</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__parse</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__parse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-            <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;get-nsf-award-set-for-soft-search-2022&quot;</span><span class="p">,</span>
+            <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;generate-nsf-soft-search-2022-dataset&quot;</span><span class="p">,</span>
             <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-                <span class="s2">&quot;Get the NSF awards dataset for use in &quot;</span>
-                <span class="s2">&quot;downstream prediction of software.&quot;</span>
+                <span class="s2">&quot;Get the NSF Awards from the last 12 years, predict &quot;</span>
+                <span class="s2">&quot;if they produced software from both the abstract and the &quot;</span>
+                <span class="s2">&quot;project outcomes report and archive the results.&quot;</span>
             <span class="p">),</span>
         <span class="p">)</span>
         <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
             <span class="s2">&quot;--start-date&quot;</span><span class="p">,</span>
             <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;start_date&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;2016-01-01&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;2010-01-01&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;ISO format string with the date to start gathering awards for.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
@@ -252,7 +257,7 @@
             <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
             <span class="s2">&quot;--outfile&quot;</span><span class="p">,</span>
             <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;outfile&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./soft-search-awards.csv&quot;</span><span class="p">),</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./nsf-soft-search-2022.csv&quot;</span><span class="p">),</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span>
             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to store the dataset CSV (and Parquet with the same name).&quot;</span><span class="p">,</span>
         <span class="p">)</span>
@@ -268,7 +273,7 @@
 <span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.get_nsf_award_set_for_soft_search_2022.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../soft_search.bin.html#soft_search.bin.generate_nsf_soft_search_2022_dataset.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># Get args</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">Args</span><span class="p">()</span>
 
@@ -305,10 +310,31 @@
         <span class="c1"># Concat and report size</span>
         <span class="n">awards</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">program_chunks</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">id_</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">])</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total awards found: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">awards</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Make predictions</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading model and predicting software production from abstract.&quot;</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">load_tfidf_logit_for_prediction_from_abstract</span><span class="p">()</span>
+        <span class="n">awards</span><span class="p">[</span><span class="s2">&quot;prediction_from_abstract&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+            <span class="n">awards</span><span class="p">[</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading model and predicting software production from outcomes.&quot;</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">load_tfidf_logit_for_prediction_from_outcomes</span><span class="p">()</span>
+
+        <span class="c1"># Subset to just awards with outcomes</span>
+        <span class="n">outcomes_awards</span> <span class="o">=</span> <span class="n">awards</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">projectOutComesReport</span><span class="p">])</span>
+        <span class="n">outcomes_awards</span><span class="p">[</span><span class="s2">&quot;prediction_from_outcomes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+            <span class="n">outcomes_awards</span><span class="p">[</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">projectOutComesReport</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">outcomes_awards</span> <span class="o">=</span> <span class="n">outcomes_awards</span><span class="p">[[</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">id_</span><span class="p">,</span> <span class="s2">&quot;prediction_from_outcomes&quot;</span><span class="p">]]</span>
+        
+        <span class="c1"># Join the outcomes predictions back to the full set</span>
+        <span class="n">awards</span> <span class="o">=</span> <span class="n">awards</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outcomes_awards</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">id_</span><span class="p">),</span> <span class="n">on</span><span class="o">=</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">id_</span><span class="p">)</span>
 
         <span class="c1"># Store</span>
         <span class="n">outfile</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">outfile</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
