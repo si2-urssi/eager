@@ -103,7 +103,16 @@ include-package-data = true
 exclude = ["*docs/*", "*tests/*"]
 
 [tool.setuptools.package-data]
-"*" = ["*.parquet", "*.json", "*.bin", "*.txt", "*.yaml", "*.pkl", "py.typed"]
+"*" = [
+  "*.parquet",
+  "*.json",
+  "*.bin",
+  "*.csv",
+  "*.txt",
+  "*.yaml",
+  "*.pkl",
+  "py.typed",
+]
 
 # tools
 [tool.black]
@@ -156,6 +165,7 @@ ignore = [
   "*soft-search-2022-transformer/*",
   "*soft-search-transformer/*",
   "*htmlcov/*",
+  "*paper/**",
 ]
 
 [tool.mypy]
