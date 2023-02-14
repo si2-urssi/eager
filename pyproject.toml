@@ -166,6 +166,9 @@ ignore = [
   "*soft-search-transformer/*",
   "*htmlcov/*",
   "*paper/**",
+  "*paper.docx",
+  "*paper.html",
+  "*paper.pdf",
 ]
 
 [tool.mypy]
