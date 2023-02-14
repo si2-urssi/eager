@@ -1,39 +1,40 @@
 ---
 title: "Searching for Software in NSF Awards"
 author:
-  - name: "Eva Maxfield Brown"
-    email: evamxb@uw.edu
-    orcid: 0000-0003-2564-0373
-    affliation:
-        name: University of Washington Information School
-        city: Seattle
-        state: Washington
-        country: USA
-  - name: "Lindsey Schwartz"
-    email: lsschwar@uw.edu
-    affliation:
-        name: University of Washington Information School
-        city: Seattle
-        state: Washington
-        country: USA
-  - name: "Richard Lewei Huang"
-    email: lwhuang@uw.edu
-    affliation:
-        name: University of Washington Information School
-        city: Seattle
-        state: Washington
-        country: USA
-  - name: "Nicholas Weber"
-    email: nmweber@uw.edu
-    orcid: 0000-0002-6008-3763
-    affliation:
-        name: University of Washington Information School
-        city: Seattle
-        state: Washington
-        country: USA
+  - name: Anonymous Submission
+  # - name: "Eva Maxfield Brown"
+  #   email: evamxb@uw.edu
+  #   orcid: 0000-0003-2564-0373
+  #   affliation:
+  #       name: University of Washington Information School
+  #       city: Seattle
+  #       state: Washington
+  #       country: USA
+  # - name: "Lindsey Schwartz"
+  #   email: lsschwar@uw.edu
+  #   affliation:
+  #       name: University of Washington Information School
+  #       city: Seattle
+  #       state: Washington
+  #       country: USA
+  # - name: "Richard Lewei Huang"
+  #   email: lwhuang@uw.edu
+  #   affliation:
+  #       name: University of Washington Information School
+  #       city: Seattle
+  #       state: Washington
+  #       country: USA
+  # - name: "Nicholas Weber"
+  #   email: nmweber@uw.edu
+  #   orcid: 0000-0002-6008-3763
+  #   affliation:
+  #       name: University of Washington Information School
+  #       city: Seattle
+  #       state: Washington
+  #       country: USA
 
 abstract: |
-  Software is an important tool for scholarly work, but software produced for research is in many cases not easily identifiable or discoverable. A potential first step in linking research and software is software identification. In this paper we present two datasets to study the identification and production of research software. The first dataset contains almost 1000 human labeled annotations of software production from National Science Foundation (NSF) awarded research projects. We use this dataset to train models that  predict software production. Our second dataset is created by applying the trained predictive models across the abstracts and project outcomes reports for all NSF funded projects between the years of 2010 and 2023. The result is an inferred dataset of software production for over 150,000 NSF awards. We release the NSF-Soft-Search dataset to aid in identifying and understanding research software production: https://github.com/si2-urssi/eager
+  Software is an important tool for scholarly work, but software produced for research is in many cases not easily identifiable or discoverable. A potential first step in linking research and software is software identification. In this paper we present two datasets to study the identification and production of research software. The first dataset contains almost 1000 human labeled annotations of software production from National Science Foundation (NSF) awarded research projects. We use this dataset to train models that  predict software production. Our second dataset is created by applying the trained predictive models across the abstracts and project outcomes reports for all NSF funded projects between the years of 2010 and 2023. The result is an inferred dataset of software production for over 150,000 NSF awards. We release the NSF-Soft-Search dataset to aid in identifying and understanding research software production: https://github.com/redacted-for-submission
 
 # Styling
 # See Quarto docs for more details on styling
@@ -329,7 +330,7 @@ Markdown(
 
 While the models trained with the project outcomes reports were trained with less data, the best model of the group achieved a higher F1 than any of the models trained with the abstracts. While we have not investigated further, we believe this to be because the project outcomes reports contain more direct citation of produced software rather than an abstract's promise of software production.
 
-The data used for training, and functions to reproduce these models, are made available via our Python package: [`soft-search`](https://github.com/si2-urssi/eager).
+The data used for training, and functions to reproduce these models, are made available via our Python package: [`redacted`](https://github.com/redacted-for-submission).
 
 # The NSF-Soft-Search Dataset {#sec-nsf-soft-search-dataset}
 
@@ -540,7 +541,7 @@ We can additionally observe trends in software production as award duration incr
 
 We introduce NSF-Soft-Search, a pair of novel datasets for studying software production from NSF funded projects. The NSF-Soft-Search Training dataset is a human-labeled dataset with almost 1000 examples used to train models which predict software production from either the NSF award abstract text or the project outcomes report text. We used these models to generate the NSF-Soft-Search Inferred dataset. The NSF-Soft-Search Inferred dataset includes project metadata, the awards abstract and project outcomes report, and predictions of software production for each NSF funded project between 2010 and 2023. We hope that NSF-Soft-Search helps further new studies and findings in understanding the role software development plays in scholarly publication.
 
-All datasets and predictive models produced by this work are available from our GitHub repository: [`si2-urssi/eager`](https://github.com/si2-urssi/eager).
+All datasets and predictive models produced by this work are available from our GitHub repository: [`redacted`](https://github.com/redacted-for-submission).
 
 ## Limitations
 
@@ -552,6 +553,6 @@ As discussed in @sec-finding-soft, our initial method for attempting to find res
 
 # Acknowledgements
 
-We thank the USRSSI team, especially Karthik Ram for their input. This material is based upon work supported by the National Science Foundation under Grant 2211275.
+Redacted for anonymous submission.
 
 # References
