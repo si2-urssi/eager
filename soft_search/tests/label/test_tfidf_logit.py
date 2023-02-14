@@ -5,7 +5,7 @@ from sklearn.pipeline import Pipeline
 
 from soft_search.data.soft_search_2022 import (
     SoftSearch2022DatasetFields,
-    load_soft_search_2022,
+    load_soft_search_2022_training,
 )
 from soft_search.label import tfidf_logit
 from soft_search.metrics import EvaluationMetrics
@@ -15,7 +15,7 @@ from soft_search.metrics import EvaluationMetrics
 
 def test_tfidf_logit_train() -> None:
     # Load data (and sample for fast tests)
-    data = load_soft_search_2022().sample(n=40)
+    data = load_soft_search_2022_training().sample(n=40)
 
     # Split
     train_df, test_df = train_test_split(

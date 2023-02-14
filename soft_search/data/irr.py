@@ -7,7 +7,10 @@ from typing import Dict, List, Optional, Union
 import pandas as pd
 from statsmodels.stats.inter_rater import aggregate_raters, fleiss_kappa
 
-from .soft_search_2022 import SoftSearch2022IRRDatasetFields, load_soft_search_2022_irr
+from .soft_search_2022 import (
+    SoftSearch2022IRRDatasetFields,
+    load_soft_search_2022_training_irr,
+)
 
 ###############################################################################
 
@@ -31,7 +34,7 @@ def calc_fleiss_kappa(
 
     See Also
     --------
-    soft_search.data.soft_search_2022.load_soft_search_2022_irr
+    soft_search.data.soft_search_2022.load_soft_search_2022_training_irr
         The function to load the IRR data.
 
     Notes
@@ -95,7 +98,7 @@ def print_irr_summary_stats(  # noqa: C901
         The overall Fliess Kappa statistic.
     """
     # Load IRR data
-    data = load_soft_search_2022_irr()
+    data = load_soft_search_2022_training_irr()
 
     # Sort by link to have consistent order
     sorted_data = data.sort_values(

@@ -228,11 +228,11 @@ When processing each repository, our Python script would load the README content
 #| code-fold: true
 #| warning: false
 
-from soft_search.data import load_soft_search_2022
+from soft_search.data import load_soft_search_2022_training
 from soft_search.data.soft_search_2022 import SoftSearch2022DatasetFields
 from soft_search.constants import PredictionLabels
 
-soft_search_2022 = load_soft_search_2022()
+soft_search_2022 = load_soft_search_2022_training()
 num_awards_produced_software = len(
   soft_search_2022[
     soft_search_2022[SoftSearch2022DatasetFields.label] == (

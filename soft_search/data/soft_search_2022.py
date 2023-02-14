@@ -337,7 +337,7 @@ def _prepare_soft_search_2022(
     return SOFT_SEARCH_2022_DS_PATH
 
 
-def load_soft_search_2022() -> pd.DataFrame:
+def load_soft_search_2022_training() -> pd.DataFrame:
     """
     Load the Software Search 2022 manually labelled dataset.
 
@@ -349,7 +349,7 @@ def load_soft_search_2022() -> pd.DataFrame:
     return pd.read_parquet(SOFT_SEARCH_2022_DS_PATH)
 
 
-def load_soft_search_2022_irr() -> pd.DataFrame:
+def load_soft_search_2022_training_irr() -> pd.DataFrame:
     """
     Load the Software Search 2022 Inter-Rater Reliability labelled dataset.
 

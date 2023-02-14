@@ -7,7 +7,10 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from ..data import _DATA_DIR
-from ..data.soft_search_2022 import SoftSearch2022DatasetFields, load_soft_search_2022
+from ..data.soft_search_2022 import (
+    SoftSearch2022DatasetFields,
+    load_soft_search_2022_training,
+)
 from ..seed import set_seed
 from . import regex, semantic_logit, tfidf_logit, transformer
 from .tfidf_logit import (
@@ -30,7 +33,7 @@ def fit_and_eval_all_models(
     set_seed(seed)
 
     # Load core data
-    data = load_soft_search_2022()
+    data = load_soft_search_2022_training()
 
     # Run both models (prediction from abstract and prediction from outcomes)
     results = []

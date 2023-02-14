@@ -245,14 +245,14 @@ def train(
 def _train_and_upload_transformer(seed: int = 0) -> Path:
     import os
 
-    from ..data import load_soft_search_2022
+    from ..data import load_soft_search_2022_training
     from ..seed import set_seed
 
     # Set global seed
     set_seed(seed)
 
     # Load data, train
-    df = load_soft_search_2022()
+    df = load_soft_search_2022_training()
     train_df, test_df = train_test_split(df, test_size=0.2)
     model, _, _, _ = train(
         train_df,
