@@ -49,7 +49,7 @@ number-sections: true
 ## Citation Style Language
 # See https://github.com/citation-style-language/styles for more options
 # We default to PNAS (Proceedings of the National Academy of Sciences)
-csl: support/acm-proceedings.csl
+# csl: support/acm-proceedings.csl
 
 ## Specific for target format
 format:
@@ -77,7 +77,7 @@ acm-metadata:
   final: true
 
   # comment this out to specify detailed document options
-  acmart-options: sigconf, review
+  acmart-options: sigconf
 
   # acm preamble information
   copyright-year: 2023
@@ -98,6 +98,37 @@ acm-metadata:
     - datasets
     - text classification
     - research software
+
+  ccs: |
+    \begin{CCSXML}
+    <ccs2012>
+      <concept>
+          <concept_id>10002951.10003227.10003392</concept_id>
+          <concept_desc>Information systems~Digital libraries and archives</concept_desc>
+          <concept_significance>500</concept_significance>
+          </concept>
+      <concept>
+          <concept_id>10002951.10003317.10003347.10003356</concept_id>
+          <concept_desc>Information systems~Clustering and classification</concept_desc>
+          <concept_significance>300</concept_significance>
+          </concept>
+      <concept>
+          <concept_id>10011007.10011074</concept_id>
+          <concept_desc>Software and its engineering~Software creation and management</concept_desc>
+          <concept_significance>300</concept_significance>
+          </concept>
+      <concept>
+          <concept_id>10011007.10011006.10011072</concept_id>
+          <concept_desc>Software and its engineering~Software libraries and repositories</concept_desc>
+          <concept_significance>100</concept_significance>
+          </concept>
+    </ccs2012>
+    \end{CCSXML}
+
+    \ccsdesc[500]{Information systems~Digital libraries and archives}
+    \ccsdesc[300]{Information systems~Clustering and classification}
+    \ccsdesc[300]{Software and its engineering~Software creation and management}
+    \ccsdesc[100]{Software and its engineering~Software libraries and repositories}
 ---
 
 # Introduction
@@ -227,7 +258,7 @@ Markdown(
 
 # Predictive Models {#sec-models}
 
-Using the compiled NSF-Soft-Search Training dataset, we trained three different models using the text from either the award abstract or project outcomes report. The models trained include a logistic regression model trained with TF-IDF word embeddings (`tfidf-logit`), a logistic regression model trained with semantic embeddings (`semantic-logit`), and a fine-tuned transformer (`transformer`). The semantic embeddings and the base model from which we fine-tuned our own transformer model was the `distilbert-base-uncased-finetuned-sst-2-english` model [@hf_canonical_model_maintainers_2022]. Each model was trained with 80% of the NSF-Soft-Search Training dataset. We then test each of the models and use F1 to rank each model’s performance.
+Using the compiled NSF-Soft-Search Training dataset, we trained three different models using the text from either the award abstract or project outcomes report. The models trained include a logistic regression model trained with TF-IDF word embeddings (`tfidf-logit`), a logistic regression model trained with semantic embeddings (`semantic-logit`), and a fine-tuned transformer (`transformer`). The semantic embeddings and the base model from which we fine-tuned our own transformer model was the 'distilbert-base-uncased-finetuned-sst-2-english' model [@hf_canonical_model_maintainers_2022]. Each model was trained with 80% of the NSF-Soft-Search Training dataset. We then test each of the models and use F1 to rank each model’s performance.
 
 ```{python}
 #| code-fold: true
@@ -521,8 +552,6 @@ As discussed in @sec-finding-soft, our initial method for attempting to find res
 
 # Acknowledgements
 
-We wish to thank ....
-
-This work was supported in part by NSF Grant ####
+We thank the USRSSI team, especially Karthik Ram for their input. This material is based upon work supported by the National Science Foundation under Grant 2211275.
 
 # References
