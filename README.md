@@ -12,6 +12,13 @@ searching for software promises in grant applications
 **Stable Release:** `pip install soft-search`<br>
 **Development Head:** `pip install git+https://github.com/si2-urssi/eager.git`
 
+This repository contains the library code and the paper generation code
+created for our paper [Searching for Software in NSF Awards](https://si2-urssi.github.io/eager/_static/paper.html).
+
+### Abstract
+Software is an important tool for scholarly work, but software produced for research is in many cases not easily identifiable or discoverable. A potential first step in linking research and software is software identification. In this paper we present two datasets to study the identification and production of research software. The first dataset contains almost 1000 human labeled annotations of software production from National Science Foundation (NSF) awarded research projects. We use this dataset to train models that  predict software production. Our second dataset is created by applying the trained predictive models across the abstracts and project outcomes reports for all NSF funded projects between the years of 2010 and 2023. The result is an inferred dataset of software production for over 150,000 NSF awards. We release the NSF-Soft-Search dataset to aid in identifying and understanding research software production: https://github.com/si2-urssi/eager
+
+
 ## The NSF-Soft-Search Inferred Dataset
 
 Please download the 500MB NSF-Soft-Search Inferred dataset from
@@ -50,6 +57,7 @@ pipeline = load_tfidf_logit_for_prediction_from_abstract()
 # Pull data
 data = get_nsf_dataset(
   start_date="2022-10-01",
+  end_date="2023-01-01",
   program_name=NSFPrograms.Mathematical_and_Physical_Sciences,
   dataset_fields=[
     NSFFields.id_,
@@ -63,9 +71,9 @@ data = get_nsf_dataset(
 data["prediction_from_abstract"] = pipeline.predict(data[NSFFields.abstractText])
 print(data[["id", "prediction_from_abstract"]])
 
-#    id         prediction_from_abstract
-# 0  2213827      software-not-predicted
-# 1  2213756          software-predicted
+#           id prediction_from_abstract
+# 0    2238468   software-not-predicted
+# 1    2239561   software-not-predicted
 ```
 
 ### Annotated Training Data
