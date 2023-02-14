@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Installation" href="installation.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>soft-search 0.1.dev1+gcf22180 documentation</title>
+        <title>soft-search 0.1.dev1+ge108782 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">soft-search 0.1.dev1+gcf22180 documentation</div></a>
+      <a href="#"><div class="brand">soft-search 0.1.dev1+ge108782 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
   
-  <span class="sidebar-brand-text">soft-search 0.1.dev1+gcf22180 documentation</span>
+  <span class="sidebar-brand-text">soft-search 0.1.dev1+ge108782 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -218,6 +218,12 @@
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h2>
 <p><strong>Stable Release:</strong> <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">soft-search</span></code><span class="raw-html-m2r"><br></span>
 <strong>Development Head:</strong> <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/si2-urssi/eager.git</span></code></p>
+<p>This repository contains the library code and the paper generation code
+created for our paper <a class="reference external" href="https://si2-urssi.github.io/eager/_static/paper.html">Searching for Software in NSF Awards</a>.</p>
+<section id="abstract">
+<h3>Abstract<a class="headerlink" href="#abstract" title="Permalink to this heading">#</a></h3>
+<p>Software is an important tool for scholarly work, but software produced for research is in many cases not easily identifiable or discoverable. A potential first step in linking research and software is software identification. In this paper we present two datasets to study the identification and production of research software. The first dataset contains almost 1000 human labeled annotations of software production from National Science Foundation (NSF) awarded research projects. We use this dataset to train models that  predict software production. Our second dataset is created by applying the trained predictive models across the abstracts and project outcomes reports for all NSF funded projects between the years of 2010 and 2023. The result is an inferred dataset of software production for over 150,000 NSF awards. We release the NSF-Soft-Search dataset to aid in identifying and understanding research software production: <a class="reference external" href="https://github.com/si2-urssi/eager">https://github.com/si2-urssi/eager</a></p>
+</section>
 </section>
 <section id="the-nsf-soft-search-inferred-dataset">
 <h2>The NSF-Soft-Search Inferred Dataset<a class="headerlink" href="#the-nsf-soft-search-inferred-dataset" title="Permalink to this heading">#</a></h2>
@@ -241,35 +247,44 @@ for information regarding reading the dataset in R.</p>
 <li><p>Predict if the award will produce software using the abstract text for each award</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soft_search.constants</span> <span class="kn">import</span> <span class="n">NSFFields</span><span class="p">,</span> <span class="n">NSFPrograms</span>
-<span class="kn">from</span> <span class="nn">soft_search.label</span> <span class="kn">import</span> <span class="n">load_soft_search_model</span>
+<span class="kn">from</span> <span class="nn">soft_search.label</span> <span class="kn">import</span> <span class="p">(</span>
+  <span class="n">load_tfidf_logit_for_prediction_from_abstract</span><span class="p">,</span>
+  <span class="n">load_tfidf_logit_for_prediction_from_outcomes</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">soft_search.nsf</span> <span class="kn">import</span> <span class="n">get_nsf_dataset</span>
 
-<span class="c1"># Load the model</span>
-<span class="n">pipeline</span> <span class="o">=</span> <span class="n">load_soft_search_model</span><span class="p">()</span>
+<span class="c1"># Load the abstract model</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">load_tfidf_logit_for_prediction_from_abstract</span><span class="p">()</span>
+<span class="c1"># or load the outcomes model</span>
+<span class="c1"># pipeline = load_tfidf_logit_for_prediction_from_outcomes()</span>
 
 <span class="c1"># Pull data</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">get_nsf_dataset</span><span class="p">(</span>
-    <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2022-05-01&quot;</span><span class="p">,</span>
-    <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2022-07-01&quot;</span><span class="p">,</span>
-    <span class="n">program_name</span><span class="o">=</span><span class="n">NSFPrograms</span><span class="o">.</span><span class="n">Computer_and_Information_Science_and_Engineering</span><span class="p">,</span>
-    <span class="n">dataset_fields</span><span class="o">=</span><span class="p">[</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">id_</span><span class="p">,</span> <span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">],</span>
-    <span class="n">require_project_outcomes_doc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+  <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2022-10-01&quot;</span><span class="p">,</span>
+  <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2023-01-01&quot;</span><span class="p">,</span>
+  <span class="n">program_name</span><span class="o">=</span><span class="n">NSFPrograms</span><span class="o">.</span><span class="n">Mathematical_and_Physical_Sciences</span><span class="p">,</span>
+  <span class="n">dataset_fields</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">NSFFields</span><span class="o">.</span><span class="n">id_</span><span class="p">,</span>
+    <span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">,</span>
+    <span class="n">NSFFields</span><span class="o">.</span><span class="n">projectOutComesReport</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">require_project_outcomes_doc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Predict</span>
-<span class="n">data</span><span class="p">[</span><span class="s2">&quot;prediction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s2">&quot;prediction_from_abstract&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">NSFFields</span><span class="o">.</span><span class="n">abstractText</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;prediction_from_abstract&quot;</span><span class="p">]])</span>
 
-<span class="c1">#                                         abstractText       id              prediction</span>
-<span class="c1"># 0  Human AI Teaming (HAT) is an emerging and rapi...  2213827  software-not-predicted</span>
-<span class="c1"># 1  This project furthers progress in our understa...  2213756      software-predicted</span>
+<span class="c1">#           id prediction_from_abstract</span>
+<span class="c1"># 0    2238468   software-not-predicted</span>
+<span class="c1"># 1    2239561   software-not-predicted</span>
 </pre></div>
 </div>
 <section id="annotated-training-data">
 <h3>Annotated Training Data<a class="headerlink" href="#annotated-training-data" title="Permalink to this heading">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soft_search.data</span> <span class="kn">import</span> <span class="n">load_soft_search_2022</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soft_search.data</span> <span class="kn">import</span> <span class="n">load_soft_search_2022_training</span>
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_soft_search_2022</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_soft_search_2022_training</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
@@ -404,9 +419,9 @@ directory. The code for this function is available at the following link:
 <a class="reference external" href="https://github.com/si2-urssi/eager/blob/main/soft_search/data/soft_search_2022.py#L143">https://github.com/si2-urssi/eager/blob/main/soft_search/data/soft_search_2022.py#L143</a></p></li>
 <li><p>The manually labeled, cleaned, prepared, and stored data is made available with the
 following code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soft_search.data</span> <span class="kn">import</span> <span class="n">load_soft_search_2022</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soft_search.data</span> <span class="kn">import</span> <span class="n">load_soft_search_2022_training</span>
 
-<span class="n">data</span> <span class="o">=</span> <span class="n">load_soft_search_2022</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">load_soft_search_2022_training</span><span class="p">()</span>
 </pre></div>
 </div>
 </li>
@@ -415,9 +430,9 @@ annotation trials to ensure we had agreement on our labeling definitions.
 The final annotation trial results which resulted in an inter-rater
 reliability (Fleiss Kappa score) of 0.8918 (near perfect) is available
 via the following function:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soft_search.data</span> <span class="kn">import</span> <span class="n">load_soft_search_2022_irr</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soft_search.data</span> <span class="kn">import</span> <span class="n">load_soft_search_2022_training_irr</span>
 
-<span class="n">data</span> <span class="o">=</span> <span class="n">load_soft_search_2022_irr</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">load_soft_search_2022_training_irr</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Additionally, the code for calculating the Fleiss Kappa Statistic
