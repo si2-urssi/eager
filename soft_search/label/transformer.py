@@ -230,7 +230,7 @@ def train(
     epoch_metrics = trainer.train()
     raw_eval_metrics = trainer.evaluate(tokenized_test_dataset)
     eval_metrics = EvaluationMetrics(
-        model="fine-tuned-transformer",
+        model="transformer",
         accuracy=raw_eval_metrics["eval_accuracy"],
         precision=raw_eval_metrics["eval_precision"],
         recall=raw_eval_metrics["eval_recall"],
