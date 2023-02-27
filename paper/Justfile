@@ -29,6 +29,10 @@ build-html:
 build-pdf:
     quarto render {{FILE_URI}} --to acm-pdf
 
+# build normal pdf
+build-preprint-pdf:
+    quarto render {{FILE_URI}} --to pdf
+
 # build docx
 build-docx:
     quarto render {{FILE_URI}} --to docx

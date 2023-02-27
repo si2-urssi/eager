@@ -1,40 +1,41 @@
 ---
-title: "NSF-Soft-Search: Two Datasets to Study the Identification and Production of Research Software"
+title: "Soft-Search: Two Datasets to Study the Identification and Production of Research Software"
 author:
-  # - name: Anonymous Submission
   - name: "Eva Maxfield Brown"
     email: evamxb@uw.edu
     orcid: 0000-0003-2564-0373
     affliation:
-        name: University of Washington Information School
-        city: Seattle
-        state: Washington
-        country: USA
+      name: University of Washington Information School
+      city: Seattle
+      state: Washington
+      country: USA
   - name: "Lindsey Schwartz"
     email: lsschwar@uw.edu
+    orcid: 0000-0001-8338-0288
     affliation:
-        name: University of Washington Information School
-        city: Seattle
-        state: Washington
-        country: USA
+      name: University of Washington Information School
+      city: Seattle
+      state: Washington
+      country: USA
   - name: "Richard Lewei Huang"
     email: lwhuang@uw.edu
+    orcid: 0000-0002-0264-9300
     affliation:
-        name: University of Washington Information School
-        city: Seattle
-        state: Washington
-        country: USA
+      name: University of Washington Information School
+      city: Seattle
+      state: Washington
+      country: USA
   - name: "Nicholas Weber"
     email: nmweber@uw.edu
     orcid: 0000-0002-6008-3763
     affliation:
-        name: University of Washington Information School
-        city: Seattle
-        state: Washington
-        country: USA
+      name: University of Washington Information School
+      city: Seattle
+      state: Washington
+      country: USA
 
 abstract: |
-  Software is an important tool for scholarly work, but software produced for research is in many cases not easily identifiable or discoverable. A potential first step in linking research and software is software identification. In this paper we present two datasets to study the identification and production of research software. The first dataset contains almost 1000 human labeled annotations of software production from National Science Foundation (NSF) awarded research projects. We use this dataset to train models that  predict software production. Our second dataset is created by applying the trained predictive models across the abstracts and project outcomes reports for all NSF funded projects between the years of 2010 and 2023. The result is an inferred dataset of software production for over 150,000 NSF awards. We release the NSF-Soft-Search dataset to aid in identifying and understanding research software production: https://github.com/si2-urssi/eager
+  Software is an important tool for scholarly work, but software produced for research is in many cases not easily identifiable or discoverable. A potential first step in linking research and software is software identification. In this paper we present two datasets to study the identification and production of research software. The first dataset contains almost 1000 human labeled annotations of software production from National Science Foundation (NSF) awarded research projects. We use this dataset to train models that  predict software production. Our second dataset is created by applying the trained predictive models across the abstracts and project outcomes reports for all NSF funded projects between the years of 2010 and 2023. The result is an inferred dataset of software production for over 150,000 NSF awards. We release the Soft-Search dataset to aid in identifying and understanding research software production: https://github.com/si2-urssi/eager
 
 # Styling
 # See Quarto docs for more details on styling
@@ -78,7 +79,7 @@ acm-metadata:
   final: true
 
   # comment this out to specify detailed document options
-  acmart-options: sigconf
+  acmart-options: sigconf, review
 
   # acm preamble information
   copyright-year: 2023
@@ -89,11 +90,11 @@ acm-metadata:
   conference-name: Joint Conference on Digital Libraries
   conference-date: June 26--30, 2023
   conference-location: Santa Fe, NM
-  # price: "15.00"
-  # isbn: 978-1-4503-XXXX-X/18/06
+  price: "15.00"
+  isbn: 978-1-4503-XXXX-X/18/06
 
   # if present, replaces the list of authors in the page header.
-  shortauthors: Brown et al.
+  # shortauthors: Brown et al.
   
   keywords:
     - datasets
@@ -134,19 +135,19 @@ acm-metadata:
 
 # Introduction
 
-Software production, use, and reuse is an increasingly crucial part of scholarly work [@open_source_code_repo_predict_impact;@Trisovic2021ALS]. While historically underutilized, citing and referencing software used during the course of research is becoming common with new standards for software citation [@Katz2021RecognizingTV;@Du2022UnderstandingPI] and work in extracting software references in existing literature [@cz_software_mentions]. However, records of software production are not readily identifiable or available at scale in the way that peer-reviewed publications or other scholarly outputs are [@Schindler2022TheRO]. To make progress on this problem, we introduce two related datasets for studying and inferring software produced as a part of research, which we refer to as the NSF-Soft-Search dataset.
+Software production, use, and reuse is an increasingly crucial part of scholarly work [@open_source_code_repo_predict_impact;@Trisovic2021ALS]. While historically underutilized, citing and referencing software used during the course of research is becoming common with new standards for software citation [@Katz2021RecognizingTV;@Du2022UnderstandingPI] and work in extracting software references in existing literature [@cz_software_mentions]. However, records of software production are not readily identifiable or available at scale in the way that peer-reviewed publications or other scholarly outputs are [@Schindler2022TheRO]. To make progress on this problem, we introduce two related datasets for studying and inferring software produced as a part of research, which we refer to as the Soft-Search dataset.
 
-The NSF-Soft-Search dataset is aimed at identifying research projects which are likely to have produced software while funded by a federal grant. We start by identifying GitHub repositories that  acknowledge funding from at least one National Science Foundation (NSF) award. We then annotate each GitHub repository found with a binary decision for its contents: software or not-software (e.g. not all github repositories contain software, they might include research notes, course materials, etc.). We then link each annotated GitHub repository to the specific NSF award ID(s) referenced in its README.md file. Finally, we compile the NSF-Soft-Search Training dataset using the annotations for each GitHub repository, and the text from the linked NSF award abstract and the project outcomes report.
+The Soft-Search dataset is aimed at identifying research projects which are likely to have produced software while funded by a federal grant. We start by identifying GitHub repositories that  acknowledge funding from at least one National Science Foundation (NSF) award. We then annotate each GitHub repository found with a binary decision for its contents: software or not-software (e.g. not all github repositories contain software, they might include research notes, course materials, etc.). We then link each annotated GitHub repository to the specific NSF award ID(s) referenced in its README.md file. Finally, we compile the Soft-Search Training dataset using the annotations for each GitHub repository, and the text from the linked NSF award abstract and the project outcomes report.
 
-Using the NSF-Soft-Search Training dataset, we train a variety of models to predict software production using either the NSF award abstract or project outcomes report text as input. We use the best performing models to then infer software production against all awards funded by the National Science Foundation from 2010 to 2023 (additional details are offered in @sec-data-collection). The predictions and metadata for each NSF award between the 2010 and 2023 period are compiled to form the NSF-Soft-Search Inferred dataset.
+Using the Soft-Search Training dataset, we train a variety of models to predict software production using either the NSF award abstract or project outcomes report text as input. We use the best performing models to then infer software production against all awards funded by the National Science Foundation from 2010 to 2023 (additional details are offered in @sec-data-collection). The predictions and metadata for each NSF award between the 2010 and 2023 period are compiled to form the Soft-Search Inferred dataset.
 
-In total, our new NSF-Soft-Search dataset includes the following contributions:
+In total, our new Soft-Search dataset includes the following contributions:
 
-1. NSF-Soft-Search Training: A ground truth dataset compiled using linked NSF awards and GitHub repositories which have been annotated for software production.
+1. Soft-Search Training: A ground truth dataset compiled using linked NSF awards and GitHub repositories which have been annotated for software production.
 2. Multiple classifiers which infer software production from either the text of an NSF award’s abstract or project outcomes report.
-3. NSF-Soft-Search Inferred: A dataset of more than 150,000 NSF funded awards from between 2010 and 2023. Each award has two predictions for software production: one from prediction using the abstract text and the other from prediction using the project outcomes report text.
+3. Soft-Search Inferred: A dataset of more than 150,000 NSF funded awards from between 2010 and 2023. Each award has two predictions for software production: one from prediction using the abstract text and the other from prediction using the project outcomes report text.
 
-The rest of the paper proceeds as follows. In @sec-data-collection we detail the data collection and annotation process used for creating the NSF-Soft-Search Training dataset. In @sec-models we briefly describe the model training process and report results. In @sec-nsf-soft-search-dataset we provide summary statistics for the NSF-Soft-Search Inferred dataset and observe trends in software production over time. We conclude with discussion regarding the limitations of our approach and opportunities for future work.
+The rest of the paper proceeds as follows. In @sec-data-collection we detail the data collection and annotation process used for creating the Soft-Search Training dataset. In @sec-models we briefly describe the model training process and report results. In @sec-soft-search-dataset we provide summary statistics for the Soft-Search Inferred dataset and observe trends in software production over time. We conclude with discussion regarding the limitations of our approach and opportunities for future work.
 
 # Data Collection and Annotation {#sec-data-collection}
 
@@ -259,7 +260,7 @@ Markdown(
 
 # Predictive Models {#sec-models}
 
-Using the compiled NSF-Soft-Search Training dataset, we trained three different models using the text from either the award abstract or project outcomes report. The models trained include a logistic regression model trained with TF-IDF word embeddings (`tfidf-logit`), a logistic regression model trained with semantic embeddings (`semantic-logit`), and a fine-tuned transformer (`transformer`). The semantic embeddings and the base model from which we fine-tuned our own transformer model was the 'distilbert-base-uncased-finetuned-sst-2-english' model [@hf_canonical_model_maintainers_2022]. Each model was trained with 80% of the NSF-Soft-Search Training dataset. We then test each of the models and use F1 to rank each model’s performance.
+Using the compiled Soft-Search Training dataset, we trained three different models using the text from either the award abstract or project outcomes report. The models trained include a logistic regression model trained with TF-IDF word embeddings (`tfidf-logit`), a logistic regression model trained with semantic embeddings (`semantic-logit`), and a fine-tuned transformer (`transformer`). The semantic embeddings and the base model from which we fine-tuned our own transformer model was the 'distilbert-base-uncased-finetuned-sst-2-english' model [@hf_canonical_model_maintainers_2022]. Each model was trained with 80% of the Soft-Search Training dataset. We then test each of the models and use F1 to rank each model’s performance.
 
 ```{python}
 #| code-fold: true
@@ -269,7 +270,7 @@ Using the compiled NSF-Soft-Search Training dataset, we trained three different 
 
 from soft_search.label.model_selection import fit_and_eval_all_models
 
-model_results = fit_and_eval_all_models().round(3)
+model_results = fit_and_eval_all_models(train_transformer=True).round(3)
 ```
 
 ```{python}
@@ -332,14 +333,14 @@ While the models trained with the project outcomes reports were trained with les
 
 The data used for training, and functions to reproduce these models, are made available via our Python package: [`soft-search`](https://github.com/si2-urssi/eager).
 
-# The NSF-Soft-Search Dataset {#sec-nsf-soft-search-dataset}
+# The Soft-Search Dataset {#sec-soft-search-dataset}
 
-Using the predictive models, we compile the NSF-Soft-Search Inferred dataset which contains the metadata, abstract text, and project outcomes report text, for all NSF awarded projects during the 2010-2023 period. The NSF-Soft-Search Inferred dataset additionally contains our predictions for software production using both texts respectively. 
+Using the predictive models, we compile the Soft-Search Inferred dataset which contains the metadata, abstract text, and project outcomes report text, for all NSF awarded projects during the 2010-2023 period. The Soft-Search Inferred dataset additionally contains our predictions for software production using both texts respectively. 
 
 ```{python}
 #| code-fold: true
 #| warning: false
-#| label: tbl-nsf-soft-search-stats
+#| label: tbl-soft-search-stats
 #| tbl-cap: Composition of the NSF Soft Search Dataset
 
 import pandas as pd
@@ -472,7 +473,7 @@ plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 ```
 
-Using the NSF-Soft-Search Inferred dataset we can observe trends in software production over time. @fig-soft-over-time plots the percent of awards which we predict to have produced software (using the award's abstract) over time. While there are minor year-to-year deviations in predicted software production, we observe the "Math and Physical Sciences" (MPS) funding program as funding the most awards which we predict to produce software, with "Computer and Information Science and Engineering" (CISE), and "Engineering" (ENG) close behind.
+Using the Soft-Search Inferred dataset we can observe trends in software production over time. @fig-soft-over-time plots the percent of awards which we predict to have produced software (using the award's abstract) over time. While there are minor year-to-year deviations in predicted software production, we observe the "Math and Physical Sciences" (MPS) funding program as funding the most awards which we predict to produce software, with "Computer and Information Science and Engineering" (CISE), and "Engineering" (ENG) close behind.
 
 ```{python}
 #| code-fold: true
@@ -539,13 +540,13 @@ We can additionally observe trends in software production as award duration incr
 
 # Conclusion
 
-We introduce NSF-Soft-Search, a pair of novel datasets for studying software production from NSF funded projects. The NSF-Soft-Search Training dataset is a human-labeled dataset with almost 1000 examples used to train models which predict software production from either the NSF award abstract text or the project outcomes report text. We used these models to generate the NSF-Soft-Search Inferred dataset. The NSF-Soft-Search Inferred dataset includes project metadata, the awards abstract and project outcomes report, and predictions of software production for each NSF funded project between 2010 and 2023. We hope that NSF-Soft-Search helps further new studies and findings in understanding the role software development plays in scholarly publication.
+We introduce Soft-Search, a pair of novel datasets for studying software production from NSF funded projects. The Soft-Search Training dataset is a human-labeled dataset with almost 1000 examples used to train models which predict software production from either the NSF award abstract text or the project outcomes report text. We used these models to generate the Soft-Search Inferred dataset. The Soft-Search Inferred dataset includes project metadata, the awards abstract and project outcomes report, and predictions of software production for each NSF funded project between 2010 and 2023. We hope that Soft-Search helps further new studies and findings in understanding the role software development plays in scholarly publication.
 
 All datasets and predictive models produced by this work are available from our GitHub repository: [`si2-urssi/eager`](https://github.com/si2-urssi/eager).
 
 ## Limitations
 
-As discussed in @sec-data-collection, the NSF-Soft-Search Training dataset was entirely composed of NSF awards which ultimately released or hosted software (and other research products) on GitHub. Due to our data collection strategy, it is possible that each of the predictive models learned not to predict if an NSF award would produce software, but rather, if an NSF award would produce software hosted on GitHub.
+As discussed in @sec-data-collection, the Soft-Search Training dataset was entirely composed of NSF awards which ultimately released or hosted software (and other research products) on GitHub. Due to our data collection strategy, it is possible that each of the predictive models learned not to predict if an NSF award would produce software, but rather, if an NSF award would produce software hosted on GitHub.
 
 ## Future Work
 
