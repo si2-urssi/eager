@@ -36,6 +36,14 @@ soft\_search.bin.get\_github\_repositories\_with\_nsf\_ref module
    :undoc-members:
    :show-inheritance:
 
+soft\_search.bin.get\_github\_repositories\_with\_nsf\_ref\-WITHCOMMENTS module
+-------------------------------------------------------------------------------
+
+.. automodule:: soft_search.bin.get_github_repositories_with_nsf_ref-WITHCOMMENTS
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
