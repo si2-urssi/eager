@@ -90,7 +90,7 @@ def get_nsf_dataset(
     end_date: Optional[Union[str, datetime]] = None,
     program_name: str = NSFPrograms.Biological_Sciences,
     agency: str = "NSF",
-    transaction_type: str = "Grant",
+    transaction_type: str = "Standard Grant",
     dataset_fields: List[str] = ALL_NSF_FIELDS,
     require_project_outcomes_doc: bool = True,
 ) -> pd.DataFrame:
